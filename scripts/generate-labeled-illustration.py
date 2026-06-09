@@ -3,8 +3,14 @@ import argparse
 from collections import deque
 import os
 import subprocess
+import sys
 from pathlib import Path
-from PIL import Image
+
+try:
+    from PIL import Image
+except ImportError:
+    print("ERROR: Pillow is required. Install with: pip install Pillow", file=sys.stderr)
+    sys.exit(1)
 
 
 def normalize_background(image_path, target=(247, 244, 236), tolerance=42, feather=26):
@@ -79,6 +85,15 @@ def main():
 
     output = Path(args.output)
     output.parent.mkdir(parents=True, exist_ok=True)
+
+    baoyu_path = Path(args.baoyu_imagine)
+    bun_path = Path(args.bun)
+    if not baoyu_path.exists():
+        print(f"ERROR: baoyu-imagine skill not found at {baoyu_path}. Install it first.", file=sys.stderr)
+        sys.exit(1)
+    if not bun_path.exists():
+        print(f"ERROR: bun not found at {bun_path}. Install with: curl -fsSL https://bun.sh/install | bash", file=sys.stderr)
+        sys.exit(1)
 
     env = os.environ.copy()
     env.setdefault("OPENAI_BASE_URL", "https://zenmux.ai/api/v1")

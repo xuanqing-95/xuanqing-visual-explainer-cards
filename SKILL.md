@@ -1,6 +1,22 @@
 ---
 name: visual-explainer-cards
-description: Create illustrated Xiaohongshu/Rednote knowledge-card series that combine GPT Image 2 explanatory illustrations with Guizang-style editorial HTML layout. Use when turning abstract concepts, tutorials, AI knowledge, product mechanisms, comparisons, or educational content into clear 3:4 social cards with small in-image Chinese labels, accurate outer typography, reusable layouts, and automated validation.
+description: Create illustrated Xiaohongshu/Rednote knowledge-card series that combine GPT Image 2 explanatory illustrations with Guizang-style editorial HTML layout. Use when turning abstract concepts, tutorials, AI knowledge, product mechanisms, comparisons, or educational content into clear 3:4 social cards with small in-image Chinese labels, accurate outer typography, reusable layouts, and automated validation. Use this skill whenever the user mentions creating social cards, knowledge posts, visual explanations, educational infographics, Xiaohongshu/Rednote content, or illustrated explainer series — even if they don't explicitly ask for "visual explainer cards."
+---
+
+## Dependencies
+
+This skill requires the following to be installed:
+
+| Dependency | Install | Purpose |
+|---|---|---|
+| Playwright (npm) | `npm install playwright` in the skill directory | Renders HTML to PNG |
+| Pillow (Python) | `pip install Pillow` | Background normalization for generated illustrations |
+| [baoyu-imagine](~/.openclaw/skills/baoyu-imagine) | OpenClaw skill | GPT Image 2 labeled illustration generation (Step 10) |
+| [mz-image-gen](~/.openclaw/skills/mz-image-gen) | OpenClaw skill | No-text fallback illustration generation (Step 11) |
+| bun | `curl -fsSL https://bun.sh/install \| bash` | Required by baoyu-imagine |
+
+> `<skill-dir>` in the commands below refers to the directory containing this SKILL.md file.
+
 ---
 
 # Visual Explainer Cards
@@ -16,6 +32,14 @@ Default to a hybrid composition:
 - Validate before delivery.
 
 ## Core Workflow
+
+0. Verify dependencies are ready:
+   ```bash
+   python3 -c "import PIL" 2>/dev/null || pip install Pillow
+   node -e "require('playwright')" 2>/dev/null || (cd <skill-dir> && npm install playwright)
+   test -f ~/.openclaw/skills/baoyu-imagine/scripts/main.ts || echo "WARN: baoyu-imagine skill not installed"
+   test -f ~/.openclaw/skills/mz-image-gen/scripts/main.py || echo "WARN: mz-image-gen skill not installed"
+   ```
 
 1. Read the source and verify unstable facts when necessary.
 2. Build a beginner explanation brief using `references/beginner-explanation.md`. Do not begin layout work until the concept can be explained without jargon.
@@ -48,8 +72,8 @@ python3 <skill-dir>/scripts/generate-illustration.py \
 
 The generation script normalizes the generated edge-connected background to the page paper color `#f7f4ec` by default. Add `--remove-background` only for isolated objects or characters that must overlap HTML regions. Add `--skip-background-normalize` only when preserving an intentional scene background.
 
-12. Copy `assets/template.html` into the task directory as `index.html`.
-13. Replace the example posters with the real pages. Add task-scoped CSS only when necessary.
+12. Copy `assets/template.html` into the task directory as `index.html`. The template is a Swiss International seed template with IKB Blue accent, dot-matrix backgrounds, and full component system. Switch `data-accent` on `<html>` to change accent color.
+13. Replace the example posters with the real pages. Use layout recipes from `references/layouts.md`. Add background layers (dot-mat, cross-mat, ring-mat) from `references/background-systems.md` on covers and sparse pages. Add task-scoped CSS only when necessary.
 14. Render:
 
 ```bash
@@ -126,8 +150,11 @@ Hard rules:
 - Read `references/beginner-explanation.md` before storyboarding or writing card copy.
 - Read `references/metaphor-library.md` when translating abstract ideas into scenes.
 - Read `references/illustration-prompts.md` before generating any illustration.
-- Read `references/design-system.md` before editing the HTML template.
+- Read `references/design-system.md` before editing the HTML template (includes typography, spacing, theme tokens).
+- Read `references/theme-presets.md` when choosing a color palette.
+- Read `references/background-systems.md` when setting up page backgrounds.
 - Read `references/layouts.md` when selecting page structures.
+- Read `references/style-system.md` for Editorial vs Swiss mode rules.
 - Read `references/qa-checklist.md` before delivery.
 
 ## Task Directory

@@ -2,76 +2,104 @@
 
 ## Canvas
 
-- Xiaohongshu: 1080 x 1440.
-- Outer padding: 80px.
-- Spacing scale: 8, 16, 24, 40, 64, 96px.
-- Default theme is Guizang `Indigo Porcelain`: porcelain paper `#f1f3f5`, deep indigo ink `#0a1f3d`, muted blue accent `#0a4fb8`, soft blue-gray modules, and restrained warm-yellow highlight for the English term underline.
-- Do not return to red/yellow/blue primary-color styling unless the user explicitly asks for a brighter variant.
+- Xiaohongshu: 1080 x 1440 (3:4).
+- Outer padding: 88px left/right, 96px top, 56px bottom (issue-strip safe area).
+- Spacing scale: 8, 12, 16, 24, 32, 40, 48, 64, 80, 96px.
 
-## Portrait Composition
+## Theme
 
-Plan every 3:4 page as five intentional vertical zones:
+Default theme is **Indigo Porcelain** (Swiss International mode). One deck — one accent. Never combine.
 
-| Zone | Height | Purpose |
-|---|---:|---|
-| Header | 0-90px | optional category, issue, page |
-| Hook | 240-380px | dominant title and promise |
-| Evidence | 520-720px | illustration, diagram, comparison, ledger |
-| Takeaway | 100-180px | consequence, formula, compressed conclusion |
-| Footer | 52-86px | orientation or next-page cue |
+```css
+:root {
+  --paper:     #f2f4f5;
+  --paper-2:   #e5ebef;
+  --ink:       #0a1f3d;
+  --muted:     #5f6d78;
+  --line:      rgba(10,31,61,.20);
+  --accent:    #315d93;
+  --accent-soft: #d7e1ec;
+}
+```
 
-Active composition must occupy at least 75% of the canvas. A large empty middle or lower band is a failure unless the page is an explicit statement page.
+Do not return to red/yellow/blue primary-color styling unless the user explicitly asks for a brighter variant.
+
+### Other Available Themes
+
+See `theme-presets.md` for the full palette catalog (6 Editorial + 4 Swiss). Switch via `data-theme` on `<html>` (Editorial) or `data-accent` (Swiss).
 
 ## Typography
 
-- Display: sans-serif, light weight, 92-150px.
-- Page title: sans-serif, 72-96px, at most two lines.
-- Mid title: 38-48px.
-- Body: at least 28px.
-- Metadata: 18-20px mono.
-- Render outer titles, body explanations, caveats, dates, prices, and unstable claims in HTML.
-- Short in-image labels are allowed in GPT Image 2 labeled illustrations when they make the picture self-explanatory.
-- Shorten copy before reducing body text below 28px.
+### Swiss International Mode (default for this skill)
+
+**Hard rule: "the larger, the lighter"**
+
+| Role | Weight | Size (3:4) | Font | Notes |
+|---|---|---|---|---|
+| Hero display | 200 | 168px | sans | ≤2 lines |
+| Statement | 200 | 124px | sans | Pull-quote size |
+| Page title (h-xl) | 300 | 96px | sans | 2-3 lines max |
+| Mid title (h-md) | 400 | 56px | sans | Section headers |
+| Category kicker | 600 | 22px | sans | Uppercase, accent color, +.08em tracking |
+| Lead | 400 | 30px | sans-zh | Introductions |
+| Body | 400 | 26px | sans-zh | Main content |
+| Metadata | 500 | 20px | mono | Uppercase, +.14em tracking |
+
+Anti-patterns:
+- **Do not** use weight 700-900 for display titles — it collapses Swiss into "infographic banner" look
+- **Do not** use serif body text in Swiss mode (that's Editorial mode)
+- **Do not** use negative tracking on large type
+
+### Editorial Magazine Mode (optional)
+
+See `style-system.md` "Mode A" for Editorial typography rules (serif display, Songti body, wide tracking on kicker/meta).
+
+## Portrait Composition
+
+Plan every 3:4 page as intentional vertical zones:
+
+| Zone | Height | Purpose |
+|---|---|---|
+| Header | 0-90px | chrome-min row: category, date, issue |
+| Hook | 240-380px | dominant title and promise |
+| Evidence | 520-720px | illustration, diagram, comparison, ledger |
+| Takeaway | 100-180px | consequence, formula, compressed conclusion |
+| Footer | 52-86px | issue-strip or next-page cue |
+
+**Content density rule (hard)**: content must cover ≥75% of canvas height. Any pure-whitespace band >15% canvas height (>216px) needs a stated reason.
+
+Do NOT use `<div style="flex: 1"></div>` to push content to the vertical centre — social cards are scrolled one at a time, under-filled cards read as "PowerPoint with a missing element."
+
+## Background
+
+A flat paper color is not enough. Use the layered background system from `background-systems.md`:
+
+1. Paper base from theme preset
+2. Procedural paper grain (CSS dots or noise)
+3. Optional ink wash / contour atmosphere (stronger on covers, subtler on content pages)
+4. Content layer
+
+For Swiss mode, use subtle dot-matrix or cross-mat patterns instead of ink wash. See `background-systems.md` for CSS.
 
 ## Information Hierarchy
 
 Each page should contain:
 
-1. One dominant message.
-2. One evidence or explanation zone.
-3. Optional supporting note or takeaway.
-
-Metadata rows are optional and disabled by default. Use them only when the user wants an issue/editorial system or when page orientation genuinely benefits from them.
+1. One dominant message
+2. One evidence or explanation zone
+3. Optional supporting note or takeaway
 
 Use one accent color per set. Align elements to a visible grid.
 
-For the recurring AI knowledge series, keep the whole set on the Indigo Porcelain theme unless the user explicitly chooses another Guizang preset.
-
 ## Page Rhythm
 
-For 5-7 pages, use at least four different silhouettes:
+Alternate between dense pages and breathing pages. Do not stack three heavy ledger pages in a row. End with a closing page, not a content page.
 
-- cover with dominant hook and bottom evidence strip
-- large evidence illustration
-- structured comparison or matrix
-- tall process or ledger
-- closing statement/action
+## Hard Rules
 
-Never repeat a centered title-plus-small-image composition. After an illustration-heavy page, use a structured text/data page.
-
-## Illustration Integration
-
-- HTML controls the page. When an illustration is used as evidence, give it 40%-60% of the canvas height. Small corner illustrations are allowed only as secondary decoration.
-- Keep illustration inside a deliberate evidence well or side zone.
-- Default for beginner concept cards: use GPT Image 2 to generate a central explanation illustration with a few readable Chinese labels, then use HTML for the outer card title, body, caveat, and conclusion.
-- Generated in-image labels are allowed only when they make the illustration independently understandable.
-- GPT Image 2 illustrations should feel like Guizang-style editorial diagrams: thin electronic-ink lines, quiet paper, restrained blue accents, precise geometry, and no chunky cartoon/toy rendering.
-- Do not place long explanations, caveats, dates, prices, or unstable facts inside generated images.
-- Do not duplicate the HTML title inside the generated image.
-- Use HTML labels and arrows when generated text must be perfectly editable, when labels are long, or when the model repeatedly makes Chinese mistakes.
-- Prefer a page-matched uniform illustration background inside a borderless evidence well.
-- Normalize the edge-connected generated background to the exact page paper color before rendering; do not rely on the model matching a hex value exactly.
-- Use transparent PNG only for isolated characters or objects that must overlap HTML regions.
-- Do not use an illustration as faint decoration behind dense text.
-- Crop only after checking that the main action remains visible.
-- Do not generate full-page visual backgrounds by default.
+- Exactly one `--accent` in the entire deck
+- No border-radius on frames (Swiss mode uses square corners)
+- No box-shadow, no gradients (Swiss mode)
+- `frame-img` / `frame-shot` use `object-fit: contain` for screenshots (never crop UI)
+- "The larger, the lighter" — ≥200px must use weight 200
+- Content density ≥75% on 3:4 cards

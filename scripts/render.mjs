@@ -8,8 +8,6 @@ async function loadChromium() {
   } catch {
     const candidates = [
       process.env.PLAYWRIGHT_MODULE,
-      path.join(process.env.HOME || "", ".codex/skills/visual-explainer-cards/node_modules/playwright/index.mjs"),
-      "/private/tmp/guizang-social-card-skill/node_modules/playwright/index.mjs",
     ].filter(Boolean);
     for (const candidate of candidates) {
       if (fs.existsSync(candidate)) return (await import(pathToFileURL(candidate).href)).chromium;

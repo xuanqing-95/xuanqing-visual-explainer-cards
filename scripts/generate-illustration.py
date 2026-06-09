@@ -2,8 +2,14 @@
 import argparse
 from collections import deque
 import subprocess
+import sys
 from pathlib import Path
-from PIL import Image
+
+try:
+    from PIL import Image
+except ImportError:
+    print("ERROR: Pillow is required. Install with: pip install Pillow", file=sys.stderr)
+    sys.exit(1)
 
 
 def remove_background(image_path, tolerance=34, feather=28):
@@ -105,6 +111,11 @@ def main():
     prompt = Path(args.prompt_file).read_text(encoding="utf-8")
     output = Path(args.output)
     output.parent.mkdir(parents=True, exist_ok=True)
+
+    generator_path = Path(args.generator)
+    if not generator_path.exists():
+        print(f"ERROR: mz-image-gen skill not found at {generator_path}. Install it first.", file=sys.stderr)
+        sys.exit(1)
 
     command = [
         "python3",
