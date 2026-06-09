@@ -6,80 +6,79 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&family=Noto+Sans+SC:wght@200;300;400;500;600;700&family=Noto+Serif+SC:wght@400;500;700;900&family=Playfair+Display:wght@700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@400;500;700;900&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
   <style>
     /* =========================================================
        Visual Explainer Cards — Editorial Seed (Indigo Porcelain)
        ---------------------------------------------------------
-       Single board: .poster.xhs  1080×1440  (3:4 小红书)
+       Type scale + weights ported from the reference Guizang
+       editorial card system. Hard rule: "the larger, the lighter".
+       Display sizes use weight 500 (not 700). Body uses serif-zh
+       (not sans-zh).
 
-       THIS FILE IS A SEED, NOT A LAYOUT LIBRARY.
-       It provides:
-         - color tokens (Indigo Porcelain + 3 alt single-color)
-         - typography stack (serif display + sans body + mono meta)
-         - poster shell + chrome + foot
-         - one finished layout: S00 Series Cover
-       It deliberately does NOT ship fixed recipes for content pages
-       (concept / ledger / before-after / closing). Design each content
-       page fresh based on the content shape, using the principles in
-       references/layouts.md.
+       Board: .poster.xhs  1080×1440  (3:4 小红书)
 
        Two-layer color logic:
-         --accent     IKB Klein Blue  — the visible system color.
-                      MUST appear on chrome, hairlines, page numbers,
-                      section labels, dividers, structural marks across
-                      every page. If you don't see IKB blue when you
-                      look at a finished page, you've used the system
-                      wrong.
-         --highlight  Mustard Yellow  — reserved for the cover horizontal
-                      bar under .term-en ONLY. Do NOT use it on content
-                      pages. Do NOT use it for em fills, kickers, list
-                      numbers, key options. One use per card set.
+         --accent     IKB Klein Blue   — visible system color on every
+                      page (chrome / foot / section-label / em underline
+                      / page numbers / body strong / captions).
+         --highlight  Mustard Yellow   — cover-bar ONLY (the horizontal
+                      bar under .term-en on the series cover).
+
+       This file ships ONE fixed layout: the S00 Series Cover.
+       Content pages compose fresh from primitives — see
+       references/layouts.md.
        ========================================================= */
 
     /* ---------- 1. Indigo Porcelain (primary) ---------- */
     :root,
     [data-accent="indigo-porcelain"] {
       --paper: #fafaf8;
-      --paper-deep: #f0f0ee;
+      --paper-2: #f0f0ee;
       --ink: #0a0a0a;
       --ink-soft: #1f1f1f;
+      --ink-rgb: 10,10,10;
+      --paper-rgb: 250,250,248;
+      --line: rgba(10,10,10,.16);
+      --muted: #6f6f6c;
       --grey-1: #f0f0ee;
       --grey-2: #d4d4d2;
       --grey-3: #737373;
-      --accent: #002FA7;       /* IKB Klein Blue — system structure, visible everywhere */
+      --accent: #002FA7;       /* IKB Klein Blue */
       --accent-on: #ffffff;
-      --highlight: #F2D24B;    /* Mustard Yellow — COVER BAR ONLY */
+      --accent-rgb: 0,47,167;
+      --highlight: #F2D24B;    /* Mustard Yellow — cover bar only */
       --highlight-on: #0a0a0a;
     }
+
     /* ---------- 2. Alternate accents (single-color, no cover bar) ---------- */
     [data-accent="lemon-yellow"] {
-      --paper:#fafaf8; --paper-deep:#f0f0ee;
-      --ink:#0a0a0a; --ink-soft:#1f1f1f;
-      --grey-1:#f0f0ee; --grey-2:#d4d4d2; --grey-3:#737373;
-      --accent:#FFD500; --accent-on:#0a0a0a;
-      --highlight:#FFD500; --highlight-on:#0a0a0a;
+      --paper:#fafaf8;--paper-2:#f0f0ee;--ink:#0a0a0a;--ink-soft:#1f1f1f;
+      --ink-rgb:10,10,10;--paper-rgb:250,250,248;--line:rgba(10,10,10,.16);
+      --muted:#6f6f6c;--grey-1:#f0f0ee;--grey-2:#d4d4d2;--grey-3:#737373;
+      --accent:#FFD500;--accent-on:#0a0a0a;--accent-rgb:255,213,0;
+      --highlight:#FFD500;--highlight-on:#0a0a0a;
     }
     [data-accent="lemon-green"] {
-      --paper:#fafaf8; --paper-deep:#f0f0ee;
-      --ink:#0a0a0a; --ink-soft:#1f1f1f;
-      --grey-1:#f0f0ee; --grey-2:#d4d4d2; --grey-3:#737373;
-      --accent:#C5E803; --accent-on:#0a0a0a;
-      --highlight:#C5E803; --highlight-on:#0a0a0a;
+      --paper:#fafaf8;--paper-2:#f0f0ee;--ink:#0a0a0a;--ink-soft:#1f1f1f;
+      --ink-rgb:10,10,10;--paper-rgb:250,250,248;--line:rgba(10,10,10,.16);
+      --muted:#6f6f6c;--grey-1:#f0f0ee;--grey-2:#d4d4d2;--grey-3:#737373;
+      --accent:#C5E803;--accent-on:#0a0a0a;--accent-rgb:197,232,3;
+      --highlight:#C5E803;--highlight-on:#0a0a0a;
     }
     [data-accent="safety-orange"] {
-      --paper:#fafaf8; --paper-deep:#f0f0ee;
-      --ink:#0a0a0a; --ink-soft:#1f1f1f;
-      --grey-1:#f0f0ee; --grey-2:#d4d4d2; --grey-3:#737373;
-      --accent:#FF6B35; --accent-on:#ffffff;
-      --highlight:#FF6B35; --highlight-on:#ffffff;
+      --paper:#fafaf8;--paper-2:#f0f0ee;--ink:#0a0a0a;--ink-soft:#1f1f1f;
+      --ink-rgb:10,10,10;--paper-rgb:250,250,248;--line:rgba(10,10,10,.16);
+      --muted:#6f6f6c;--grey-1:#f0f0ee;--grey-2:#d4d4d2;--grey-3:#737373;
+      --accent:#FF6B35;--accent-on:#ffffff;--accent-rgb:255,107,53;
+      --highlight:#FF6B35;--highlight-on:#ffffff;
     }
 
     /* ---------- 3. Typography stack ---------- */
     :root {
       --serif-en: "Playfair Display","Source Serif Pro",Georgia,serif;
-      --serif-zh: "Noto Serif SC","Source Han Serif SC","Songti SC",serif;
-      --sans:     "Inter","Helvetica Neue",Helvetica,"Noto Sans SC",
+      --serif-zh: "Noto Serif SC","Songti SC","STSong",serif;
+      --sans:     "Inter","Helvetica Neue",Helvetica,
                   -apple-system,"PingFang SC","Microsoft YaHei UI",sans-serif;
       --sans-zh:  "Noto Sans SC",-apple-system,"PingFang SC","Inter",sans-serif;
       --mono:     "IBM Plex Mono",ui-monospace,"SF Mono",Consolas,monospace;
@@ -95,7 +94,7 @@
     *,*::before,*::after{box-sizing:border-box;}
     html,body{margin:0;padding:0;}
     body{
-      background:#1a1a1a;font-family:var(--sans);color:var(--ink);
+      background:#1a1a1a;font-family:var(--serif-zh);color:var(--ink);
       -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
       padding:64px 32px;
     }
@@ -105,123 +104,181 @@
     .poster{position:relative;background:var(--paper);color:var(--ink);overflow:hidden;isolation:isolate;}
     .poster.xhs{width:1080px;height:1440px;}
     .poster figure{margin:0;}
-    .poster.xhs .content{padding:80px;position:relative;width:100%;height:100%;display:flex;flex-direction:column;}
+    /* Content padding ported from reference: 96px top/bottom, 88px sides */
+    .poster.xhs .content{padding:96px 88px;position:relative;width:100%;height:100%;display:flex;flex-direction:column;z-index:2;}
 
-    /* ---------- 7. Chrome + foot (IKB blue is visible here) ---------- */
-    /* Chrome: top metadata row. IKB blue on the left category label
-       makes the system color visible on every page. */
-    .chrome{
-      display:flex;justify-content:space-between;align-items:baseline;
-      font-family:var(--mono);font-size:18px;letter-spacing:.14em;text-transform:uppercase;
-      padding-bottom:18px;border-bottom:1px solid var(--accent);  /* IKB hairline */
-      margin-bottom:var(--sp-9);
-    }
-    .chrome .c-cat{color:var(--accent);font-weight:600;}          /* IKB label */
-    .chrome .c-num{color:var(--grey-3);}
+    /* ---------- 7. Typography roles (ported from reference) ----------
+       The larger, the lighter. Display weights are 500, not 700.
+       Body family is serif-zh, not sans-zh. Tracking on display is
+       positive (+.03 to +.04em); kicker/meta tracking is +.20em+.
+    ---------------------------------------------------------- */
 
-    .foot{
-      display:flex;justify-content:space-between;align-items:baseline;
-      font-family:var(--mono);font-size:18px;letter-spacing:.06em;
-      margin-top:auto;padding-top:var(--sp-7);
-      border-top:1px solid var(--accent);                          /* IKB hairline */
-    }
-    .foot .f-tag{color:var(--grey-3);}
-    .foot .f-num{color:var(--accent);font-weight:600;}             /* IKB page number */
-
-    .grow{flex:1;}
-    .hr-hairline{height:1px;background:var(--grey-2);border:0;margin:0;}
-    .hr-accent{height:3px;background:var(--accent);border:0;width:96px;margin:0;}  /* IKB, not yellow */
-
-    /* ---------- 8. Section label (IKB blue, used per content page) ---------- */
-    /* Use this in place of yellow kickers. It states "what kind of page
-       this is" in IKB blue mono, with a small IKB square mark. */
-    .section-label{
-      display:inline-flex;align-items:center;gap:10px;
-      font-family:var(--mono);font-weight:600;
-      font-size:20px;letter-spacing:.16em;text-transform:uppercase;
-      color:var(--accent);margin:0;
-    }
-    .section-label::before{
-      content:"";display:inline-block;width:14px;height:14px;background:var(--accent);
-    }
-
-    /* ---------- 9. Editorial display titles (no yellow on content pages) ---------- */
-    /* Display title — large serif Chinese.
-       For emphasis on content pages, use IKB underline (NOT yellow fill). */
-    .h-display-zh{
-      font-family:var(--serif-zh);font-weight:700;
-      font-size:96px;line-height:1.22;letter-spacing:-.01em;
+    /* Display — the biggest serif title, used for cover series title and
+       (rarely) for content-page hero titles. Weight 500, +.04em tracking. */
+    .h-display{
+      font-family:var(--serif-zh);font-weight:500;
+      font-size:124px;line-height:1.06;letter-spacing:.04em;
       color:var(--ink);margin:0;
     }
-    .h-display-zh em{
+    /* Section title — used on most content pages as the dominant title. */
+    .h-xl{
+      font-family:var(--serif-zh);font-weight:500;
+      font-size:88px;line-height:1.10;letter-spacing:.03em;
+      color:var(--ink);margin:0;
+    }
+    /* Mid title — used for subordinate sections, ledger headers, etc. */
+    .h-md{
+      font-family:var(--serif-zh);font-weight:500;
+      font-size:56px;line-height:1.18;letter-spacing:.02em;
+      color:var(--ink);margin:0;
+    }
+    /* Sub — italic Playfair English subtitle. Goes under display titles. */
+    .h-sub{
+      font-family:var(--serif-en);font-style:italic;font-weight:400;
+      font-size:36px;line-height:1.3;color:var(--muted);margin:0;
+    }
+    /* Pull quote — italic serif, large. */
+    .pullquote{
+      font-family:var(--serif-zh);font-style:italic;font-weight:500;
+      font-size:64px;line-height:1.28;color:var(--ink);margin:0;
+    }
+    /* Lead — first paragraph after a title. SERIF, not sans. */
+    .lead{
+      font-family:var(--serif-zh);font-weight:400;
+      font-size:28px;line-height:1.55;color:rgba(var(--ink-rgb),.82);margin:0;
+    }
+    /* Body — paragraph copy. SERIF, not sans. */
+    .body{
+      font-family:var(--serif-zh);font-weight:400;
+      font-size:24px;line-height:1.65;color:rgba(var(--ink-rgb),.80);margin:0;
+    }
+    .body strong{color:var(--accent);font-weight:500;}
+
+    /* Em underline emphasis — IKB blue, never yellow on content pages. */
+    .h-display em,.h-xl em,.h-md em{
       font-style:normal;color:var(--ink);
       text-decoration:underline;
       text-decoration-color:var(--accent);
       text-decoration-thickness:6px;
       text-underline-offset:10px;
     }
+    .h-md em{text-decoration-thickness:5px;text-underline-offset:8px;}
 
-    .h-section-zh{
-      font-family:var(--serif-zh);font-weight:700;
-      font-size:64px;line-height:1.25;
-      color:var(--ink);margin:0;
+    /* Kicker — mono uppercase, +.22em tracking. NOT yellow. */
+    .kicker{
+      font-family:var(--mono);font-weight:500;
+      font-size:21px;letter-spacing:.22em;text-transform:uppercase;
+      color:rgba(var(--ink-rgb),.55);margin:0;
     }
-    .h-section-zh em{
-      font-style:normal;color:var(--ink);
-      text-decoration:underline;
-      text-decoration-color:var(--accent);
-      text-decoration-thickness:5px;
-      text-underline-offset:8px;
-    }
-
-    /* Body / lead — sans-zh */
-    .lead{font-family:var(--sans-zh);font-weight:400;font-size:30px;line-height:1.6;color:var(--ink-soft);margin:0;}
-    .body{font-family:var(--sans-zh);font-weight:400;font-size:26px;line-height:1.65;color:var(--ink-soft);margin:0;}
-    .body strong{color:var(--accent);font-weight:600;}             /* IKB inline emphasis */
-
-    /* ---------- 10. S00 — Series Cover (the ONE fixed layout) ---------- */
-    /* The cover is the only page with mustard yellow. It carries the
-       horizontal bar under .term-en. Content pages do not use this color. */
-    .cover-series .series-zh{
-      font-family:var(--serif-zh);font-weight:700;
-      font-size:84px;line-height:1.18;color:var(--ink);margin:0;
-    }
-    .cover-series .series-zh .ai-accent{
-      color:var(--accent);font-family:var(--serif-en);font-weight:900;
-    }
-    .cover-series .term-en{
-      position:relative;display:inline-block;
-      font-family:var(--serif-en);font-weight:900;
-      font-size:240px;line-height:1;letter-spacing:-.025em;
-      color:var(--ink);margin:0;
-    }
-    .cover-series .term-en::before{
-      content:"";position:absolute;left:-8px;right:-8px;bottom:14px;
-      height:52px;background:var(--highlight);z-index:-1;       /* ← yellow bar (cover only) */
-    }
-    .cover-series .term-zh{
-      font-family:var(--sans-zh);font-weight:600;font-size:32px;
-      color:var(--accent);letter-spacing:.02em;margin:0;        /* IKB sub-line */
-    }
-    .cover-series .term-question{
-      font-family:var(--serif-zh);font-weight:500;font-size:44px;line-height:1.45;
-      color:var(--ink);margin:0;max-width:880px;
+    /* Meta / label — even tighter, +.20em. */
+    .meta,.label{
+      font-family:var(--mono);font-weight:500;
+      font-size:18px;letter-spacing:.20em;text-transform:uppercase;
+      color:rgba(var(--ink-rgb),.55);
     }
 
-    /* ---------- 11. Image containers (used by all content pages) ---------- */
+    /* ---------- 8. Section label (IKB tag, replaces yellow kicker) ---------- */
+    /* IKB blue square + IKB mono uppercase. Use one per content page so
+       the system color is visible. */
+    .section-label{
+      display:inline-flex;align-items:center;gap:12px;
+      font-family:var(--mono);font-weight:500;
+      font-size:21px;letter-spacing:.22em;text-transform:uppercase;
+      color:var(--accent);margin:0;
+    }
+    .section-label::before{
+      content:"";display:inline-block;width:14px;height:14px;background:var(--accent);
+    }
+
+    /* ---------- 9. Issue row + footer (IKB visible) ---------- */
+    .issue-row{
+      display:flex;align-items:center;gap:16px;
+      font-family:var(--mono);font-weight:500;
+      font-size:20px;letter-spacing:.20em;text-transform:uppercase;
+      color:var(--muted);
+    }
+    .issue-row .dot{
+      width:8px;height:8px;border-radius:50%;background:var(--accent);
+    }
+    .chrome{
+      display:flex;justify-content:space-between;align-items:center;
+      font-family:var(--mono);font-weight:500;
+      font-size:18px;letter-spacing:.20em;text-transform:uppercase;
+      padding-bottom:18px;border-bottom:1px solid var(--accent);
+      margin-bottom:48px;
+    }
+    .chrome .c-cat{color:var(--accent);}
+    .chrome .c-num{color:var(--muted);}
+
+    .foot{
+      display:flex;justify-content:space-between;align-items:center;
+      font-family:var(--mono);font-weight:500;
+      font-size:18px;letter-spacing:.20em;text-transform:uppercase;
+      margin-top:auto;padding-top:32px;
+      border-top:1px solid var(--accent);
+    }
+    .foot .f-tag{color:var(--muted);}
+    .foot .f-num{color:var(--accent);}
+
+    .grow{flex:1;}
+    .hr-hairline{height:1px;background:var(--line);border:0;margin:0;}
+    .hr-accent{height:2px;background:var(--accent);border:0;width:96px;margin:0;}
+
+    /* ---------- 10. Image containers ---------- */
     .illust-frame{
       width:100%;background:var(--paper);
       display:flex;align-items:center;justify-content:center;
       overflow:hidden;margin:0;
     }
     .illust-frame img{width:100%;height:100%;object-fit:contain;display:block;}
-    .frame-img{position:relative;overflow:hidden;background:var(--paper-deep);}
+    .frame-img{position:relative;overflow:hidden;background:var(--paper-2);}
     .frame-img img{width:100%;height:100%;object-fit:cover;display:block;}
+    .img-cap{
+      font-family:var(--mono);font-weight:500;
+      font-size:18px;letter-spacing:.20em;text-transform:uppercase;
+      color:var(--accent);margin-top:14px;
+    }
 
-    .plate-caption{
-      font-family:var(--mono);font-size:18px;letter-spacing:.14em;
-      text-transform:uppercase;color:var(--accent);              /* IKB caption */
-      margin:14px 0 0;
+    /* ---------- 11. S00 — Series Cover (the ONE fixed layout) ---------- */
+    /* Cover composition (top to bottom):
+         .chrome             — IKB hairline + IKB category + day no.
+         .section-label      — small IKB tag with square
+         .series-zh          — large serif series title (uses .h-display 124px)
+         hr-hairline         — quiet divider
+         .term-en            — huge serif English term (240px) with yellow bar
+         .term-zh            — italic Playfair English sub (.h-sub) — IKB recolor
+         .term-question      — serif Chinese question (.h-md size)
+         .grow               — pushes foot down
+         .foot               — IKB hairline + tag + day no.
+       This is the ONLY page in the system that uses the mustard yellow bar.
+    */
+    .cover-series .series-zh{
+      font-family:var(--serif-zh);font-weight:500;
+      font-size:124px;line-height:1.06;letter-spacing:.04em;
+      color:var(--ink);margin:0;
+    }
+    .cover-series .series-zh .ai-accent{
+      color:var(--accent);font-family:var(--serif-en);
+      font-style:italic;font-weight:700;
+    }
+    .cover-series .term-en{
+      position:relative;display:inline-block;
+      font-family:var(--serif-en);font-weight:900;
+      font-size:240px;line-height:1;letter-spacing:-.02em;
+      color:var(--ink);margin:0;
+    }
+    .cover-series .term-en::before{
+      content:"";position:absolute;left:-8px;right:-8px;bottom:14px;
+      height:56px;background:var(--highlight);z-index:-1;  /* ← yellow bar (cover only) */
+    }
+    .cover-series .term-zh{
+      font-family:var(--serif-en);font-style:italic;font-weight:400;
+      font-size:36px;line-height:1.3;color:var(--accent);margin:0;
+    }
+    .cover-series .term-question{
+      font-family:var(--serif-zh);font-weight:500;
+      font-size:56px;line-height:1.18;letter-spacing:.02em;
+      color:var(--ink);margin:0;max-width:880px;
     }
   </style>
 </head>
@@ -231,41 +288,48 @@
     <!-- =====================================================
          HOW TO USE THIS SEED
 
-         1. The cover (S00) below is the ONE fixed layout in the system.
-            Replace the placeholders with real content but keep the
-            structure intact.
+         1. The cover (S00) below is the ONE fixed layout. Replace the
+            placeholders verbatim — do NOT redesign its structure.
 
-         2. For content pages (page 2 onwards), DO NOT copy this cover
-            structure. Read references/layouts.md for design principles,
-            then compose each page fresh from these primitives:
-              - .poster.xhs            board
-              - .content               flex column inside the board
-              - .chrome + .foot        top/bottom IKB hairline bars
-              - .section-label         per-page IKB section tag
-              - .h-display-zh / .h-section-zh / .lead / .body
-              - .illust-frame          for AI-generated illustrations
-              - .frame-img             for photographic evidence
-              - .hr-accent / .hr-hairline
-              - whatever task-scoped CSS the content needs
+         2. For content pages, do NOT copy the cover structure. Read
+            references/layouts.md for design principles, then compose
+            each page fresh from these primitives:
+              - .poster.xhs / .content                board + flex column
+              - .chrome / .foot                       top/bottom IKB hairlines
+              - .section-label                        per-page IKB section tag
+              - .h-display (124) / .h-xl (88) /
+                .h-md (56) / .h-sub (36 italic en) /
+                .pullquote (64 italic) /
+                .lead (28 serif) / .body (24 serif) /
+                .kicker (21 mono) / .meta (18 mono)
+              - em inside any heading                 → IKB underline
+              - .illust-frame                         AI-generated illustration
+              - .frame-img                            photo evidence
+              - .hr-accent (IKB) / .hr-hairline (grey)
+              - .img-cap                              IKB mono caption
 
          3. Color rules (HARD):
-              - IKB blue MUST be visible on every page (chrome, foot,
-                section label, dividers, page numbers, body strong, etc.)
-              - Mustard yellow appears ONLY on the cover bar. Never on
-                content pages.
+              - IKB blue MUST be visible on every page (chrome / foot /
+                section-label / em underline / page numbers).
+              - Mustard yellow appears EXACTLY ONCE per set: the cover bar.
 
-         4. Illustration rule (HARD):
-              - Most content pages should pair text + illustration.
-              - Text leads; illustration explains.
-              - Use .illust-frame with task-scoped height (typically
-                360-560px), not one giant centerpiece per set.
+         4. Type rules (HARD):
+              - The larger, the lighter. Display weights are 500, never 700+.
+              - Body and lead are SERIF (serif-zh), never sans.
+              - Tracking on display titles is positive (+.03 to +.04em).
+              - Kicker / meta tracking is +.20em or more.
+
+         5. Illustration rule (HARD):
+              - Most content pages should pair text + small illustration.
+              - .illust-frame heights: 480-560 (concept-led), 160-260 (list
+                thumb), 100-160 (inline step). Never one giant centerpiece.
      ===================================================== -->
 
     <!-- ============================================================
          S00 Series Cover — fixed layout (replace placeholders only)
          ============================================================ -->
     <section class="poster xhs cover-series" id="xhs-01-cover">
-      <div class="content" style="gap:36px;">
+      <div class="content" style="gap:40px;">
         <div class="chrome">
           <span class="c-cat">AI Knowledge · Beginner Series</span>
           <span class="c-num">Day 0X</span>
@@ -273,9 +337,9 @@
         <p class="section-label">Indigo Porcelain</p>
         <h1 class="series-zh">每天吃透一个<br><span class="ai-accent">AI</span> 知识点</h1>
         <hr class="hr-hairline">
-        <div style="display:flex;flex-direction:column;gap:24px;">
+        <div style="display:flex;flex-direction:column;gap:18px;">
           <p class="term-en">TERM</p>
-          <p class="term-zh">中文小标题</p>
+          <p class="term-zh">A working subtitle in English</p>
         </div>
         <p class="term-question">一个具体的用户场景问题,引出本日主题。</p>
         <div class="grow"></div>

@@ -92,7 +92,7 @@ visual-explainer-cards/
 `scripts/validate.mjs` enforces 7 rules using real Playwright rendering, not static scan:
 
 - **R1** Overflow — any poster whose content exceeds 1080×1440
-- **R2** Type caps — `.h-display-zh` > 96px or > 2 lines on 1080×1440
+- **R2** Type caps — `.h-display` > 132px or `.h-xl` > 100px, or > 2 lines on 1080×1440
 - **R3** Footer collision — `.foot` overlapped by preceding content
 - **R4** 4-band density — fewer than 3 of 4 horizontal bands carry content
 - **R5** Frame overflow — children escaping `.illust-frame` / `.frame-img`

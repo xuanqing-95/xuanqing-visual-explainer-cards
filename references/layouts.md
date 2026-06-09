@@ -77,12 +77,14 @@ Build with these classes (all defined in `assets/template.html`):
 - `.content` — the flex column inside
 - `.chrome` + `.foot` — top/bottom IKB hairline bars (required on every page)
 - `.section-label` — the per-page IKB tag with square mark
-- `.h-display-zh` / `.h-section-zh` — display titles, with IKB underline `em`
-- `.lead` / `.body` — body copy
+- `.h-display` (124px) / `.h-xl` (88px) / `.h-md` (56px) / `.pullquote` (64px italic) — display titles, with IKB underline `em`
+- `.h-sub` (36px italic Playfair) — English subtitles
+- `.lead` (28px serif) / `.body` (24px serif) — body copy
+- `.kicker` (21px mono) / `.meta` `.label` (18px mono) — small meta text
 - `.illust-frame` — AI-generated illustrations (object-fit: contain)
 - `.frame-img` — photographic evidence (object-fit: cover)
 - `.hr-accent` (IKB) / `.hr-hairline` (grey) — dividers
-- `.plate-caption` — IKB mono caption under illustrations
+- `.img-cap` — IKB mono caption under illustrations
 
 Add task-scoped CSS (inside `<style>` in `index.html`) for anything else the specific content needs — grid columns for a comparison, padding for a special card, etc. Do not add the task-scoped CSS back into the seed; it should not be reusable.
 

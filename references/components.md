@@ -4,67 +4,79 @@ Shared component spec for the seed template. Read this when you need to look up 
 
 ## Font Stacks
 
-Editorial (default, in `assets/template.html`):
+- `--serif-en`: Playfair Display — English display titles, italic subtitles
+- `--serif-zh`: Noto Serif SC, Songti SC, STSong — Chinese display titles + body + lead
+- `--sans-zh`: Noto Sans SC, PingFang SC — utility text, fallback only (body defaults to serif-zh in Editorial)
+- `--sans`: Inter — Latin body in mixed content
+- `--mono`: IBM Plex Mono — kicker, meta, captions, section labels, chrome, foot
 
-- `--serif-en`: Playfair Display — English display titles
-- `--serif-zh`: Noto Serif SC — Chinese display titles
-- `--sans-zh`: Noto Sans SC, PingFang SC — Chinese body
-- `--mono`: IBM Plex Mono — chrome / foot / section labels / captions
+Editorial **body and lead default to serif-zh**, not sans. This is what makes the cards read as magazine, not landing page.
 
-## Type Scale + Weight Mapping
+## Type Scale — "The Larger, The Lighter"
 
-On 1080×1440 boards, minimum readable size is 22-28px after factoring in mobile downsample.
+Display sizes use **weight 500**, never 700+. Heavy display weights collapse the card into "heavy infographic banner" and destroy the editorial identity. Small text uses heavier weight than large text.
 
-Editorial scale (3:4 / 1080×1440):
+Editorial scale (1080×1440 board):
 
-| Role | Class | Size | Weight | Family |
-|---|---|---|---|---|
-| Term EN (cover) | `.term-en` | 240px | 900 | serif-en |
-| Display title | `.h-display-zh` | 96px | 700 | serif-zh |
-| Series ZH | `.series-zh` | 84px | 700 | serif-zh |
-| Section title | `.h-section-zh` | 64px | 700 | serif-zh |
-| Term question | `.term-question` | 44px | 500 | serif-zh |
-| Term ZH (cover) | `.term-zh` | 32px | 600 | sans-zh (IKB) |
-| Lead | `.lead` | 30px | 400 | sans-zh |
-| Body | `.body` | 26px | 400 | sans-zh |
-| Section label | `.section-label` | 20px | 600 | mono (IKB) |
-| Plate caption | `.plate-caption` | 18px | 400 | mono (IKB) |
-| Chrome / foot meta | `.chrome` / `.foot` | 18px | 500-600 | mono |
+| Role | Class | Size | Weight | Tracking | Family |
+|---|---|---|---|---|---|
+| Display | `.h-display` | **124px** | 500 | +.04em | serif-zh |
+| Section title | `.h-xl` | **88px** | 500 | +.03em | serif-zh |
+| Mid title | `.h-md` | **56px** | 500 | +.02em | serif-zh |
+| English subtitle | `.h-sub` | 36px | 400 italic | normal | serif-en |
+| Pull quote | `.pullquote` | 64px | 500 italic | normal | serif-zh |
+| Lead | `.lead` | 28px | 400 | normal | **serif-zh** |
+| Body | `.body` | 24px | 400 | normal | **serif-zh** |
+| Kicker | `.kicker` | 21px | 500 | +.22em | mono |
+| Section label | `.section-label` | 21px | 500 (IKB) | +.22em | mono |
+| Meta / label | `.meta` / `.label` | 18px | 500 | +.20em | mono |
+| Caption | `.img-cap` | 18px | 500 (IKB) | +.20em | mono |
+| Chrome / foot | `.chrome` / `.foot` | 18px | 500 | +.20em | mono |
 
-Task-scoped classes (numbered lists, comparison columns, etc.) are defined inline in each `index.html`, not here. See `layouts.md` for guidance.
+Cover-only specials:
+
+| Role | Class | Size | Weight | Tracking | Family |
+|---|---|---|---|---|---|
+| Series title | `.cover-series .series-zh` | 124px | 500 | +.04em | serif-zh |
+| Series accent letter ("AI") | `.series-zh .ai-accent` | 124px | 700 italic (IKB) | inherit | serif-en |
+| Big English term | `.cover-series .term-en` | **240px** | 900 | −.02em | serif-en |
+| Cover sub line | `.cover-series .term-zh` | 36px | 400 italic (IKB) | normal | serif-en |
+| Cover question | `.cover-series .term-question` | 56px | 500 | +.02em | serif-zh |
 
 ### Chinese Title Length Bands
 
-Chinese characters are visually denser than Latin. Pick a band before sizing:
+Chinese characters are denser than Latin. Pick a band before sizing:
 
-| Title shape | `.h-display-zh` |
-|---|---|
-| 1 line, ≤ 6 chars | 96px |
-| 2 lines, each ≤ 8 chars | 96px (default) |
-| 3 lines | Cut copy. Don't shrink. |
+| Title shape | `.h-display` | `.h-xl` |
+|---|---|---|
+| 1 line, ≤ 6 chars | 124px (default) | 88px (default) |
+| 1 line, 7-10 chars | 108px | 78px |
+| 2 lines, each ≤ 8 chars | 96px | 78px |
+| 2 lines, any line 9-12 chars | 84px | 68px |
+| 3 lines | reconsider — split the page |
 
 If the title still does not fit, **shorten the copy first**. Never solve overflow by shrinking body text below the minimum readable size.
 
-### `.h-display-zh` — Hard Caps
+### `.h-xl` — Hard Caps (validated)
 
 | Field | Value |
 |---|---|
-| Default size on `.poster.xhs` | 96px |
+| Default size on `.poster.xhs` | 88px |
 | Max lines | 2 |
-| Max chars per line | 8 |
+| Max chars per line | 9 |
 | `em` blocks per title | 1 |
 
-If your title needs 3 Chinese lines: switch the recipe. Don't shrink below 84px.
+If your title needs 3 Chinese lines: shorten the copy or split the page. Don't shrink `.h-xl` below 78px — small + heavy reads as Web1.0.
 
 ## Emphasis Patterns
 
-### `.h-display-zh em` / `.h-section-zh em` — IKB underline
+### `em` inside `.h-display` / `.h-xl` / `.h-md` — IKB underline
 
 ```html
-<h2 class="h-display-zh">Demo 漂亮<br><em>上生产翻车</em></h2>
+<h2 class="h-xl">Demo 漂亮<br><em>上生产翻车</em></h2>
 ```
 
-Thick IKB underline (6px on display, 5px on section), large offset. Use for the single most important phrase per page. **One em block per title.**
+Thick IKB underline (6px on display/xl, 5px on md), large offset (10/8px). Use for the single most important phrase per page. **One em block per title.**
 
 Yellow background fills on em are forbidden. Yellow lives only on the cover bar.
 
@@ -73,10 +85,9 @@ Yellow background fills on em are forbidden. Yellow lives only on the cover bar.
 ```html
 <p class="section-label">核心比喻</p>
 <p class="section-label">为什么重要</p>
-<p class="section-label">真实案例</p>
 ```
 
-Small IKB blue square + mono uppercase IKB text. This is what makes IKB blue visible on every page and replaces what used to be the yellow `.kicker`. Use one per content page.
+Small IKB blue square + 21px mono uppercase IKB text, +.22em tracking. Makes the system color visible on every page. Use one per content page in place of `.kicker`.
 
 ### `.body strong` — IKB inline emphasis
 
@@ -84,48 +95,57 @@ Small IKB blue square + mono uppercase IKB text. This is what makes IKB blue vis
 <p class="body">大多数团队在 LLMOps 上失败,是因为 <strong>缺少反馈闭环</strong>,不是模型选错了。</p>
 ```
 
-Use for inline emphasis inside body copy. IKB color, 600 weight.
+IKB color, 500 weight, inside serif body copy.
+
+### `.kicker` — mono uppercase, no color emphasis
+
+```html
+<p class="kicker">第三幕 · The Third Act</p>
+```
+
+21px mono, +.22em tracking, muted ink. Use when you need a section label that does NOT need to read as "system color". For the IKB system marker use `.section-label` instead.
 
 ## Image Containers
-
-Use `.illust-frame` for AI-generated illustrations. Use `.frame-img` for photographic evidence.
 
 | Class | Fit | Use |
 |---|---|---|
 | `.illust-frame` | contain | AI-generated illustrations — preserves whole image |
 | `.frame-img` | cover | Photographic evidence — cropping is acceptable |
 
-The seed leaves `.illust-frame` height up to the task. See `illustration-prompts.md` "How Big Should the Illustration Be":
+`.illust-frame` heights (per `illustration-prompts.md`):
 
 - Concept page (image-led): 480-560px
-- List item (one mini per row): 160-260px
+- List item thumb: 160-260px
 - Inline step mark: 100-160px
 
-Captions use `.plate-caption` (IKB mono, 18px).
+Captions use `.img-cap` (18px mono, +.20em tracking, IKB color).
 
 ## Minimum Readable Sizes
 
-Below these, text becomes unreadable at phone size:
+A 1080×1440 PNG is usually viewed on phone at 360-420 logical pixels wide. Below these, text becomes unreadable:
 
 | Role | Minimum |
 |---|---|
-| Body | 22px |
-| Lead | 26px |
-| Caption/Meta | 18px |
+| Body / paragraph | 24px |
+| Lead | 28px |
+| Caption / kicker | 20px |
+| Label / meta | 18px (mono only) |
+| Cell title in grids | 24px |
 
-**Cut copy instead of shrinking type.** If content overflows, remove words — don't make text smaller.
+**Cut copy instead of shrinking type.** If content overflows, remove words.
 
 ## Poster Structure
 
 Every `.poster` must have:
-1. `overflow: hidden` — prevents content from bleeding out
+1. `overflow: hidden` — prevents content bleeding out
 2. Stable dimensions — never use `vw`/`vh` inside posters
 3. One accent only per deck
 4. No border-radius, no box-shadow, no gradients
+5. Content padding: 96px top/bottom, 88px sides on `.poster.xhs`
 
 ## Chrome (required on every page)
 
-Top metadata bar. IKB blue hairline + IKB category label is what makes the system color visible on every page.
+Top metadata bar. IKB hairline + IKB category label is what makes the system color visible.
 
 ```html
 <div class="chrome">
@@ -134,11 +154,11 @@ Top metadata bar. IKB blue hairline + IKB category label is what makes the syste
 </div>
 ```
 
-`.c-cat` is IKB, `.c-num` is grey. The `border-bottom` is IKB hairline.
+`.c-cat` is IKB, `.c-num` is muted. `border-bottom` is IKB hairline.
 
 ## Footer (required on every page)
 
-Bottom metadata bar. IKB blue hairline + IKB page number for the same reason.
+Bottom metadata bar.
 
 ```html
 <div class="foot">
@@ -147,4 +167,4 @@ Bottom metadata bar. IKB blue hairline + IKB page number for the same reason.
 </div>
 ```
 
-`.f-tag` is grey, `.f-num` is IKB. Pinned via `margin-top: auto` inside the flex column `.content` — preserve the flex column or footer collision happens (see `style-system.md` Anti-pattern C).
+`.f-tag` is muted, `.f-num` is IKB. Pinned via `margin-top: auto` inside the flex column `.content` — preserve the flex column or footer collision happens (see `style-system.md` Anti-pattern C).

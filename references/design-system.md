@@ -21,7 +21,7 @@ Default theme is **Indigo Porcelain** — a deliberate dual-color system:
 
 | Token | Role | Use on |
 |---|---|---|
-| `--accent` (IKB Blue) | The visible system color | Chrome hairline + category label, foot hairline + page number, `.section-label`, `.hr-accent`, `.h-display-zh em` underline, `.plate-caption`, `.body strong`, illustrations |
+| `--accent` (IKB Blue) | The visible system color | Chrome hairline + category label, foot hairline + page number, `.section-label`, `.hr-accent`, `em` underline inside `.h-display`/`.h-xl`/`.h-md`, `.img-cap`, `.body strong`, illustrations |
 | `--highlight` (Mustard) | Cover bar ONLY | The horizontal bar under `.term-en` on the cover. Nowhere else. |
 | `--ink` / `--ink-soft` | Body text | All copy |
 | `--grey-1/2/3` | Surfaces & meta | Card backgrounds, hairlines, metadata |
@@ -38,53 +38,54 @@ Earlier versions of this skill used mustard on `.kicker`, `em` fills, ledger num
 
 ## Typography
 
-**Editorial-first**: Serif for display, sans for body, mono for meta.
+**Editorial-first**: Serif for display + body + lead, italic Playfair for English subtitles, mono for meta.
 
-| Role | Class | Font | Size | Weight |
-|---|---|---|---|---|
-| Series ZH (cover) | `.series-zh` | serif-zh | 84px | 700 |
-| English term (cover) | `.term-en` | serif-en (Playfair Display) | 240px | 900 |
-| Display title | `.h-display-zh` | serif-zh | 96px | 700 |
-| Section title | `.h-section-zh` | serif-zh | 64px | 700 |
-| Ledger number | `.ledger .num` | serif-en | 104px | 900 |
-| Closing letter | `.closing .opt .letter` | serif-en | 64px | 900 |
-| Lead | `.lead` | sans-zh | 30px | 400 |
-| Body | `.body` | sans-zh | 26px | 400 |
-| Caption | `.concept-page .caption` | sans-zh | 26px | 500 |
-| Kicker | `.kicker` | mono | 20px | 500 |
-| Chrome / foot meta | `.chrome` / `.foot` | mono | 18px | 500 |
+The single most important rule: **"the larger, the lighter"** — display sizes use weight 500, never 700+. Heavy display weights collapse cards into "heavy infographic banner" and destroy the editorial identity.
+
+The second most important rule: **body and lead use serif-zh, not sans-zh.** Sans body reads as landing page, not magazine.
+
+| Role | Class | Size | Weight | Tracking | Family |
+|---|---|---|---|---|---|
+| Display | `.h-display` | 124px | 500 | +.04em | serif-zh |
+| Section title | `.h-xl` | 88px | 500 | +.03em | serif-zh |
+| Mid title | `.h-md` | 56px | 500 | +.02em | serif-zh |
+| English sub italic | `.h-sub` | 36px | 400 italic | normal | serif-en |
+| Pull quote | `.pullquote` | 64px | 500 italic | normal | serif-zh |
+| Lead | `.lead` | 28px | 400 | normal | **serif-zh** |
+| Body | `.body` | 24px | 400 | normal | **serif-zh** |
+| Kicker / section-label | `.kicker` / `.section-label` | 21px | 500 | +.22em | mono |
+| Meta / label / caption / chrome | `.meta` / `.label` / `.img-cap` / `.chrome` | 18px | 500 | +.20em | mono |
+
+Cover-only: `.cover-series .term-en` = 240px Playfair weight 900; `.cover-series .term-zh` = 36px Playfair italic IKB; `.cover-series .term-question` = 56px serif-zh.
 
 ### Fonts
 
 - `--serif-en`: Playfair Display (loaded from Google Fonts)
 - `--serif-zh`: Noto Serif SC
-- `--sans-zh`: Noto Sans SC
+- `--sans-zh`: Noto Sans SC (utility only; do NOT use for body)
 - `--mono`: IBM Plex Mono
 
 Hard rules:
 
-- **Do not** use sans-serif for display titles in Editorial mode.
+- **Display weights are 500.** Never 700+. The system is "the larger, the lighter".
+- **Body and lead are serif-zh.** Never sans. Sans body breaks the magazine feel.
+- **Tracking on display is positive** (+.03 to +.04em). Negative tracking on serif Chinese looks crushed.
+- **Tracking on kicker/meta/section-label is ≥+.20em.** Tight mono uppercase looks like a code editor, not a magazine label.
 - **Do not** load additional serif families. Stick to Playfair + Noto Serif SC.
-- **Do not** use mono outside chrome/meta/kicker. Mono in body copy reads as code.
+- **Do not** use mono outside chrome/meta/kicker/section-label/caption. Mono in body reads as code.
 - **Do not** stretch `em` highlights across more than 4-6 characters. Long highlight blocks lose emphasis.
 
 ## Emphasis Pattern
 
-`em` inside a display title gets an IKB blue underline. The underline is thick (6px) and offset (10px) so it reads as deliberate, not a hyperlink.
+`em` inside `.h-display` / `.h-xl` / `.h-md` gets an IKB blue underline. Thick (6px on display/xl, 5px on md) with large offset (10/8px) so it reads as deliberate, not as a hyperlink.
 
 ```html
-<h2 class="h-display-zh">Demo 漂亮<br><em>上生产翻车</em></h2>
+<h2 class="h-xl">Demo 漂亮<br><em>上生产翻车</em></h2>
 ```
 
-Use this for the single most important phrase per page. **One em block per title.** Two em blocks on one title look like decoration, not emphasis.
+Use for the single most important phrase per page. **One em block per title.**
 
-`h-section-zh em` is identical (slightly thinner underline at 5px) for medium-size titles.
-
-```html
-<h2 class="h-section-zh">LLMOps 像<em>餐厅后厨</em></h2>
-```
-
-Do not use yellow background fills on `em` in content pages. Yellow is reserved for the cover bar.
+Yellow background fills on em are forbidden on content pages. Yellow lives only on the cover bar.
 
 ## Page Rhythm
 

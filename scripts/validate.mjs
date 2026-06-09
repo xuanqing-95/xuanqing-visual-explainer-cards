@@ -54,15 +54,17 @@ const results = await page.locator(".poster").evaluateAll((cards, mode) => {
       failures.push(`R1 overflow ${card.scrollWidth}×${card.scrollHeight} (board ${card.clientWidth}×${card.clientHeight})`);
     }
 
-    // R2 — type caps: .h-display-zh / .h-xl ≤ 2 lines on xhs, ≤ 100px
+    // R2 — type caps: .h-display / .h-xl ≤ 2 lines on xhs, ≤ 132px (display) / 100px (xl)
     const isXhs = card.classList.contains("xhs");
-    card.querySelectorAll(".h-display-zh, .h-xl").forEach((el) => {
+    card.querySelectorAll(".h-display, .h-xl, .series-zh").forEach((el) => {
       const style = getComputedStyle(el);
       const size = parseFloat(style.fontSize);
       const lineHeight = parseFloat(style.lineHeight) || size * 1.1;
       const lines = Math.round(el.getBoundingClientRect().height / lineHeight);
-      if (isXhs && size > 100) {
-        failures.push(`R2 ${el.className} ${Math.round(size)}px exceeds 96px cap on xhs board`);
+      const isDisplay = el.classList.contains("h-display") || el.classList.contains("series-zh");
+      const cap = isDisplay ? 132 : 100;
+      if (isXhs && size > cap) {
+        failures.push(`R2 ${el.className} ${Math.round(size)}px exceeds ${cap}px cap on xhs board`);
       }
       if (isXhs && lines > 2) {
         failures.push(`R2 ${el.className} spans ${lines} lines (max 2 on xhs)`);
@@ -115,9 +117,10 @@ const results = await page.locator(".poster").evaluateAll((cards, mode) => {
 
     // R6 — Mode identity
     // Swiss mode: every display title ≥72px must have weight ≤300
-    // Editorial mode: skip per-card weight check (display titles are intentionally heavy serif)
+    // Editorial mode: every display title ≥64px must have weight ≤500
+    //                 ("the larger, the lighter" — never 700+ on serif display)
+    const displayCandidates = [...card.querySelectorAll("h1,h2,h3,.h-hero,.h-statement,.h-display,.h-xl,.h-md,.num-mega,.num-xl,.term-en,.series-zh,.pullquote")];
     if (mode === "swiss") {
-      const displayCandidates = [...card.querySelectorAll("h1,h2,h3,.h-hero,.h-statement,.h-xl,.num-mega,.num-xl,.h-display-zh,.h-section-zh,.term-en,.series-zh")];
       for (const el of displayCandidates) {
         const style = getComputedStyle(el);
         const size = parseFloat(style.fontSize);
@@ -125,6 +128,22 @@ const results = await page.locator(".poster").evaluateAll((cards, mode) => {
         if (size >= 72 && weight > 300) {
           failures.push(
             `R6 Swiss identity: <${el.tagName.toLowerCase()}.${el.className}> at ${Math.round(size)}px uses weight ${weight} (must be ≤300)`
+          );
+        }
+      }
+    } else {
+      // Editorial: "the larger, the lighter". Display ≥64px must be ≤500.
+      // Exempt .term-en (cover-only 240px Playfair 900) — that single weight
+      // is part of the cover identity, not a content-page rule.
+      for (const el of displayCandidates) {
+        if (el.classList.contains("term-en")) continue;
+        if (el.querySelector(".ai-accent") || el.classList.contains("ai-accent")) continue;
+        const style = getComputedStyle(el);
+        const size = parseFloat(style.fontSize);
+        const weight = parseInt(style.fontWeight, 10);
+        if (size >= 64 && weight > 500) {
+          warnings.push(
+            `R6 Editorial identity: <${el.tagName.toLowerCase()}.${el.className}> at ${Math.round(size)}px uses weight ${weight} (should be ≤500 — "the larger, the lighter")`
           );
         }
       }

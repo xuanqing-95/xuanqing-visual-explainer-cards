@@ -29,12 +29,13 @@ Visual anchors:
 
 ### Editorial Identity Test
 
-A poster is Editorial only if **all four** hold:
+A poster is Editorial only if **all five** hold:
 
-1. Every large display title (≥64px) uses `.h-display-zh` / `.h-section-zh` / `.series-zh` / `.term-en`. They all render in serif.
-2. IKB Blue (`--accent`) is visible on every page — at minimum on the chrome hairline + category label, foot hairline + page number.
-3. Mustard Yellow (`--highlight`) appears in the entire set exactly once: the cover bar under `.term-en`. Not on content-page titles, kickers, numbers, key options, or backgrounds.
-4. Section dividers are hairlines (1px) or chrome top/bottom borders, not boxes with drop shadows.
+1. Every large display title (≥64px) uses `.h-display` / `.h-xl` / `.h-md` / `.series-zh` / `.term-en` / `.pullquote`. They all render in serif.
+2. **Display weights are ≤500.** "The larger, the lighter." Body and lead are also serif-zh, never sans.
+3. IKB Blue (`--accent`) is visible on every page — at minimum on the chrome hairline + category label, foot hairline + page number.
+4. Mustard Yellow (`--highlight`) appears in the entire set exactly once: the cover bar under `.term-en`. Not on content-page titles, kickers, numbers, key options, or backgrounds.
+5. Section dividers are hairlines (1px) or chrome top/bottom borders, not boxes with drop shadows.
 
 If any one fails, the poster is not Editorial — it is generic infographic. Fix it before delivery.
 
@@ -76,7 +77,7 @@ A Swiss poster is Swiss only if **all three** hold:
 
 ```html
 <!-- WRONG: yellow on a content-page title -->
-<h2 class="h-display-zh">Demo 漂亮<br>
+<h2 class="h-xl">Demo 漂亮<br>
   <em style="background:var(--highlight);padding:0 12px;">上生产翻车</em>
 </h2>
 
@@ -119,3 +120,27 @@ Random ovals, blobs, sparkles, gradient shapes — any visual element that does 
 ### Anti-pattern F: Pinned content-page templates
 
 Designing every set as "cover → concept+image → tall ledger → before/after → closing" produces visually identical decks across totally different topics. Read `layouts.md` — the cover is fixed; content pages are composed fresh from primitives based on content shape.
+
+### Anti-pattern G: Heavy display weights / sans body
+
+```html
+<!-- WRONG: bold serif display reads as "heavy infographic banner" -->
+<h1 class="h-display" style="font-weight:700;">每天吃透一个 AI 知识点</h1>
+
+<!-- WRONG: sans body reads as "landing page", not magazine -->
+<p class="body" style="font-family:var(--sans-zh);">…</p>
+```
+
+The single most important rule of the system is **"the larger, the lighter"**. Display sizes use weight 500, never 700+. The second most important rule is **body and lead are serif-zh, not sans**. Sans display + sans body + small type was the symptom of the 2026-06-09 regression — when the cover felt cramped and the content felt like a slide deck, this rule was being violated.
+
+### Anti-pattern H: Tracking too tight on display + mono
+
+```html
+<!-- WRONG: serif Chinese display with negative tracking looks crushed -->
+<h2 class="h-xl" style="letter-spacing:-.01em;">…</h2>
+
+<!-- WRONG: kicker without wide tracking looks like body text -->
+<p class="kicker" style="letter-spacing:normal;">…</p>
+```
+
+Display titles use **positive** tracking (+.03 to +.04em on display, +.02em on mid). Kicker, meta, section-label, chrome, foot all use **+.20em or more**. Tight mono uppercase reads as code editor, not magazine label.
