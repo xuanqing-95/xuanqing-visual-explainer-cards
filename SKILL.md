@@ -23,17 +23,16 @@ This skill requires the following to be installed:
 
 Create social cards that readers understand visually before reading closely.
 
-This skill is **Editorial-first**: serif display titles (Playfair Display + Noto Serif SC), sans body, mono meta, dual-color (IKB Klein Blue for system structure + Mustard Yellow for emphasis only). Hairline rules, off-white paper, no shadows/gradients/rounded corners.
+This skill is **Editorial-first**: serif display titles (Playfair Display + Noto Serif SC), sans body, mono meta. IKB Klein Blue is the visible system color on every page (chrome, foot, section labels, dividers, page numbers). Mustard Yellow appears exactly once per set, on the cover horizontal bar — nowhere else.
 
 It pairs that strict typography system with GPT Image 2 illustrations that may carry a small number of exact Chinese labels.
 
 Default to a hybrid composition:
 
 - Render the outer card, large titles, body copy, bottom takeaways, page rhythm, and editorial structure in HTML.
-- Generate the central explanation illustration with GPT Image 2 only on the **metaphor page** of a set (typical: page 2 of 5).
+- Generate illustrations for most content pages — text leads, illustration explains. Use small, supporting illustrations (160-560px depending on page role), not one full-canvas centerpiece per set.
 - Allow only small, high-value in-image labels inside generated illustrations. Keep long explanations and caveats in HTML.
-- Use no-text or HTML-overlay illustrations only when generated text is unnecessary or too risky.
-- 1 illustration per 5-page set is the norm. Not one per page.
+- The cover (S00) is the only fixed layout in the system. Content pages are composed fresh from primitives based on content shape — do not invent named "S01/S02/S03" templates and force pages into them.
 
 ## Core Workflow
 
@@ -51,7 +50,7 @@ Default to a hybrid composition:
 4. For recurring AI knowledge series, make page 1 a fixed `series-cover`: series line, English term, Chinese explanation, and one user-scenario question. Do not generate a cover illustration unless the user explicitly asks.
 5. Add a page-rhythm plan before coding: list each content page's silhouette and evidence type. Use at least four distinct silhouettes in a 5-7 page set after the cover.
 6. Route each content page using `references/visual-routing.md`.
-7. Select one of the layouts in `references/layouts.md` (S00 series cover, S01 concept+image, S02 ledger, S03 before/after, S04 closing). Reject side-by-side portrait layouts that leave large empty upper or lower bands.
+7. The cover (page 1) uses the fixed S00 layout in `references/layouts.md`. For pages 2 onwards, do NOT pick a pre-named recipe — read `references/layouts.md` to choose a layout pattern based on the content shape, and compose the page fresh from primitives.
 8. For every illustration-led page, choose one illustration mode using `references/illustration-prompts.md`: `labeled-gpt-image`, `html-label-overlay`, or `no-text`.
 9. For the default `labeled-gpt-image` mode, write a compact GPT Image 2 prompt with 3-8 exact in-image labels and no duplicate card title inside the illustration.
 10. Generate labeled GPT Image 2 illustrations:
@@ -76,8 +75,8 @@ python3 <skill-dir>/scripts/generate-illustration.py \
 
 The generation script normalizes the generated edge-connected background to the page paper color `#fafaf8` by default. Add `--remove-background` only for isolated objects or characters that must overlap HTML regions. Add `--skip-background-normalize` only when preserving an intentional scene background.
 
-12. Copy `assets/template.html` into the task directory as `index.html`. The template is an Editorial seed (Indigo Porcelain default) with serif display fonts, IKB Blue structure + Mustard Yellow emphasis, and the S00-S04 component system. Switch `data-accent` on `<html>` to change palette (`indigo-porcelain` | `lemon-yellow` | `lemon-green` | `safety-orange`). The alt accents collapse to single-color (no separate highlight) — only Indigo Porcelain carries the dual-color logic.
-13. Replace the placeholder cover with the real pages. Use layout recipes from `references/layouts.md`. **One illustration per set on the metaphor page** is the norm — see `references/illustration-prompts.md` "When to Generate an Illustration". Add background layers from `references/background-systems.md` only when a page is truly sparse. Add task-scoped CSS only when necessary.
+12. Copy `assets/template.html` into the task directory as `index.html`. The template is an Editorial seed (Indigo Porcelain default) with serif display fonts, IKB Blue as the visible system color, and ONE fixed layout: the S00 Series Cover. Switch `data-accent` on `<html>` to change palette (`indigo-porcelain` | `lemon-yellow` | `lemon-green` | `safety-orange`). The alt accents collapse to single-color (no separate highlight) — only Indigo Porcelain carries the cover-bar yellow.
+13. Keep the cover (S00) structure verbatim, replacing only the placeholders. For content pages, do NOT copy the cover structure — compose each page fresh based on the content shape using primitives (`.chrome`, `.foot`, `.section-label`, `.h-display-zh`, `.illust-frame`, etc.). Read `references/layouts.md` for the design principles. Most content pages should pair text + small illustration (`.illust-frame` 160-560px depending on role). Add task-scoped CSS in the page's `<style>` only when necessary — do NOT add it back into the seed.
 14. Render:
 
 ```bash
@@ -141,7 +140,7 @@ Hard rules:
 - In `labeled-gpt-image` mode, generated images may contain only short exact labels that make the picture self-explanatory.
 - Never duplicate the outer HTML title inside the generated illustration. The illustration should explain the mechanism, while the outer card introduces the topic.
 - Do not add top metadata/category/page labels by default. Use them only when the user requests an editorial issue system.
-- Use 1-3 illustrations in a typical 5-page set, not one on every page.
+- Use 3-4 illustrations in a typical 5-page set (most content pages should pair text + small illustration). Not one giant illustration per set, not one on every single page either.
 - Reserve composition safe zones before generating illustrations.
 - Prefer concrete actions over static collections of objects.
 - Illustration presence is not success. Every illustration-led page must visibly communicate a causal chain and pass both image-only and full-page explanation checks.

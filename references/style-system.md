@@ -32,8 +32,8 @@ Visual anchors:
 A poster is Editorial only if **all four** hold:
 
 1. Every large display title (≥64px) uses `.h-display-zh` / `.h-section-zh` / `.series-zh` / `.term-en`. They all render in serif.
-2. Mustard Yellow (`--highlight`) only appears on: `.kicker`, `em` inside titles, `.ledger .num`, `.hr-accent`, `.term-en::before` bar, `.closing .opt.is-key`. Nowhere else.
-3. IKB Blue (`--accent`) is the only structural color. Used inside illustrations + brand chrome only — NOT on display titles.
+2. IKB Blue (`--accent`) is visible on every page — at minimum on the chrome hairline + category label, foot hairline + page number.
+3. Mustard Yellow (`--highlight`) appears in the entire set exactly once: the cover bar under `.term-en`. Not on content-page titles, kickers, numbers, key options, or backgrounds.
 4. Section dividers are hairlines (1px) or chrome top/bottom borders, not boxes with drop shadows.
 
 If any one fails, the poster is not Editorial — it is generic infographic. Fix it before delivery.
@@ -72,29 +72,37 @@ A Swiss poster is Swiss only if **all three** hold:
 
 ## Anti-Patterns
 
-### Anti-pattern A: Highlight color overuse
+### Anti-pattern A: Mustard yellow leaks onto content pages
 
 ```html
-<!-- WRONG: highlight on every page element -->
-<div class="kicker">Action</div>
-<h2 class="h-display-zh"><em>每一行</em>都<em>这样</em></h2>
-<hr class="hr-accent">
-<p class="lead" style="background:var(--highlight);">连正文都黄</p>
+<!-- WRONG: yellow on a content-page title -->
+<h2 class="h-display-zh">Demo 漂亮<br>
+  <em style="background:var(--highlight);padding:0 12px;">上生产翻车</em>
+</h2>
+
+<!-- WRONG: yellow kicker on every page -->
+<p class="kicker" style="background:var(--highlight);">缺 LLMOps 的典型症状</p>
+
+<!-- WRONG: yellow number blocks -->
+<span class="num" style="background:var(--highlight);">01</span>
+
+<!-- WRONG: yellow "key option" letter -->
+<span class="letter" style="background:var(--highlight);">C</span>
 ```
 
-`--highlight` is **emphasis only**. If 5+ things on a page wear yellow, none of them are emphasized — they all become decoration. Hard cap: **1 em block per display title, 1 kicker per page**.
+**Mustard yellow is for the cover bar. That's it.** When yellow appears on three content pages, the cover stops looking like a cover and the set turns into a yellow-themed deck. Use IKB blue for everything that needs to read as "structure" or "system marker"; use IKB underline for in-title emphasis.
 
-### Anti-pattern B: Mixing accent and highlight roles
+### Anti-pattern B: IKB blue invisible on the page
 
 ```html
-<!-- WRONG: structure color used as emphasis -->
-<h2 class="h-display-zh"><em style="background:var(--accent);color:white">这里很重要</em></h2>
-
-<!-- WRONG: highlight color used as structure -->
-<div class="content" style="background:var(--highlight);">整页都黄</div>
+<!-- WRONG: chrome with no IKB -->
+<div class="chrome" style="border-bottom:1px solid var(--grey-2);">
+  <span style="color:var(--grey-3);">CATEGORY</span>
+  <span style="color:var(--grey-3);">02 / 05</span>
+</div>
 ```
 
-IKB Blue and Mustard Yellow have specific, non-overlapping roles. Mixing them breaks the calm-vs-accent rhythm — the system reads as "two random colors" instead of "structure + emphasis".
+The page renders as pure black/grey/paper. IKB blue is the system color — if a reader can't tell which design system this card came from at a glance, the system has no presence. Put IKB on the chrome hairline, the category label, the foot hairline, and the page number at minimum.
 
 ### Anti-pattern C: Footer overlap
 
@@ -107,3 +115,7 @@ If the outer HTML title says `LLMOps`, the generated illustration must NOT rende
 ### Anti-pattern E: Generic decorative SVG
 
 Random ovals, blobs, sparkles, gradient shapes — any visual element that does not point to a specific piece of information — break the editorial identity. If a shape cannot be labeled, remove it.
+
+### Anti-pattern F: Pinned content-page templates
+
+Designing every set as "cover → concept+image → tall ledger → before/after → closing" produces visually identical decks across totally different topics. Read `layouts.md` — the cover is fixed; content pages are composed fresh from primitives based on content shape.

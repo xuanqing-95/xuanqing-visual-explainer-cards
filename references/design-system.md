@@ -21,12 +21,16 @@ Default theme is **Indigo Porcelain** — a deliberate dual-color system:
 
 | Token | Role | Use on |
 |---|---|---|
-| `--accent` (IKB Blue) | System structure | Illustrations, brand chrome, link color, structural blocks |
-| `--highlight` (Mustard) | Emphasis only | `.kicker`, `em` inside titles, `.ledger .num`, `.hr-accent`, cover term-en bar, key `.closing .opt.is-key` |
+| `--accent` (IKB Blue) | The visible system color | Chrome hairline + category label, foot hairline + page number, `.section-label`, `.hr-accent`, `.h-display-zh em` underline, `.plate-caption`, `.body strong`, illustrations |
+| `--highlight` (Mustard) | Cover bar ONLY | The horizontal bar under `.term-en` on the cover. Nowhere else. |
 | `--ink` / `--ink-soft` | Body text | All copy |
 | `--grey-1/2/3` | Surfaces & meta | Card backgrounds, hairlines, metadata |
 
-**Never use `--accent` for emphasis. Never use `--highlight` for structure.** This separation is what gives the system its calm + accent rhythm. Mixing breaks the visual hierarchy.
+**IKB blue must be visible on every page.** If you finish a page and the only colors on it are black + grey + paper, you've failed the system. Use IKB on at minimum: chrome hairline + label, foot hairline + page number.
+
+**Mustard yellow appears exactly once in a card set** — on the cover bar under `.term-en`. Not on content-page titles, not on backgrounds, not on numbers, not on key options. Concentrating mustard on one place is what makes the cover read as a cover.
+
+Earlier versions of this skill used mustard on `.kicker`, `em` fills, ledger numbers, and key options. That over-saturated the emphasis color and made every page look the same. Don't go back to that.
 
 ### Alt Accents
 
@@ -66,7 +70,7 @@ Hard rules:
 
 ## Emphasis Pattern
 
-`em` inside a display title gets a mustard background with white-on-black ink. The padding + `box-decoration-break: clone` keeps the highlight block intact when wrapping.
+`em` inside a display title gets an IKB blue underline. The underline is thick (6px) and offset (10px) so it reads as deliberate, not a hyperlink.
 
 ```html
 <h2 class="h-display-zh">Demo 漂亮<br><em>上生产翻车</em></h2>
@@ -74,42 +78,34 @@ Hard rules:
 
 Use this for the single most important phrase per page. **One em block per title.** Two em blocks on one title look like decoration, not emphasis.
 
-`h-section-zh em` is different — it uses an underline instead of a fill, lighter visual weight, for inline highlighting.
+`h-section-zh em` is identical (slightly thinner underline at 5px) for medium-size titles.
 
 ```html
 <h2 class="h-section-zh">LLMOps 像<em>餐厅后厨</em></h2>
 ```
 
-## Portrait Composition
-
-Plan every 3:4 page as intentional vertical zones:
-
-| Zone | Height | Purpose |
-|---|---|---|
-| Chrome | 0-60px | category / day / page no. |
-| Kicker | 60-110px | yellow highlight tag |
-| Display title | 130-360px | dominant message |
-| Evidence | 380-1000px | illustration / ledger / split / options |
-| Foot | 1340-1400px | tagline + page no. |
-
-**Content density rule (hard)**: content must cover ≥75% of canvas height. Any pure-whitespace band >15% canvas height (>216px) needs a stated reason.
+Do not use yellow background fills on `em` in content pages. Yellow is reserved for the cover bar.
 
 ## Page Rhythm
 
-Alternate between dense pages and breathing pages. End with a closing page, not a content page.
+Most content pages pair **text + small illustration**. Text leads, illustration explains.
 
 Typical 5-page set:
-1. Cover (S00)
-2. Concept + Image (S01) — only page with illustration
-3. Tall Ledger (S02) — pure type rhythm
-4. Before / After (S03) — split contrast
-5. Closing (S04) — options + action
+1. Cover (S00) — typography only, mustard yellow bar
+2. Concept / metaphor — large illustration (480-560px) + short caption
+3. Numbered list / multi-item — 3 small illustrations (160-260px each) inline with text
+4. Comparison or mechanism — 2 small illustrations side-by-side
+5. Closing / call to action — type-led, optional small illustration
+
+Avoid both extremes: "one illustration on page 2 only" (boring) or "one big illustration on every single page" (overwhelming).
 
 ## Hard Rules
 
 - Exactly one `--accent` per set
-- `--highlight` only on emphasis surfaces listed above
+- IKB blue is visible on every page (chrome + foot, minimum)
+- Mustard yellow appears exactly once per set, on the cover bar only
 - No border-radius, no box-shadow, no gradients
 - Content density ≥ 75% on 3:4 cards
-- One `em` block per display title
-- 1-3 illustrations per 5-page set, not one on every page
+- One `em` block per display title (IKB underline, not yellow fill)
+- Most content pages should pair text + small illustration
+- The cover is the only fixed layout. Content pages are composed fresh from primitives.

@@ -9,7 +9,7 @@ Editorial (default, in `assets/template.html`):
 - `--serif-en`: Playfair Display — English display titles
 - `--serif-zh`: Noto Serif SC — Chinese display titles
 - `--sans-zh`: Noto Sans SC, PingFang SC — Chinese body
-- `--mono`: IBM Plex Mono — chrome / foot / kicker
+- `--mono`: IBM Plex Mono — chrome / foot / section labels / captions
 
 ## Type Scale + Weight Mapping
 
@@ -23,15 +23,15 @@ Editorial scale (3:4 / 1080×1440):
 | Display title | `.h-display-zh` | 96px | 700 | serif-zh |
 | Series ZH | `.series-zh` | 84px | 700 | serif-zh |
 | Section title | `.h-section-zh` | 64px | 700 | serif-zh |
-| Ledger number | `.ledger .num` | 104px | 900 | serif-en |
-| Closing letter | `.closing .opt .letter` | 64px | 900 | serif-en |
 | Term question | `.term-question` | 44px | 500 | serif-zh |
-| Term ZH (cover) | `.term-zh` | 32px | 600 | sans-zh |
+| Term ZH (cover) | `.term-zh` | 32px | 600 | sans-zh (IKB) |
 | Lead | `.lead` | 30px | 400 | sans-zh |
 | Body | `.body` | 26px | 400 | sans-zh |
-| Caption | `.concept-page .caption` | 26px | 500 | sans-zh |
-| Kicker | `.kicker` / `.kicker-plain` | 20px | 500 | mono |
-| Chrome / foot meta | `.chrome` / `.foot` | 18px | 500 | mono |
+| Section label | `.section-label` | 20px | 600 | mono (IKB) |
+| Plate caption | `.plate-caption` | 18px | 400 | mono (IKB) |
+| Chrome / foot meta | `.chrome` / `.foot` | 18px | 500-600 | mono |
+
+Task-scoped classes (numbered lists, comparison columns, etc.) are defined inline in each `index.html`, not here. See `layouts.md` for guidance.
 
 ### Chinese Title Length Bands
 
@@ -58,37 +58,33 @@ If your title needs 3 Chinese lines: switch the recipe. Don't shrink below 84px.
 
 ## Emphasis Patterns
 
-### `.h-display-zh em` — fill block
+### `.h-display-zh em` / `.h-section-zh em` — IKB underline
 
 ```html
 <h2 class="h-display-zh">Demo 漂亮<br><em>上生产翻车</em></h2>
 ```
 
-Mustard background, dark text, padded 0 12px, `box-decoration-break: clone` so the highlight stays intact when the line wraps. Use for the single most important phrase per page.
+Thick IKB underline (6px on display, 5px on section), large offset. Use for the single most important phrase per page. **One em block per title.**
 
-### `.h-section-zh em` — underline
+Yellow background fills on em are forbidden. Yellow lives only on the cover bar.
 
-```html
-<h2 class="h-section-zh">LLMOps 像<em>餐厅后厨</em></h2>
-```
-
-Mustard underline (6px thick, 8px offset), no fill. Lighter weight than the block emphasis. Use when the title is medium-size or when fill would feel too heavy.
-
-### `.kicker` — yellow block tag
+### `.section-label` — IKB tag with square mark
 
 ```html
-<p class="kicker">缺 LLMOps 的典型症状</p>
+<p class="section-label">核心比喻</p>
+<p class="section-label">为什么重要</p>
+<p class="section-label">真实案例</p>
 ```
 
-Mono uppercase, 20px, mustard background, dark text. One per page maximum. Sits above the display title.
+Small IKB blue square + mono uppercase IKB text. This is what makes IKB blue visible on every page and replaces what used to be the yellow `.kicker`. Use one per content page.
 
-### `.kicker-plain` — mono tag without highlight
+### `.body strong` — IKB inline emphasis
 
 ```html
-<p class="kicker-plain">Indigo Porcelain</p>
+<p class="body">大多数团队在 LLMOps 上失败,是因为 <strong>缺少反馈闭环</strong>,不是模型选错了。</p>
 ```
 
-Same shape as `.kicker` but plain (no background). Use for series labels or themes that don't deserve emphasis.
+Use for inline emphasis inside body copy. IKB color, 600 weight.
 
 ## Image Containers
 
@@ -99,16 +95,13 @@ Use `.illust-frame` for AI-generated illustrations. Use `.frame-img` for photogr
 | `.illust-frame` | contain | AI-generated illustrations — preserves whole image |
 | `.frame-img` | cover | Photographic evidence — cropping is acceptable |
 
-The S01 concept page wraps `.illust-frame` inside `.plate` (paper background, grey border, 560px illustration height + mono caption strip).
+The seed leaves `.illust-frame` height up to the task. See `illustration-prompts.md` "How Big Should the Illustration Be":
 
-```html
-<div class="plate">
-  <figure class="illust-frame">
-    <img src="assets/page-02.png" alt="...">
-  </figure>
-  <p class="plate-caption">Fig. 01 · 后厨的四个工位</p>
-</div>
-```
+- Concept page (image-led): 480-560px
+- List item (one mini per row): 160-260px
+- Inline step mark: 100-160px
+
+Captions use `.plate-caption` (IKB mono, 18px).
 
 ## Minimum Readable Sizes
 
@@ -130,24 +123,28 @@ Every `.poster` must have:
 3. One accent only per deck
 4. No border-radius, no box-shadow, no gradients
 
-## Footer
+## Chrome (required on every page)
 
-Use `.foot` for page metadata (series name, page number). It's defined in the seed template and pinned via `margin-top: auto` inside the flex column `.content` — preserve the flex column or footer collision happens (see `style-system.md` Anti-pattern C).
-
-```html
-<div class="foot">
-  <span>每天吃透一个 AI 知识点</span>
-  <span>01 / 05</span>
-</div>
-```
-
-## Chrome
-
-Top metadata bar with mono uppercase, hairline border-bottom. Always include category + page number.
+Top metadata bar. IKB blue hairline + IKB category label is what makes the system color visible on every page.
 
 ```html
 <div class="chrome">
-  <span>核心比喻 · Metaphor</span>
-  <span>02 / 05</span>
+  <span class="c-cat">核心比喻 · Metaphor</span>
+  <span class="c-num">02 / 05</span>
 </div>
 ```
+
+`.c-cat` is IKB, `.c-num` is grey. The `border-bottom` is IKB hairline.
+
+## Footer (required on every page)
+
+Bottom metadata bar. IKB blue hairline + IKB page number for the same reason.
+
+```html
+<div class="foot">
+  <span class="f-tag">每天吃透一个 AI 知识点</span>
+  <span class="f-num">02 / 05</span>
+</div>
+```
+
+`.f-tag` is grey, `.f-num` is IKB. Pinned via `margin-top: auto` inside the flex column `.content` — preserve the flex column or footer collision happens (see `style-system.md` Anti-pattern C).

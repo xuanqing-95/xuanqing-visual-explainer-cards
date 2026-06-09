@@ -6,22 +6,37 @@ Default mode is **GPT Image 2 labeled illustration**: the generated image may co
 
 ## When to Generate an Illustration (hard rule)
 
-**Illustration is supporting, not primary.** Text carries the load; illustration only earns space when it does something text cannot.
+**Most content pages should pair text + small illustration.** Text leads, illustration explains. The point of this skill is the *combination* — pure-text card sets and one-giant-illustration card sets both fail the brief.
 
-Generate an illustration only if the page meets one of:
+Default to including an illustration when the page has any of:
 
-1. **Metaphor page** — concept is abstract (LLMOps, RAG, agent loop), reader needs a concrete mental anchor
-2. **Mechanism flow** — input → transform → output where the spatial layout IS the explanation
-3. **Comparison panel** — two states side-by-side where visual contrast is the message
+- A metaphor or concrete scene (kitchen, dashboard, traffic light)
+- A mechanism, flow, or transformation (input → process → output)
+- Items with visible referents (stations, tools, products, body parts, food)
+- Two states being compared visually (before/after, wrong/right)
 
-Do NOT generate illustrations for:
+Skip illustration only when:
 
-- Numbered lists (use S02 ledger — type rhythm is the visual)
-- Before/After text comparisons (use S03 ba — typography carries it)
-- Closing pages with options (use S04 — letter blocks are the visual)
-- Cover pages (use S00 — huge serif term is the visual)
+- The page is a pure pull-quote or one-line definition
+- The page is a checklist of abstract verbs ("review", "decide", "ship") with no clear visual
+- The page is the cover (the huge English term IS the visual)
 
-Typical 5-page set: **1 illustration on page 2**. Not one per page.
+Typical 5-page set: **3-4 pages with illustrations + 1-2 type-only pages**. Avoid both:
+
+- One giant illustration on page 2, nothing else → boring
+- One full-page illustration on every page → overwhelming
+
+## How Big Should the Illustration Be (hard rule)
+
+Text-led pages need small, supporting illustrations. Illustration-led pages can go larger but never fill the whole canvas.
+
+| Page role | `.illust-frame` height |
+|---|---|
+| Concept page where image IS the explanation | 480-560px |
+| Page where image supports a list (one mini per row) | 160-260px each |
+| Page where image is one small mark on a mechanism | 100-160px inline |
+
+The text content should still occupy at least 60% of the page's visual weight. If the illustration is louder than the title, shrink it.
 
 ## Palette Lock (hard rule)
 
@@ -29,12 +44,10 @@ Generated illustrations must match the card's `data-accent` palette. **Never** i
 
 | System palette | Allowed ink colors in illustration |
 |---|---|
-| Indigo Porcelain | IKB Blue `#002FA7`, paper `#fafaf8`, ink `#0a0a0a`, greys. **NO mustard yellow inside illustration.** Mustard is reserved for HTML emphasis. |
+| Indigo Porcelain | IKB Blue `#002FA7`, paper `#fafaf8`, ink `#0a0a0a`, greys. **NO mustard yellow inside illustration.** Mustard is reserved for the cover bar. |
 | Lemon Yellow | `#FFD500`, paper, ink, greys |
 | Lemon Green | `#C5E803`, paper, ink, greys |
 | Safety Orange | `#FF6B35`, paper, ink, greys |
-
-The reason mustard is excluded from Indigo Porcelain illustrations: yellow is the page's emphasis surface (kicker, em, ledger numbers). If the illustration also wears yellow, emphasis loses its signal.
 
 Always include this line in every prompt's STYLE section:
 
