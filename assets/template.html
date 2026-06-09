@@ -359,6 +359,29 @@
       display: block;
     }
     .frame-img.fit-contain img { object-fit: contain; background: var(--paper); }
+
+    /* Illustration frame — for generated GPT Image 2 illustrations.
+       Background set to var(--paper) so normalized illustrations blend seamlessly.
+       Use scripts/normalize-bg.py to pre-process illustration backgrounds. */
+    .illust-frame {
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--paper);
+    }
+    .illust-frame img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    .illust-frame.r-3x4   { aspect-ratio: 3 / 4; }
+    .illust-frame.r-4x3   { aspect-ratio: 4 / 3; }
+    .illust-frame.r-16x10 { aspect-ratio: 16 / 10; }
+    .illust-frame.r-1x1   { aspect-ratio: 1 / 1; }
+
     .frame-img.r-3x4   { aspect-ratio: 3 / 4; }
     .frame-img.r-1x1   { aspect-ratio: 1 / 1; }
     .frame-img.r-4x3   { aspect-ratio: 4 / 3; }

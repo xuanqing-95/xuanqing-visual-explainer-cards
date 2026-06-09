@@ -74,13 +74,21 @@ The generation script normalizes the generated edge-connected background to the 
 
 12. Copy `assets/template.html` into the task directory as `index.html`. The template is a Swiss International seed template with IKB Blue accent, dot-matrix backgrounds, and full component system. Switch `data-accent` on `<html>` to change accent color.
 13. Replace the example posters with the real pages. Use layout recipes from `references/layouts.md`. Add background layers (dot-mat, cross-mat, ring-mat) from `references/background-systems.md` on covers and sparse pages. Add task-scoped CSS only when necessary.
-14. Render:
+14. Normalize illustration backgrounds to match the card paper color:
+
+```bash
+python3 <skill-dir>/scripts/normalize-bg.py assets/page-*.png --target f1f3f5
+```
+
+This replaces the illustration's paper-colored background with the exact card background color, eliminating visible seams. Run this after generating all illustrations and before rendering.
+
+15. Render:
 
 ```bash
 node <skill-dir>/scripts/render.mjs <task-dir>
 ```
 
-15. Validate and fix every FAIL:
+16. Validate and fix every FAIL:
 
 ```bash
 node <skill-dir>/scripts/validate.mjs <task-dir>
