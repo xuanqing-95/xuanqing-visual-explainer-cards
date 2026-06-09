@@ -5,17 +5,39 @@ description: Create illustrated Xiaohongshu/Rednote knowledge-card series that c
 
 ## Dependencies
 
-This skill requires the following to be installed:
-
 | Dependency | Install | Purpose |
 |---|---|---|
 | Playwright (npm) | `npm install playwright` in the skill directory | Renders HTML to PNG |
-| Pillow (Python) | `pip install Pillow` | Background normalization for generated illustrations |
-| [baoyu-imagine](~/.openclaw/skills/baoyu-imagine) | OpenClaw skill | GPT Image 2 labeled illustration generation (Step 10) |
-| [mz-image-gen](~/.openclaw/skills/mz-image-gen) | OpenClaw skill | No-text fallback illustration generation (Step 11) |
-| bun | `curl -fsSL https://bun.sh/install \| bash` | Required by baoyu-imagine |
+| bun | `curl -fsSL https://bun.sh/install \| bash` | Required by some image generation skills |
 
 > `<skill-dir>` in the commands below refers to the directory containing this SKILL.md file.
+
+## Image Generation
+
+This skill does not bundle image generation. Use your own image generation skill (e.g. `baoyu-imagine`, `mz-image-gen`, or any other tool that produces PNG images).
+
+For `labeled-gpt-image` mode, your image generation tool needs to:
+- Accept a text prompt with Chinese labels
+- Output a PNG image
+- Support aspect ratio (3:4 for cards)
+
+Typical invocation pattern:
+
+```bash
+# Example with baoyu-imagine:
+bun ~/.openclaw/skills/baoyu-imagine/scripts/main.ts \
+  --promptfiles prompts/page-02.md \
+  --image assets/page-02.png \
+  --ar 3:4
+
+# Example with mz-image-gen:
+python3 ~/.openclaw/skills/mz-image-gen/scripts/main.py \
+  --prompt-file prompts/page-02.md \
+  --output assets/page-02.png \
+  --ar 4:3
+```
+
+After generating illustrations, verify the background color matches your card's `--paper` value. If not, adjust the illustration prompt to specify the exact background color.
 
 ---
 
@@ -35,10 +57,7 @@ Default to a hybrid composition:
 
 0. Verify dependencies are ready:
    ```bash
-   python3 -c "import PIL" 2>/dev/null || pip install Pillow
    node -e "require('playwright')" 2>/dev/null || (cd <skill-dir> && npm install playwright)
-   test -f ~/.openclaw/skills/baoyu-imagine/scripts/main.ts || echo "WARN: baoyu-imagine skill not installed"
-   test -f ~/.openclaw/skills/mz-image-gen/scripts/main.py || echo "WARN: mz-image-gen skill not installed"
    ```
 
 1. Read the source and verify unstable facts when necessary.
@@ -49,28 +68,8 @@ Default to a hybrid composition:
 6. Route each content page using `references/visual-routing.md`.
 7. Select one of the layouts in `references/layouts.md`. Reject side-by-side portrait layouts that leave large empty upper or lower bands.
 8. For every illustration-led page, choose one illustration mode using `references/illustration-prompts.md`: `labeled-gpt-image`, `html-label-overlay`, or `no-text`.
-9. For the default `labeled-gpt-image` mode, write a compact GPT Image 2 prompt with 3-8 exact in-image labels and no duplicate card title inside the illustration.
-10. Generate labeled GPT Image 2 illustrations through ZenMux / baoyu-imagine:
-
-```bash
-python3 <skill-dir>/scripts/generate-labeled-illustration.py \
-  --prompt-file prompts/page-01.md \
-  --output assets/page-01.png \
-  --ar 3:4
-```
-
-The script uses `OPENAI_BASE_URL=https://zenmux.ai/api/v1` and maps `ZENMUX_API_KEY` to `OPENAI_API_KEY` when needed.
-
-11. Generate no-text fallback illustrations with:
-
-```bash
-python3 <skill-dir>/scripts/generate-illustration.py \
-  --prompt-file prompts/page-01.md \
-  --output assets/page-01.png \
-  --ar 4:3
-```
-
-The generation script normalizes the generated edge-connected background to the page paper color `#f7f4ec` by default. Add `--remove-background` only for isolated objects or characters that must overlap HTML regions. Add `--skip-background-normalize` only when preserving an intentional scene background.
+9. For the default `labeled-gpt-image` mode, write a compact prompt with 3-8 exact in-image labels and no duplicate card title inside the illustration. Follow the prompt template in `references/illustration-prompts.md`.
+10. Generate illustrations using your image generation skill. Save prompts in `prompts/` and output images in `assets/`. Ensure the illustration background color matches the card's `--paper` value (default: `#f1f3f5` for Indigo Porcelain).
 
 12. Copy `assets/template.html` into the task directory as `index.html`. The template is a Swiss International seed template with IKB Blue accent, dot-matrix backgrounds, and full component system. Switch `data-accent` on `<html>` to change accent color.
 13. Replace the example posters with the real pages. Use layout recipes from `references/layouts.md`. Add background layers (dot-mat, cross-mat, ring-mat) from `references/background-systems.md` on covers and sparse pages. Add task-scoped CSS only when necessary.
