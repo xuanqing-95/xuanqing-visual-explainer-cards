@@ -9,7 +9,7 @@
  * Environment:
  *   OPENAI_API_KEY    — required (or ZENMUX_API_KEY)
  *   OPENAI_BASE_URL   — API base URL (default: https://api.openai.com/v1)
- *   OPENAI_IMAGE_MODEL — model override (default: gpt-image-1.5)
+ *   OPENAI_IMAGE_MODEL — model override (default: gpt-image-2)
  *
  * No npm dependencies. Uses Node.js built-in fetch + FormData.
  */
@@ -47,7 +47,7 @@ if (promptFile) {
 const apiKey = process.env.OPENAI_API_KEY || process.env.ZENMUX_API_KEY;
 if (!apiKey) { console.error("ERROR: OPENAI_API_KEY or ZENMUX_API_KEY required"); process.exit(1); }
 const baseURL = process.env.OPENAI_BASE_URL || "https://api.openai.com/v1";
-const modelName = model || process.env.OPENAI_IMAGE_MODEL || "gpt-image-1.5";
+const modelName = model || process.env.OPENAI_IMAGE_MODEL || "gpt-image-2";
 
 // --- Size mapping ---
 function parseAR(ar) {
