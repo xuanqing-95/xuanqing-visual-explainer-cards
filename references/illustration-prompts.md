@@ -68,12 +68,15 @@ Use large labels; avoid tiny captions.
 
 STYLE
 Guizang-style Swiss editorial × electronic ink.
-Warm paper background #f7f4ec, visually flat and uniform.
 Thin deep-ink linework, precise geometric forms, restrained off-white fills.
 Use IKB blue only as a small analytical accent, not as large chunky filled objects.
 Use hairline arrows, fine rules, quiet whitespace, and magazine-diagram hierarchy.
 No cartoon toy look, no childish icon style, no 3D blocks, no glossy shadows.
 No people, no robots unless the role requires an agent.
+
+BACKGROUND
+Background must be solid #f1f3f5. No gradients, no patterns, no texture.
+This matches the Indigo Porcelain card background and eliminates visible seams.
 
 EXCLUDE
 No logos, watermark, decorative clutter, fake UI, extra titles, extra labels, or noisy background.
