@@ -112,15 +112,15 @@ For beginner concept pages, prefer `mechanism-flow`, `capacity-scene`, or `compa
 ## GPT Image 2 Command
 
 ```bash
-python3 <skill-dir>/scripts/generate-labeled-illustration.py \
-  --prompt-file prompts/page-01.md \
+node <skill-dir>/scripts/generate.mjs \
+  --promptfile prompts/page-01.md \
   --output assets/page-01.png \
   --ar 3:4 \
   --quality 2k
 ```
 
-The wrapper uses ZenMux as the OpenAI-compatible base URL and maps `ZENMUX_API_KEY` to `OPENAI_API_KEY` when needed.
-The wrapper normalizes the edge-connected image background to the exact paper color by default.
+The script uses `OPENAI_BASE_URL` and `OPENAI_API_KEY` from environment variables.
+The illustration prompt should specify the exact paper background color (e.g. `BACKGROUND: solid #f1f3f5`) to match the card.
 
 Use `--ar 3:4` when the image is a central standalone panel. Use `4:3`, `3:2`, or `16:10` only when the illustration is a smaller embedded well.
 

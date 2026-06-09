@@ -140,7 +140,7 @@ Hard rules:
 - Illustration presence is not success. Every illustration-led page must visibly communicate a causal chain and pass both image-only and full-page explanation checks.
 - Generated illustrations explain one decisive visual moment. HTML completes exact causal chains, labels, definitions, and caveats.
 - Generate for the final image slot. Do not default every embedded illustration to 3:4.
-- Reuse a textual style anchor across the series. Use the first approved illustration as a reference only when the active generator supports reference images; the default `mz-image-gen` backend currently does not.
+- Reuse a textual style anchor across the series. Use the first approved illustration as a reference only when the active generator supports reference images.
 - When using GPT Image 2, visually inspect every generated Chinese label. Regenerate if any label is wrong, fuzzy, cramped, duplicated, or invented.
 
 ## Required References
