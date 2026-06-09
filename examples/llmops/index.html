@@ -1,333 +1,290 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-mode="editorial" data-accent="indigo-porcelain">
 <head>
   <meta charset="utf-8">
   <title>LLMOps · Day 04 每天吃透一个 AI 知识点</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&family=Noto+Sans+SC:wght@200;300;400;500;600;700&family=Noto+Serif+SC:wght@400;500;700;900&family=Playfair+Display:wght@700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@400;500;700;900&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
   <style>
-    /* === Indigo · Klein Blue palette + Editorial typography === */
-    :root {
+    /* ===========================================================
+       LLMOps · Day 04 — uses Skill seed Editorial / Indigo Porcelain
+       Type scale, color rules, and component classes are inherited
+       from assets/template.html (mirrored inline so this example
+       runs standalone without a build step).
+       =========================================================== */
+
+    :root,
+    [data-accent="indigo-porcelain"] {
       --paper: #fafaf8;
-      --paper-deep: #f0f0ee;
+      --paper-2: #f0f0ee;
       --ink: #0a0a0a;
       --ink-soft: #1f1f1f;
+      --ink-rgb: 10,10,10;
+      --paper-rgb: 250,250,248;
+      --line: rgba(10,10,10,.16);
+      --muted: #6f6f6c;
       --grey-1: #f0f0ee;
       --grey-2: #d4d4d2;
       --grey-3: #737373;
-      --accent: #002FA7;       /* IKB Klein Blue — system accent */
+      --accent: #002FA7;       /* IKB Klein Blue */
       --accent-on: #ffffff;
-      --highlight: #F2D24B;    /* Mustard yellow — used ONLY for emphasis marks */
+      --accent-rgb: 0,47,167;
+      --highlight: #F2D24B;    /* Mustard Yellow — cover bar only */
       --highlight-on: #0a0a0a;
 
       --serif-en: "Playfair Display","Source Serif Pro",Georgia,serif;
-      --serif-zh: "Noto Serif SC","Source Han Serif SC","Songti SC",serif;
-      --sans: "Inter","Helvetica Neue",Helvetica,"Noto Sans SC",-apple-system,"PingFang SC",sans-serif;
-      --sans-zh: "Noto Sans SC",-apple-system,"PingFang SC","Inter",sans-serif;
-      --mono: "IBM Plex Mono",ui-monospace,"SF Mono",Consolas,monospace;
+      --serif-zh: "Noto Serif SC","Songti SC","STSong",serif;
+      --sans:     "Inter","Helvetica Neue",Helvetica,-apple-system,"PingFang SC",sans-serif;
+      --sans-zh:  "Noto Sans SC",-apple-system,"PingFang SC","Inter",sans-serif;
+      --mono:     "IBM Plex Mono",ui-monospace,"SF Mono",Consolas,monospace;
 
       --sp-3:8px;--sp-4:12px;--sp-5:16px;--sp-6:24px;--sp-7:32px;
       --sp-8:40px;--sp-9:48px;--sp-10:64px;--sp-11:80px;--sp-12:96px;
     }
+
     *,*::before,*::after{box-sizing:border-box;}
     html,body{margin:0;padding:0;}
-    body{background:#1a1a1a;font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased;padding:64px 32px;}
+    body{background:#1a1a1a;font-family:var(--serif-zh);color:var(--ink);-webkit-font-smoothing:antialiased;padding:64px 32px;}
     .sheet{display:flex;flex-direction:column;align-items:center;gap:48px;}
 
     /* Poster shell */
     .poster{position:relative;background:var(--paper);color:var(--ink);overflow:hidden;isolation:isolate;}
     .poster.xhs{width:1080px;height:1440px;}
     .poster figure{margin:0;}
-    .poster.xhs .content{padding:80px 80px;position:relative;width:100%;height:100%;display:flex;flex-direction:column;}
+    .poster.xhs .content{padding:96px 88px;position:relative;width:100%;height:100%;display:flex;flex-direction:column;z-index:2;}
 
-    /* Chrome bar (top metadata) */
-    .chrome{
-      display:flex;justify-content:space-between;align-items:center;
-      font-family:var(--mono);font-size:18px;letter-spacing:.14em;text-transform:uppercase;
-      color:var(--grey-3);
-      padding-bottom:18px;border-bottom:1px solid var(--grey-2);
-      margin-bottom:var(--sp-9);
-    }
-    .foot{
-      display:flex;justify-content:space-between;align-items:center;
-      font-family:var(--mono);font-size:18px;letter-spacing:.06em;
-      color:var(--grey-3);
-      margin-top:auto;padding-top:var(--sp-7);
-      border-top:1px solid var(--grey-2);
-    }
+    /* Display — 124px 500 +.04em */
+    .h-display{font-family:var(--serif-zh);font-weight:500;font-size:124px;line-height:1.06;letter-spacing:.04em;color:var(--ink);margin:0;}
+    /* Section title — 88px 500 +.03em */
+    .h-xl{font-family:var(--serif-zh);font-weight:500;font-size:88px;line-height:1.10;letter-spacing:.03em;color:var(--ink);margin:0;}
+    /* Mid title — 56px 500 +.02em */
+    .h-md{font-family:var(--serif-zh);font-weight:500;font-size:56px;line-height:1.18;letter-spacing:.02em;color:var(--ink);margin:0;}
+    /* English subtitle italic */
+    .h-sub{font-family:var(--serif-en);font-style:italic;font-weight:400;font-size:36px;line-height:1.3;color:var(--muted);margin:0;}
+    /* Pull quote */
+    .pullquote{font-family:var(--serif-zh);font-style:italic;font-weight:500;font-size:64px;line-height:1.28;color:var(--ink);margin:0;}
+    /* Lead / Body — SERIF */
+    .lead{font-family:var(--serif-zh);font-weight:400;font-size:28px;line-height:1.55;color:rgba(var(--ink-rgb),.82);margin:0;}
+    .body{font-family:var(--serif-zh);font-weight:400;font-size:24px;line-height:1.65;color:rgba(var(--ink-rgb),.80);margin:0;}
+    .body strong{color:var(--accent);font-weight:500;}
+
+    /* Em — IKB underline */
+    .h-display em,.h-xl em,.h-md em{font-style:normal;color:var(--ink);text-decoration:underline;text-decoration-color:var(--accent);text-decoration-thickness:6px;text-underline-offset:10px;}
+    .h-md em{text-decoration-thickness:5px;text-underline-offset:8px;}
+
+    /* Kicker / meta */
+    .kicker{font-family:var(--mono);font-weight:500;font-size:21px;letter-spacing:.22em;text-transform:uppercase;color:rgba(var(--ink-rgb),.55);margin:0;}
+    .meta,.label{font-family:var(--mono);font-weight:500;font-size:18px;letter-spacing:.20em;text-transform:uppercase;color:rgba(var(--ink-rgb),.55);}
+
+    /* Section label — IKB tag with square */
+    .section-label{display:inline-flex;align-items:center;gap:12px;font-family:var(--mono);font-weight:500;font-size:21px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);margin:0;}
+    .section-label::before{content:"";display:inline-block;width:14px;height:14px;background:var(--accent);}
+
+    /* Chrome / foot — IKB hairlines */
+    .chrome{display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-weight:500;font-size:18px;letter-spacing:.20em;text-transform:uppercase;padding-bottom:18px;border-bottom:1px solid var(--accent);margin-bottom:48px;}
+    .chrome .c-cat{color:var(--accent);}
+    .chrome .c-num{color:var(--muted);}
+    .foot{display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-weight:500;font-size:18px;letter-spacing:.20em;text-transform:uppercase;margin-top:auto;padding-top:32px;border-top:1px solid var(--accent);}
+    .foot .f-tag{color:var(--muted);}
+    .foot .f-num{color:var(--accent);}
+
     .grow{flex:1;}
-    .hr-hairline{height:1px;background:var(--grey-2);border:0;margin:0;}
-    .hr-accent{height:3px;background:var(--highlight);border:0;width:96px;margin:0;}
+    .hr-hairline{height:1px;background:var(--line);border:0;margin:0;}
+    .hr-accent{height:2px;background:var(--accent);border:0;width:96px;margin:0;}
 
-    /* ============ Editorial typography ============ */
-    .kicker{font-family:var(--mono);font-size:20px;letter-spacing:.16em;text-transform:uppercase;color:var(--highlight-on);background:var(--highlight);padding:6px 14px;display:inline-block;margin:0;}
-    .kicker-plain{font-family:var(--mono);font-size:20px;letter-spacing:.16em;text-transform:uppercase;color:var(--grey-3);margin:0;}
+    /* Image containers */
+    .illust-frame{width:100%;background:var(--paper);display:flex;align-items:center;justify-content:center;overflow:hidden;margin:0;}
+    .illust-frame img{width:100%;height:100%;object-fit:contain;display:block;}
+    .frame-img{position:relative;overflow:hidden;background:var(--paper-2);}
+    .frame-img img{width:100%;height:100%;object-fit:cover;display:block;}
+    .img-cap{font-family:var(--mono);font-weight:500;font-size:18px;letter-spacing:.20em;text-transform:uppercase;color:var(--accent);margin-top:14px;}
 
-    .h-display-zh{
-      font-family:var(--serif-zh);font-weight:700;
-      font-size:96px;line-height:1.22;letter-spacing:-.01em;
-      color:var(--ink);margin:0;
-    }
-    .h-display-zh em{font-style:normal;color:var(--highlight-on);background:var(--highlight);padding:0 12px;box-decoration-break:clone;-webkit-box-decoration-break:clone;}
-
-    .h-section-zh{
-      font-family:var(--serif-zh);font-weight:700;
-      font-size:64px;line-height:1.25;
-      color:var(--ink);margin:0;
-    }
-
-    .lead{font-family:var(--sans-zh);font-weight:400;font-size:30px;line-height:1.6;color:var(--ink-soft);margin:0;}
-    .body{font-family:var(--sans-zh);font-weight:400;font-size:26px;line-height:1.65;color:var(--ink-soft);margin:0;}
-    .body strong{color:var(--ink);font-weight:600;}
-
-    /* ============ Page 1 · Cover ============ */
-    .cover-series{background:var(--paper);}
-    .cover-series .series-zh{
-      font-family:var(--serif-zh);font-weight:700;
-      font-size:84px;line-height:1.18;color:var(--ink);margin:0;
-    }
-    .cover-series .series-zh .ai-accent{color:var(--ink);font-family:var(--serif-en);font-weight:900;}
-    .cover-series .term-en{
-      position:relative;display:inline-block;
-      font-family:var(--serif-en);font-weight:900;
-      font-size:240px;line-height:1;letter-spacing:-.025em;
-      color:var(--ink);margin:0;
-    }
-    .cover-series .term-en::before{
-      content:"";position:absolute;left:-8px;right:-8px;bottom:14px;
-      height:52px;background:var(--highlight);z-index:-1;
-    }
-    .cover-series .term-zh{font-family:var(--sans-zh);font-weight:600;font-size:32px;color:var(--grey-3);letter-spacing:.02em;margin:0;}
-    .cover-series .term-question{font-family:var(--serif-zh);font-weight:500;font-size:44px;line-height:1.45;color:var(--ink);margin:0;max-width:880px;}
-
-    /* ============ Page 2 · Concept + Image ============ */
-    /* Illustration sits in a framed plate. ~580px tall — not dominant,
-       but visually weighted by the dark frame and breathing room. */
-    .concept-page .plate{
-      background:var(--paper);
-      padding:0;
-      border:1px solid var(--grey-2);
-    }
-    .concept-page .illust-frame{
-      width:100%;
-      height:560px;
-      background:var(--paper);
-      display:flex;align-items:center;justify-content:center;
-      overflow:hidden;margin:0;
-    }
-    .concept-page .illust-frame img{width:100%;height:100%;object-fit:contain;display:block;}
-    .concept-page .plate-caption{
-      font-family:var(--mono);font-size:18px;letter-spacing:.14em;
-      text-transform:uppercase;color:var(--grey-3);
-      margin:20px 0 0;text-align:center;
-    }
-    .concept-page .caption{
-      font-family:var(--sans-zh);font-weight:500;font-size:26px;
-      line-height:1.55;color:var(--ink-soft);margin:0;
-    }
-    .concept-page .caption strong{color:var(--ink);font-weight:600;}
-
-    /* ============ Page 3 · Tall Ledger (numbered list) ============ */
-    .ledger{display:flex;flex-direction:column;}
-    .ledger .row{
-      display:grid;grid-template-columns:160px 1fr;gap:32px;
-      align-items:baseline;padding:28px 0;
-      border-bottom:1px solid var(--grey-2);
-    }
-    .ledger .row:first-child{padding-top:0;}
-    .ledger .row:last-child{border-bottom:0;}
-    .ledger .num{
-      font-family:var(--serif-en);font-weight:900;
-      font-size:104px;line-height:1;color:var(--highlight-on);
-      background:var(--highlight);padding:0 20px;display:inline-block;margin:0;
-      justify-self:start;
-    }
-    .ledger .row-text{font-family:var(--serif-zh);font-weight:700;font-size:34px;line-height:1.3;color:var(--ink);margin:0;}
-    .ledger .row-text .sub{display:block;font-family:var(--sans-zh);font-weight:400;font-size:22px;color:var(--grey-3);margin-top:8px;}
-
-    /* ============ Page 4 · Before / After ============ */
-    .ba{display:grid;grid-template-columns:1fr 1fr;gap:32px;flex:1;}
-    .ba-card{padding:36px;display:flex;flex-direction:column;gap:20px;}
-    .ba-before{background:var(--paper-deep);border:1px solid var(--grey-2);}
-    .ba-after{background:var(--ink);color:var(--paper);}
-    .ba-after .ba-tag,.ba-after .ba-h,.ba-after li{color:var(--paper);}
-    .ba-tag{font-family:var(--mono);font-size:18px;letter-spacing:.14em;text-transform:uppercase;color:var(--grey-3);margin:0;}
-    .ba-h{font-family:var(--serif-zh);font-weight:700;font-size:42px;line-height:1.25;color:var(--ink);margin:0;}
-    .ba-after .ba-h em{font-style:normal;color:var(--highlight-on);background:var(--highlight);padding:0 8px;box-decoration-break:clone;-webkit-box-decoration-break:clone;}
-    .ba ul{font-family:var(--sans-zh);font-size:22px;line-height:1.55;margin:0;padding-left:1.1em;color:var(--ink-soft);}
-    .ba-after ul{color:var(--paper);}
-
-    /* ============ Page 5 · Closing ============ */
-    .closing .options{display:flex;flex-direction:column;gap:18px;}
-    .closing .opt{
-      display:grid;grid-template-columns:80px 1fr;gap:24px;
-      align-items:baseline;padding:18px 0;border-bottom:1px solid var(--grey-2);
-    }
-    .closing .opt:last-child{border-bottom:0;}
-    .closing .opt .letter{font-family:var(--serif-en);font-weight:900;font-size:64px;line-height:1;color:var(--ink);margin:0;}
-    .closing .opt.is-key .letter{color:var(--highlight-on);background:var(--highlight);padding:0 16px;justify-self:start;}
-    .closing .opt .opt-text{font-family:var(--serif-zh);font-weight:700;font-size:30px;line-height:1.3;color:var(--ink);margin:0;}
-    .closing .opt .opt-text .sub{display:block;font-family:var(--sans-zh);font-weight:400;font-size:20px;color:var(--grey-3);margin-top:4px;}
+    /* === Cover (S00) === */
+    .cover-series .series-zh{font-family:var(--serif-zh);font-weight:500;font-size:124px;line-height:1.06;letter-spacing:.04em;color:var(--ink);margin:0;}
+    .cover-series .series-zh .ai-accent{color:var(--accent);font-family:var(--serif-en);font-style:italic;font-weight:700;}
+    .cover-series .term-en{position:relative;display:inline-block;font-family:var(--serif-en);font-weight:900;font-size:240px;line-height:1;letter-spacing:-.02em;color:var(--ink);margin:0;}
+    .cover-series .term-en::before{content:"";position:absolute;left:-8px;right:-8px;bottom:14px;height:56px;background:var(--highlight);z-index:-1;}
+    .cover-series .term-zh{font-family:var(--serif-en);font-style:italic;font-weight:400;font-size:36px;line-height:1.3;color:var(--accent);margin:0;}
+    .cover-series .term-question{font-family:var(--serif-zh);font-weight:500;font-size:56px;line-height:1.18;letter-spacing:.02em;color:var(--ink);margin:0;max-width:880px;}
   </style>
 </head>
 <body>
   <main class="sheet">
 
-    <!-- =====================================================
-         Page 1 — Series Cover
-         ===================================================== -->
+    <!-- ============================================================
+         Page 1 — Series Cover (S00 fixed)
+         ============================================================ -->
     <section class="poster xhs cover-series" id="xhs-01-cover">
-      <div class="content" style="gap:36px;">
+      <div class="content" style="gap:40px;">
         <div class="chrome">
-          <span>AI Knowledge · Beginner Series</span>
-          <span>Day 04</span>
+          <span class="c-cat">AI Knowledge · Beginner Series</span>
+          <span class="c-num">Day 04</span>
         </div>
-        <p class="kicker-plain" style="color:var(--ink);">Indigo Porcelain</p>
+        <p class="section-label">Indigo Porcelain</p>
         <h1 class="series-zh">每天吃透一个<br><span class="ai-accent">AI</span> 知识点</h1>
         <hr class="hr-hairline">
-        <div style="display:flex;flex-direction:column;gap:24px;">
+        <div style="display:flex;flex-direction:column;gap:18px;">
           <p class="term-en">LLMOps</p>
-          <p class="term-zh">大模型运维体系</p>
+          <p class="term-zh">A working ops layer for large language models</p>
         </div>
         <p class="term-question">为什么同一个模型,别人用起来效果炸裂,你用起来平平无奇?</p>
         <div class="grow"></div>
         <div class="foot">
-          <span>LLMOPS · 从能跑到可控</span>
-          <span>AI Native · 004</span>
+          <span class="f-tag">LLMOPS · 从能跑到可控</span>
+          <span class="f-num">AI Native · 004</span>
         </div>
       </div>
     </section>
 
-    <!-- =====================================================
-         Page 2 — Concept + Illustration (大图占主导)
-         ===================================================== -->
-    <section class="poster xhs concept-page" id="xhs-02-concept">
+    <!-- ============================================================
+         Page 2 — P-METAPHOR (LLMOps = 餐厅后厨)
+         ============================================================ -->
+    <section class="poster xhs" id="xhs-02-metaphor">
       <div class="content" style="gap:28px;">
         <div class="chrome">
-          <span>核心比喻 · Metaphor</span>
-          <span>Day 04 — 02 / 05</span>
+          <span class="c-cat">核心比喻 · METAPHOR</span>
+          <span class="c-num">02 / 05</span>
         </div>
-        <p class="kicker">打个比方</p>
-        <h2 class="h-section-zh">LLMOps 像<em style="font-style:normal;color:var(--ink);text-decoration:underline;text-decoration-color:var(--highlight);text-decoration-thickness:6px;text-underline-offset:8px;">餐厅后厨</em></h2>
-        <div class="plate">
-          <figure class="illust-frame">
-            <img src="assets/page-02.png" alt="LLMOps 餐厅后厨示意图:中央 MODEL 模型,四周分别是 DATA 数据采购、QUALITY 质量评估、FEEDBACK 用户反馈、ITERATION 菜单迭代">
-          </figure>
-          <p class="plate-caption">Fig. 01 · 后厨的四个工位</p>
-        </div>
-        <p class="caption">好厨子(<strong>模型</strong>)只是第一步。采购、品控、反馈、菜单迭代,这些"后厨管理"做不好,厨子再厉害也白搭。</p>
+        <p class="section-label">打个比方</p>
+        <h2 class="h-xl">LLMOps 像 <em>餐厅后厨</em></h2>
+        <figure class="illust-frame" style="height:540px;">
+          <img src="assets/page-02.png" alt="餐厅后厨示意:中央 MODEL 模型,四周分别是 DATA 数据、QUALITY 质量、FEEDBACK 反馈、ITERATION 迭代">
+        </figure>
+        <p class="img-cap">Fig. 01 · 后厨的四个工位</p>
+        <p class="body">好厨子(<strong>模型</strong>)只是第一步。<strong>采购</strong>、<strong>品控</strong>、<strong>反馈</strong>、<strong>菜单迭代</strong> —— 这些"后厨管理"做不好,厨子再厉害也白搭。</p>
         <div class="foot">
-          <span>—— 模型不是终点,运维才是</span>
-          <span>02 / 05</span>
+          <span class="f-tag">—— 模型不是终点,运维才是</span>
+          <span class="f-num">02 / 05</span>
         </div>
       </div>
     </section>
 
-    <!-- =====================================================
-         Page 3 — Symptoms (ledger)
-         ===================================================== -->
+    <!-- ============================================================
+         Page 3 — P-LIST (3 typical symptoms with small illustrations)
+         ============================================================ -->
     <section class="poster xhs" id="xhs-03-symptoms">
-      <div class="content" style="gap:32px;">
+      <div class="content" style="gap:28px;">
         <div class="chrome">
-          <span>为什么重要 · Why</span>
-          <span>Day 04 — 03 / 05</span>
+          <span class="c-cat">为什么重要 · WHY</span>
+          <span class="c-num">03 / 05</span>
         </div>
-        <p class="kicker">缺 LLMOps 的典型症状</p>
-        <h2 class="h-display-zh">Demo 漂亮<br><em>上生产翻车</em></h2>
-        <div class="ledger grow">
-          <div class="row">
-            <span class="num">01</span>
-            <p class="row-text">输出忽高忽低<span class="sub">同一个 prompt,昨天答得很好,今天给客户的回复就翻车了。</span></p>
+        <p class="section-label">典型症状</p>
+        <h2 class="h-xl">Demo 漂亮<br><em>上生产翻车</em></h2>
+        <div class="list-rows" style="display:flex;flex-direction:column;gap:24px;flex:1;">
+          <div class="list-row" style="display:grid;grid-template-columns:200px 1fr;gap:32px;align-items:center;padding-bottom:24px;border-bottom:1px solid var(--line);">
+            <figure class="illust-frame" style="height:200px;">
+              <img src="assets/placeholder.svg" alt="输出忽高忽低 — 一条波动的折线小图">
+            </figure>
+            <div>
+              <p class="meta" style="color:var(--accent);margin:0 0 8px;">01</p>
+              <p class="body" style="margin:0;"><strong>输出忽高忽低</strong> · 同样的 prompt,昨天给出漂亮回复,今天却出错。</p>
+            </div>
           </div>
-          <div class="row">
-            <span class="num">02</span>
-            <p class="row-text">成本悄悄飙涨<span class="sub">没人盯着 token 消耗,月底账单出来才发现已经超预算两倍。</span></p>
+          <div class="list-row" style="display:grid;grid-template-columns:200px 1fr;gap:32px;align-items:center;padding-bottom:24px;border-bottom:1px solid var(--line);">
+            <figure class="illust-frame" style="height:200px;">
+              <img src="assets/placeholder.svg" alt="成本悄悄飙升 — 一根上扬的成本柱状图">
+            </figure>
+            <div>
+              <p class="meta" style="color:var(--accent);margin:0 0 8px;">02</p>
+              <p class="body" style="margin:0;"><strong>成本悄悄飙涨</strong> · 没人盯 token 消耗,月底账单出来才发现超预算两倍。</p>
+            </div>
           </div>
-          <div class="row">
-            <span class="num">03</span>
-            <p class="row-text">安全问题频发<span class="sub">用户绕过 prompt,模型说了不该说的话,事后才知道没有过滤层。</span></p>
+          <div class="list-row" style="display:grid;grid-template-columns:200px 1fr;gap:32px;align-items:center;">
+            <figure class="illust-frame" style="height:200px;">
+              <img src="assets/placeholder.svg" alt="安全问题频发 — 被绕过的过滤器小图">
+            </figure>
+            <div>
+              <p class="meta" style="color:var(--accent);margin:0 0 8px;">03</p>
+              <p class="body" style="margin:0;"><strong>安全问题频发</strong> · 用户绕过 prompt,模型说出不该说的话,事后才知道没过滤层。</p>
+            </div>
           </div>
         </div>
         <div class="foot">
-          <span>—— "能跑"不等于"可控"</span>
-          <span>03 / 05</span>
+          <span class="f-tag">—— "能跑"不等于"可控"</span>
+          <span class="f-num">03 / 05</span>
         </div>
       </div>
     </section>
 
-    <!-- =====================================================
-         Page 4 — Before / After case
-         ===================================================== -->
+    <!-- ============================================================
+         Page 4 — P-COMPARE (Before / After with two illustrations)
+         ============================================================ -->
     <section class="poster xhs" id="xhs-04-case">
       <div class="content" style="gap:28px;">
         <div class="chrome">
-          <span>真实案例 · Case</span>
-          <span>Day 04 — 04 / 05</span>
+          <span class="c-cat">真实案例 · CASE</span>
+          <span class="c-num">04 / 05</span>
         </div>
-        <p class="kicker">某电商 AI 客服</p>
-        <h2 class="h-display-zh">从写死<br>到<em>可管控</em></h2>
-        <div class="ba">
-          <div class="ba-card ba-before">
-            <p class="ba-tag">Before · 上线初期</p>
-            <p class="ba-h">prompt 硬编码<br>在代码里</p>
-            <hr class="hr-hairline">
-            <ul>
+        <p class="section-label">某电商 AI 客服</p>
+        <h2 class="h-xl">从写死<br>到 <em>可管控</em></h2>
+        <div class="compare" style="display:grid;grid-template-columns:1fr 1fr;gap:32px;flex:1;">
+          <div class="compare-col" style="display:flex;flex-direction:column;gap:16px;">
+            <p class="meta">Before · 上线初期</p>
+            <figure class="illust-frame" style="height:240px;">
+              <img src="assets/placeholder.svg" alt="prompt 硬编码在代码块里的示意图">
+            </figure>
+            <p class="body" style="margin:0;"><strong>硬编码 prompt</strong></p>
+            <ul class="body" style="margin:0;padding-left:1.1em;line-height:1.55;">
               <li>回复质量忽高忽低</li>
-              <li>改一次 prompt 要重新发版</li>
-              <li>没人看见出了什么问题</li>
+              <li>改 prompt 要重新发版</li>
+              <li>没有质量监控</li>
             </ul>
           </div>
-          <div class="ba-card ba-after">
-            <p class="ba-tag">After · 引入 LLMOps</p>
-            <p class="ba-h">prompt 可配置<br>输出<em>有评分</em></p>
-            <hr class="hr-hairline" style="background:rgba(247,241,227,.3);">
-            <ul>
-              <li>每次输出都打质量分</li>
+          <div class="compare-col" style="display:flex;flex-direction:column;gap:16px;">
+            <p class="meta" style="color:var(--accent);">After · 引入 LLMOps</p>
+            <figure class="illust-frame" style="height:240px;">
+              <img src="assets/placeholder.svg" alt="prompt 可视化管理与质量监控仪表板示意">
+            </figure>
+            <p class="body" style="margin:0;"><strong>可配置 + 可监控</strong></p>
+            <ul class="body" style="margin:0;padding-left:1.1em;line-height:1.55;">
+              <li>prompt 可视化管理</li>
+              <li>每次输出有质量评分</li>
               <li>低分自动触发人工审核</li>
-              <li>客服满意度明显回升</li>
             </ul>
           </div>
         </div>
         <div class="foot">
-          <span>—— 把"试一下"变成"管起来"</span>
-          <span>04 / 05</span>
+          <span class="f-tag">—— 把"试一下"变成"管起来"</span>
+          <span class="f-num">04 / 05</span>
         </div>
       </div>
     </section>
 
-    <!-- =====================================================
-         Page 5 — Closing
-         ===================================================== -->
-    <section class="poster xhs closing" id="xhs-05-closing">
-      <div class="content" style="gap:28px;">
+    <!-- ============================================================
+         Page 5 — P-ACTION (closing self-check with small illustration)
+         ============================================================ -->
+    <section class="poster xhs" id="xhs-05-closing">
+      <div class="content" style="gap:24px;">
         <div class="chrome">
-          <span>今日行动 · Action</span>
-          <span>Day 04 — 05 / 05</span>
+          <span class="c-cat">今日行动 · ACTION</span>
+          <span class="c-num">05 / 05</span>
         </div>
-        <p class="kicker">Action · 今天检查一件事</p>
-        <h2 class="h-display-zh">你的 prompt<br><em>写在哪?</em></h2>
-        <div class="options">
-          <div class="opt">
-            <span class="letter">A</span>
-            <p class="opt-text">写死在代码里<span class="sub">改一次 = 发一次版,这是缺 LLMOps 的最明显信号。</span></p>
+        <p class="section-label">今天检查一件事</p>
+        <h2 class="h-xl">你的 prompt<br><em>写在哪?</em></h2>
+        <figure class="illust-frame" style="height:200px;">
+          <img src="assets/placeholder.svg" alt="三种 prompt 管理方式对比小插图">
+        </figure>
+        <div class="options" style="display:flex;flex-direction:column;gap:12px;">
+          <div class="opt" style="display:grid;grid-template-columns:64px 1fr;gap:24px;align-items:baseline;padding:12px 0;border-bottom:1px solid var(--line);">
+            <span class="meta" style="color:var(--muted);">A</span>
+            <p class="body" style="margin:0;">写死在代码里 · 改一次 = 发一次版,风险最高。</p>
           </div>
-          <div class="opt">
-            <span class="letter">B</span>
-            <p class="opt-text">配置文件里<span class="sub">能改,但没人评估输出质量,算半步。</span></p>
+          <div class="opt" style="display:grid;grid-template-columns:64px 1fr;gap:24px;align-items:baseline;padding:12px 0;border-bottom:1px solid var(--line);">
+            <span class="meta" style="color:var(--muted);">B</span>
+            <p class="body" style="margin:0;">放在配置文件里 · 能改,但没人评估输出质量。</p>
           </div>
-          <div class="opt is-key">
-            <span class="letter">C</span>
-            <p class="opt-text">专门的平台<span class="sub">prompt、评分、成本、安全都在一处管理。</span></p>
+          <div class="opt" style="display:grid;grid-template-columns:64px 1fr;gap:24px;align-items:baseline;padding:12px 0;">
+            <span class="meta" style="color:var(--accent);">C</span>
+            <p class="body" style="margin:0;"><strong>有专门的 LLMOps 平台管理 · prompt、评分、成本、安全都在一处。</strong></p>
           </div>
         </div>
-        <div class="grow"></div>
         <hr class="hr-accent">
-        <p class="lead">答案是 A?从把 prompt 拿出代码开始 —— 这就是引入 LLMOps 的第一步。</p>
+        <p class="lead">答案是 A?把 prompt 从代码里拿出来,就是引入 LLMOps 的第一步。</p>
         <div class="foot">
-          <span>每天吃透一个 AI 知识点 · Day 04</span>
-          <span>END</span>
+          <span class="f-tag">每天吃透一个 AI 知识点 · Day 04</span>
+          <span class="f-num">END</span>
         </div>
       </div>
     </section>

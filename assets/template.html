@@ -350,6 +350,289 @@
       </div>
     </section>
 
+    <!--
+    ============================================================
+    CONTENT PAGE SNIPPETS — reference patterns to compose from
+    ------------------------------------------------------------
+    These are NOT five fixed slots. They are six common content
+    shapes, each shown as a complete working block. Use them as
+    starting copy-paste, then adjust to your actual content:
+    rename the section-label, change the title, swap the
+    illustration role, add/remove rows. You may use only the
+    ones you need, in any order, and you may invent variants —
+    but every content page should:
+      • have a .chrome top bar
+      • have a .section-label (IKB tag) explaining the page's role
+      • have a hero-weight headline (.h-xl or .h-display)
+      • PAIR text with at least one .illust-frame unless the page
+        is intentionally a pure-text pull-quote
+      • close with a .foot bottom bar
+    Delete this whole comment block before shipping.
+    ============================================================
+    -->
+
+    <!--
+    ============================================================
+    P-METAPHOR — concept + large illustration (the workhorse)
+    Use when: page introduces a metaphor / mental model / "X is
+    like Y" framing. Illustration carries most of the explanation.
+    Illust height: 540px. Caption is IKB mono.
+    ------------------------------------------------------------
+    <section class="poster xhs" id="xhs-02-metaphor">
+      <div class="content" style="gap:32px;">
+        <div class="chrome">
+          <span class="c-cat">核心比喻 · METAPHOR</span>
+          <span class="c-num">02 / 05</span>
+        </div>
+        <p class="section-label">打个比方</p>
+        <h2 class="h-xl">主题像 <em>类比对象</em></h2>
+        <figure class="illust-frame" style="height:540px;">
+          <img src="assets/page-02.png" alt="一句话描述插图要展示的核心结构">
+        </figure>
+        <p class="img-cap">Fig. 01 · 一句插图说明</p>
+        <p class="body">用 2-3 句话把这个类比落回真实场景:<strong>关键概念 1</strong>(对应什么)、<strong>关键概念 2</strong>(对应什么)、<strong>关键概念 3</strong>(对应什么)。</p>
+        <div class="foot">
+          <span class="f-tag">一句标语收尾</span>
+          <span class="f-num">02 / 05</span>
+        </div>
+      </div>
+    </section>
+    ============================================================
+    -->
+
+    <!--
+    ============================================================
+    P-LIST — numbered list with inline thumb illustrations
+    Use when: page is "3-4 typical symptoms / steps / signals".
+    Each row gets a SMALL illustration (200×200) on the left.
+    The illustration plus number plus copy is the row unit.
+    ------------------------------------------------------------
+    <section class="poster xhs" id="xhs-03-list">
+      <div class="content" style="gap:28px;">
+        <div class="chrome">
+          <span class="c-cat">为什么重要 · WHY</span>
+          <span class="c-num">03 / 05</span>
+        </div>
+        <p class="section-label">典型症状</p>
+        <h2 class="h-xl">Demo 漂亮<br><em>上生产翻车</em></h2>
+        <div class="list-rows" style="display:flex;flex-direction:column;gap:24px;flex:1;">
+          <div class="list-row" style="display:grid;grid-template-columns:200px 1fr;gap:32px;align-items:center;padding-bottom:24px;border-bottom:1px solid var(--line);">
+            <figure class="illust-frame" style="height:200px;">
+              <img src="assets/symptom-01.png" alt="症状 1 的小插图">
+            </figure>
+            <div>
+              <p class="meta" style="color:var(--accent);margin:0 0 8px;">01</p>
+              <p class="body" style="margin:0;"><strong>症状一标题</strong> · 一行展开,说清楚发生了什么。</p>
+            </div>
+          </div>
+          <div class="list-row" style="display:grid;grid-template-columns:200px 1fr;gap:32px;align-items:center;padding-bottom:24px;border-bottom:1px solid var(--line);">
+            <figure class="illust-frame" style="height:200px;">
+              <img src="assets/symptom-02.png" alt="症状 2 的小插图">
+            </figure>
+            <div>
+              <p class="meta" style="color:var(--accent);margin:0 0 8px;">02</p>
+              <p class="body" style="margin:0;"><strong>症状二标题</strong> · 一行展开。</p>
+            </div>
+          </div>
+          <div class="list-row" style="display:grid;grid-template-columns:200px 1fr;gap:32px;align-items:center;">
+            <figure class="illust-frame" style="height:200px;">
+              <img src="assets/symptom-03.png" alt="症状 3 的小插图">
+            </figure>
+            <div>
+              <p class="meta" style="color:var(--accent);margin:0 0 8px;">03</p>
+              <p class="body" style="margin:0;"><strong>症状三标题</strong> · 一行展开。</p>
+            </div>
+          </div>
+        </div>
+        <div class="foot">
+          <span class="f-tag">一句标语收尾</span>
+          <span class="f-num">03 / 05</span>
+        </div>
+      </div>
+    </section>
+    ============================================================
+    -->
+
+    <!--
+    ============================================================
+    P-COMPARE — Before / After side-by-side with two illustrations
+    Use when: page contrasts two states ("以前 → 现在", "错 → 对",
+    "Demo → 生产"). Each column gets its own small illustration to
+    visualize the state, plus 3 short bullets.
+    ------------------------------------------------------------
+    <section class="poster xhs" id="xhs-04-compare">
+      <div class="content" style="gap:28px;">
+        <div class="chrome">
+          <span class="c-cat">真实案例 · CASE</span>
+          <span class="c-num">04 / 05</span>
+        </div>
+        <p class="section-label">某电商 AI 客服</p>
+        <h2 class="h-xl">从写死<br>到 <em>可管控</em></h2>
+        <div class="compare" style="display:grid;grid-template-columns:1fr 1fr;gap:32px;flex:1;">
+          <div class="compare-col" style="display:flex;flex-direction:column;gap:18px;">
+            <p class="meta">Before · 上线初期</p>
+            <figure class="illust-frame" style="height:240px;">
+              <img src="assets/before.png" alt="before 状态的示意插图">
+            </figure>
+            <p class="body" style="margin:0;"><strong>硬编码 prompt</strong></p>
+            <ul class="body" style="margin:0;padding-left:1.1em;line-height:1.55;">
+              <li>回复质量忽高忽低</li>
+              <li>改 prompt 要重新发版</li>
+              <li>没有质量监控</li>
+            </ul>
+          </div>
+          <div class="compare-col" style="display:flex;flex-direction:column;gap:18px;">
+            <p class="meta" style="color:var(--accent);">After · 引入方案</p>
+            <figure class="illust-frame" style="height:240px;">
+              <img src="assets/after.png" alt="after 状态的示意插图">
+            </figure>
+            <p class="body" style="margin:0;"><strong>可配置 + 可监控</strong></p>
+            <ul class="body" style="margin:0;padding-left:1.1em;line-height:1.55;">
+              <li>prompt 可视化管理</li>
+              <li>每次输出有质量评分</li>
+              <li>低分自动触发人工审核</li>
+            </ul>
+          </div>
+        </div>
+        <div class="foot">
+          <span class="f-tag">一句标语收尾</span>
+          <span class="f-num">04 / 05</span>
+        </div>
+      </div>
+    </section>
+    ============================================================
+    -->
+
+    <!--
+    ============================================================
+    P-MECHANISM — vertical pipeline with inline step icons
+    Use when: page explains a sequence of steps / a process / a
+    pipeline. Each step has a small inline icon-style illustration
+    (130×130), step number, title, one-line description.
+    ------------------------------------------------------------
+    <section class="poster xhs" id="xhs-05-mechanism">
+      <div class="content" style="gap:28px;">
+        <div class="chrome">
+          <span class="c-cat">工作机制 · MECHANISM</span>
+          <span class="c-num">03 / 05</span>
+        </div>
+        <p class="section-label">四步走通</p>
+        <h2 class="h-xl">数据是<br>怎么 <em>流转</em>的</h2>
+        <div class="pipeline" style="display:flex;flex-direction:column;gap:20px;flex:1;">
+          <div class="step" style="display:grid;grid-template-columns:130px 60px 1fr;gap:24px;align-items:center;padding:18px 0;border-bottom:1px solid var(--line);">
+            <figure class="illust-frame" style="height:130px;">
+              <img src="assets/step-01.png" alt="步骤 1 的图标">
+            </figure>
+            <p class="kicker" style="color:var(--accent);margin:0;">01</p>
+            <p class="body" style="margin:0;"><strong>步骤一</strong> · 一行说明这一步做什么。</p>
+          </div>
+          <div class="step" style="display:grid;grid-template-columns:130px 60px 1fr;gap:24px;align-items:center;padding:18px 0;border-bottom:1px solid var(--line);">
+            <figure class="illust-frame" style="height:130px;">
+              <img src="assets/step-02.png" alt="步骤 2 的图标">
+            </figure>
+            <p class="kicker" style="color:var(--accent);margin:0;">02</p>
+            <p class="body" style="margin:0;"><strong>步骤二</strong> · 一行说明。</p>
+          </div>
+          <div class="step" style="display:grid;grid-template-columns:130px 60px 1fr;gap:24px;align-items:center;padding:18px 0;border-bottom:1px solid var(--line);">
+            <figure class="illust-frame" style="height:130px;">
+              <img src="assets/step-03.png" alt="步骤 3 的图标">
+            </figure>
+            <p class="kicker" style="color:var(--accent);margin:0;">03</p>
+            <p class="body" style="margin:0;"><strong>步骤三</strong> · 一行说明。</p>
+          </div>
+          <div class="step" style="display:grid;grid-template-columns:130px 60px 1fr;gap:24px;align-items:center;padding:18px 0;">
+            <figure class="illust-frame" style="height:130px;">
+              <img src="assets/step-04.png" alt="步骤 4 的图标">
+            </figure>
+            <p class="kicker" style="color:var(--accent);margin:0;">04</p>
+            <p class="body" style="margin:0;"><strong>步骤四</strong> · 一行说明。</p>
+          </div>
+        </div>
+        <div class="foot">
+          <span class="f-tag">一句标语收尾</span>
+          <span class="f-num">03 / 05</span>
+        </div>
+      </div>
+    </section>
+    ============================================================
+    -->
+
+    <!--
+    ============================================================
+    P-QUOTE — pull-quote + supporting illustration
+    The ONE page-type allowed to be light on text. Use when a
+    single sentence carries the whole page (a definition, a
+    principle, a quote). Illustration is medium-large (420px) and
+    sits BESIDE the quote, not under it, to balance weight.
+    ------------------------------------------------------------
+    <section class="poster xhs" id="xhs-06-quote">
+      <div class="content" style="gap:36px;">
+        <div class="chrome">
+          <span class="c-cat">一句话定义 · DEFINITION</span>
+          <span class="c-num">04 / 05</span>
+        </div>
+        <p class="section-label">划重点</p>
+        <div style="display:grid;grid-template-columns:1fr 360px;gap:48px;align-items:center;flex:1;">
+          <div>
+            <p class="pullquote">"一句精炼的、值得记住的、原文照搬的话。"</p>
+            <p class="meta" style="margin-top:24px;">—— 出处 / 作者</p>
+          </div>
+          <figure class="illust-frame" style="height:420px;">
+            <img src="assets/quote-illust.png" alt="支持这句引用的视觉意象">
+          </figure>
+        </div>
+        <div class="foot">
+          <span class="f-tag">一句标语收尾</span>
+          <span class="f-num">04 / 05</span>
+        </div>
+      </div>
+    </section>
+    ============================================================
+    -->
+
+    <!--
+    ============================================================
+    P-ACTION — closing self-check + small action illustration
+    Use as the LAST page. Asks one specific question, gives 2-3
+    options, points to the "right" answer. Small illustration
+    (200px) at the top reinforces the question metaphor.
+    ------------------------------------------------------------
+    <section class="poster xhs" id="xhs-07-action">
+      <div class="content" style="gap:28px;">
+        <div class="chrome">
+          <span class="c-cat">今日行动 · ACTION</span>
+          <span class="c-num">05 / 05</span>
+        </div>
+        <p class="section-label">今天检查一件事</p>
+        <h2 class="h-xl">你的 X<br><em>在哪一档?</em></h2>
+        <figure class="illust-frame" style="height:200px;">
+          <img src="assets/action-illust.png" alt="行动主题的小插图">
+        </figure>
+        <div class="options" style="display:flex;flex-direction:column;gap:16px;">
+          <div class="opt" style="display:grid;grid-template-columns:64px 1fr;gap:24px;align-items:baseline;padding:14px 0;border-bottom:1px solid var(--line);">
+            <span class="meta" style="color:var(--muted);">A</span>
+            <p class="body" style="margin:0;">选项 A 描述。</p>
+          </div>
+          <div class="opt" style="display:grid;grid-template-columns:64px 1fr;gap:24px;align-items:baseline;padding:14px 0;border-bottom:1px solid var(--line);">
+            <span class="meta" style="color:var(--muted);">B</span>
+            <p class="body" style="margin:0;">选项 B 描述。</p>
+          </div>
+          <div class="opt" style="display:grid;grid-template-columns:64px 1fr;gap:24px;align-items:baseline;padding:14px 0;">
+            <span class="meta" style="color:var(--accent);">C</span>
+            <p class="body" style="margin:0;"><strong>选项 C 描述 — 这是推荐的答案。</strong></p>
+          </div>
+        </div>
+        <hr class="hr-accent">
+        <p class="lead">一句鼓励或行动召唤。</p>
+        <div class="foot">
+          <span class="f-tag">每天吃透一个 AI 知识点 · Day 0X</span>
+          <span class="f-num">END</span>
+        </div>
+      </div>
+    </section>
+    ============================================================
+    -->
+
   </main>
 </body>
 </html>

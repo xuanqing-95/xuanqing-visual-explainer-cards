@@ -29,18 +29,18 @@ For pages 2 onwards, do not pick a pre-named recipe. Instead:
 
 ### Step 1 — Identify the content shape
 
-Read the page's storyboard message and ask: what shape is this?
+Read the page's storyboard message and ask: what shape is this? The seed template ships six **named content-page snippets** (commented HTML at the bottom of `assets/template.html`) that map to common shapes. Copy one as a starting point, then adjust.
 
-| Content shape | Suggests |
-|---|---|
-| One metaphor explaining an abstract concept | Image-dominant: large `.illust-frame` + short caption |
-| A numbered list of 3 items | Type rhythm: 3 stacked rows, IKB number marks, small thumb illustrations beside each |
-| Two states being compared (before/after, wrong/right) | Two columns side-by-side, each with mini illustration + label |
-| One mechanism with steps | Vertical or horizontal flow, small illustrations marking each step |
-| One self-check or call to action | Type-led, IKB structural marks, optional small illustration |
-| One quote or insight | Type-led pull quote, IKB rule above, possibly no illustration |
+| Content shape | Snippet to copy | What it gives you |
+|---|---|---|
+| One metaphor / mental model / "X is like Y" | **P-METAPHOR** | Large 540px illustration + IKB caption + 2-3 line body |
+| Numbered list of 3-4 typical items (symptoms / steps / signals) | **P-LIST** | Stacked rows, each with 200px thumb + IKB number + body line |
+| Two states compared (before / after, wrong / right, demo / 生产) | **P-COMPARE** | Two side-by-side columns, each with 240px illustration + label + 3 bullets |
+| A sequence / pipeline / process | **P-MECHANISM** | 3-4 vertical step rows, each with 130px inline icon + IKB step no. + body |
+| One pull-quote or definition that is the whole page | **P-QUOTE** | Pullquote left + 420px illustration right (the rare type-led page) |
+| Closing self-check / call to action | **P-ACTION** | Small 200px illustration + 2-3 lettered options + IKB accent line |
 
-This is a starting prompt, not a recipe. Many pages combine two shapes.
+These snippets are starting points, not constraints. You may invent variants, combine two shapes, drop sections — but every content page must follow the **Hard Rules** below.
 
 ### Step 2 — Decide whether to illustrate
 
