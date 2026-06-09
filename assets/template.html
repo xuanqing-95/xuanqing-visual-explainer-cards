@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Visual Explainer Cards</title>
+  <style>
+    :root {
+      --paper:#f1f3f5; --ink:#0a1f3d; --muted:#67717d; --line:#d4dbe2;
+      --soft:#e4e8ec; --accent:#0a4fb8; --accent-soft:#cbd9ef; --warm:#f2cf65; --red:#0a4fb8;
+      --sans:Inter,"Noto Sans SC","PingFang SC",sans-serif;
+      --serif:"Noto Serif SC","Songti SC",STSong,serif;
+      --display:Playfair Display,Georgia,serif;
+      --mono:"IBM Plex Mono",ui-monospace,monospace;
+    }
+    *{box-sizing:border-box} html,body{margin:0} body{background:#222;padding:48px;font-family:var(--sans);color:var(--ink)}
+    .sheet{display:flex;flex-direction:column;align-items:center;gap:48px}
+    .poster{position:relative;width:1080px;height:1440px;overflow:hidden;background:var(--paper)}
+    .poster.paper-fiber::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.38;background:
+      radial-gradient(circle at 18% 24%,rgba(16,17,19,.045) 0 1px,transparent 1.5px),
+      radial-gradient(circle at 72% 68%,rgba(16,17,19,.04) 0 1px,transparent 1.5px),
+      repeating-linear-gradient(74deg,transparent 0 34px,rgba(16,17,19,.035) 35px,transparent 36px);
+      background-size:130px 130px,190px 190px,260px 260px}
+    .content{height:100%;padding:72px 80px 64px;display:flex;flex-direction:column}
+    .meta{display:none;justify-content:space-between;padding-bottom:20px;border-bottom:1px solid var(--line);font:500 18px/1.3 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+    .poster.show-meta .meta{display:flex}
+    .chrome-line{display:flex;justify-content:space-between;gap:24px;border-bottom:1px solid var(--line);padding-bottom:18px;font:600 18px/1.3 var(--mono);letter-spacing:.11em;text-transform:uppercase;color:var(--muted)}
+    .foot-line{display:flex;justify-content:space-between;gap:24px;border-top:1px solid var(--line);padding-top:18px;font:500 18px/1.3 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+    .kicker{font:600 21px/1.3 var(--sans);color:var(--accent);margin:0}
+    .display{font:300 132px/1.04 var(--sans);letter-spacing:-.04em;margin:0}
+    .page-title{font:300 88px/1.08 var(--sans);letter-spacing:-.03em;margin:0}
+    .mid-title{font:500 42px/1.25 var(--sans);margin:0}
+    .body{font:400 28px/1.55 var(--sans);margin:0}
+    .note{font:400 22px/1.5 var(--sans);color:var(--muted);margin:0}
+    .grow{flex:1}.stack{display:flex;flex-direction:column}.gap-2{gap:16px}.gap-3{gap:24px}.gap-4{gap:40px}.gap-5{gap:64px}
+    .art{display:block;width:100%;height:100%;object-fit:contain}
+    .layout-series-cover{position:relative;z-index:1;height:100%;display:grid;grid-template-rows:auto 1fr auto;gap:34px}
+    .cover-main{display:grid;align-content:center;gap:54px;min-height:0}
+    .cover-kicker{font:700 22px/1.2 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin:0}
+    .cover-series{font:700 86px/1.18 var(--serif);letter-spacing:-.045em;margin:0;color:var(--ink)}
+    .cover-series strong{color:var(--red);font-family:var(--sans);font-weight:850}
+    .cover-term-wrap{display:grid;grid-template-columns:1fr;gap:22px;align-items:start;border-top:1px solid var(--ink);border-bottom:1px solid var(--line);padding:38px 0 34px}
+    .cover-term{position:relative;display:inline-block;justify-self:start;font:850 132px/.92 var(--display);letter-spacing:-.055em;margin:0;color:var(--ink);padding:0 14px 0 4px}
+    .cover-term::after{content:"";position:absolute;left:0;right:0;height:.26em;bottom:.02em;background:rgba(242,207,101,.9);z-index:-1}
+    .cover-cn{font:500 44px/1.22 var(--sans);letter-spacing:-.02em;color:#666970;margin:0}
+    .cover-question{max-width:900px;margin:0;font:600 50px/1.28 var(--serif);letter-spacing:-.035em;color:var(--ink)}
+    .cover-swiss-accent .cover-main{gap:48px}
+    .cover-swiss-accent .cover-term{font-size:210px}
+    .cover-swiss-accent .cover-question{max-width:900px;font-size:52px}
+    .layout-hero{display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:32px;flex:1;min-height:0;padding-top:48px}
+    .hero-copy{display:flex;flex-direction:column;gap:24px}.hero-art{min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
+    .hero-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;border-top:1px solid var(--line);padding-top:24px}
+    .strip-item{font:500 23px/1.35 var(--sans)}
+    .layout-concept{display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:32px;flex:1;min-height:0;padding-top:40px}
+    .concept-copy{display:flex;flex-direction:column;gap:18px}
+    .evidence-well{min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
+    .labeled-figure{min-height:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:24px 0;display:flex;align-items:center;justify-content:center;overflow:hidden}
+    .labeled-figure img{display:block;width:100%;max-height:720px;object-fit:contain}
+    .labeled-figure.figure-zoom img{width:118%;max-height:780px}
+    .takeaway-band{border-top:1px solid var(--line);padding-top:24px;display:grid;grid-template-columns:1fr 2fr;gap:32px}
+    .explain-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:18px}
+    .explain-box{padding:28px 30px;background:var(--soft)}
+    .explain-box.accent{background:var(--accent);color:white}
+    .explain-box h2{font:750 34px/1.25 var(--sans);margin:0}
+    .explain-box p{font:400 27px/1.5 var(--sans);margin:12px 0 0}
+    .explain-box .note{font-size:21px}
+    .label-pills{display:flex;gap:12px;margin-top:18px;flex-wrap:wrap}
+    .label-pill{font:700 20px/1 var(--sans);padding:9px 13px;background:rgba(255,255,255,.18);color:inherit}
+    .layout-annotated{display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:32px;flex:1;min-height:0}.art-stage{position:relative;min-height:0;padding:24px;overflow:hidden}
+    .annotation{position:absolute;max-width:280px;padding:16px 20px;background:var(--paper);border-left:4px solid var(--accent);font:500 24px/1.35 var(--sans)}
+    .layout-comparison{display:flex;flex-direction:column;gap:32px;flex:1;padding-top:40px}.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;flex:1}
+    .panel{padding:40px;background:var(--soft);display:flex;flex-direction:column;gap:24px}.panel.accent{background:var(--accent);color:white}
+    .layout-process,.layout-ledger,.layout-action{display:flex;flex-direction:column;gap:48px;flex:1}
+    .process-list,.ledger,.action-list{display:flex;flex-direction:column;flex:1}
+    .process-row,.ledger-row,.action-row{display:grid;grid-template-columns:120px 1fr;gap:28px;padding:30px 0;border-bottom:1px solid var(--line)}
+    .row-nb{font:300 72px/1 var(--sans);color:var(--accent)}
+    .layout-data{display:flex;flex-direction:column;gap:48px;flex:1}.data-hero{font:300 210px/1 var(--sans);letter-spacing:-.06em}
+    .fact-grid,.matrix{display:grid;grid-template-columns:1fr 1fr;gap:20px}.fact,.cell{padding:30px;background:var(--soft);min-height:180px}
+    .next-block{padding:36px 40px;background:var(--ink);color:var(--paper)}
+    .highlight{box-shadow:inset 0 -.24em var(--warm)}
+  </style>
+</head>
+<body>
+  <main class="sheet">
+    <section class="poster paper-fiber" id="example-cover">
+      <div class="content">
+        <div class="layout-series-cover cover-swiss-accent">
+          <div class="chrome-line">
+            <div>AI KNOWLEDGE · BEGINNER SERIES</div>
+            <div>DAY 01</div>
+          </div>
+          <div class="cover-main">
+            <p class="cover-kicker">INDIGO PORCELAIN</p>
+            <h1 class="cover-series">每天吃透一个<br><strong>AI</strong> 知识点</h1>
+            <div class="cover-term-wrap">
+              <p class="cover-term">Token</p>
+              <p class="cover-cn">文字处理单位</p>
+            </div>
+            <p class="cover-question">为什么 AI 聊久了，会忘记前面说过什么？</p>
+          </div>
+          <div class="foot-line">
+            <div>TOKEN 是什么 · 上下文与费用的起点</div>
+            <div>AI NATIVE · 001</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
