@@ -1,27 +1,15 @@
 # Platform Specs
 
-## Xiaohongshu / Rednote
+## Xiaohongshu / Rednote (only supported platform)
 
 | Board | Size | Ratio | Use |
 |---|---|---|---|
-| Portrait | 1080×1440 | 3:4 | Standard carousel image |
-| Square | 1080×1080 | 1:1 | Alternative cover |
+| Portrait | 1080×1440 | 3:4 | Standard carousel image (primary) |
 
-- 3:4 is the primary format for Rednote carousels.
+- 3:4 is the only format this skill emits.
 - Maximum 9 images per post.
-- Title: ≤ 20 characters for visibility.
+- Title: ≤ 20 Chinese characters for in-feed visibility.
 - First image = cover = most important.
-
-## WeChat Official Account
-
-| Board | Size | Ratio | Use |
-|---|---|---|---|
-| Main cover | 2100×900 | 21:9 | Article header |
-| Square cover | 1080×1080 | 1:1 | Share card |
-| Pair preview | 2400×1180 | — | Side-by-side review |
-
-- The 1:1 cover should use a simplified title, not a crop from 21:9.
-- Compose both covers in the same HTML for visual checking.
 
 ## Output Specs
 
@@ -30,4 +18,4 @@
 | Format | PNG |
 | Color space | sRGB |
 | DPI | 72 (screen) |
-| Max file size | 20MB (Rednote), 10MB (WeChat) |
+| Max file size | 20MB (Rednote) |

@@ -1,10 +1,6 @@
 {
-  "name": "xuanqing-visual-explainer-cards",
-  "version": "2.0.0",
   "private": true,
   "type": "module",
-  "description": "Guizang-style Xiaohongshu knowledge-card skill by 玄清",
-  "author": "xuanqing-95",
   "dependencies": {
     "playwright": "^1.60.0"
   }

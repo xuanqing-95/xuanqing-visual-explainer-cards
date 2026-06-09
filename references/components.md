@@ -4,93 +4,111 @@ Shared component spec for the seed template. Read this when you need to look up 
 
 ## Font Stacks
 
-Swiss International (`template.html`):
+Editorial (default, in `assets/template.html`):
 
-- `--sans`: Inter, Helvetica Neue, Helvetica.
-- `--sans-zh`: Noto Sans SC, PingFang SC — Chinese body.
-- `--mono`: IBM Plex Mono — labels, captions, t-meta.
+- `--serif-en`: Playfair Display — English display titles
+- `--serif-zh`: Noto Serif SC — Chinese display titles
+- `--sans-zh`: Noto Sans SC, PingFang SC — Chinese body
+- `--mono`: IBM Plex Mono — chrome / foot / kicker
 
 ## Type Scale + Weight Mapping
 
-**"The larger, the lighter."** Small text always uses heavier weight than large text. On 1080x1440 boards, the minimum readable size is 22-28px after factoring in mobile downsample.
+On 1080×1440 boards, minimum readable size is 22-28px after factoring in mobile downsample.
 
-Swiss scale (default for 3:4):
+Editorial scale (3:4 / 1080×1440):
 
 | Role | Class | Size | Weight | Family |
 |---|---|---|---|---|
-| Hero | `.h-hero` | 240px | 200 | sans |
-| Statement | `.h-statement` | 180px | 200 | sans |
-| Section title | `.h-xl` | 120px | 300 | sans |
-| Mid title | `.h-md` | 56px | 400 | sans |
-| Mega number | `.num-mega` | 200px | 200 | sans |
-| XL number | `.num-xl` | 144px | 200 | sans |
+| Term EN (cover) | `.term-en` | 240px | 900 | serif-en |
+| Display title | `.h-display-zh` | 96px | 700 | serif-zh |
+| Series ZH | `.series-zh` | 84px | 700 | serif-zh |
+| Section title | `.h-section-zh` | 64px | 700 | serif-zh |
+| Ledger number | `.ledger .num` | 104px | 900 | serif-en |
+| Closing letter | `.closing .opt .letter` | 64px | 900 | serif-en |
+| Term question | `.term-question` | 44px | 500 | serif-zh |
+| Term ZH (cover) | `.term-zh` | 32px | 600 | sans-zh |
 | Lead | `.lead` | 30px | 400 | sans-zh |
 | Body | `.body` | 26px | 400 | sans-zh |
-| Category | `.t-cat` | 22px | 600 | sans |
-| Meta | `.t-meta` | 20px | 500 | mono |
+| Caption | `.concept-page .caption` | 26px | 500 | sans-zh |
+| Kicker | `.kicker` / `.kicker-plain` | 20px | 500 | mono |
+| Chrome / foot meta | `.chrome` / `.foot` | 18px | 500 | mono |
 
 ### Chinese Title Length Bands
 
 Chinese characters are visually denser than Latin. Pick a band before sizing:
 
-| Title shape | Swiss h-xl |
+| Title shape | `.h-display-zh` |
 |---|---|
-| 1 line, ≤ 6 chars | 96px (default) |
-| 2 lines, each ≤ 8 chars | 96px |
-| 3 lines (rare) | Use `.h-statement` instead |
+| 1 line, ≤ 6 chars | 96px |
+| 2 lines, each ≤ 8 chars | 96px (default) |
+| 3 lines | Cut copy. Don't shrink. |
 
 If the title still does not fit, **shorten the copy first**. Never solve overflow by shrinking body text below the minimum readable size.
 
-### `.h-xl` — Hard Caps per Board
+### `.h-display-zh` — Hard Caps
 
-| Board | Default `.h-xl` | Max lines | Max chars/line |
-|---|---|---|---|
-| `.poster.xhs` (1080×1440) | 96px | 2 | 8 |
-| `.poster.square` (1080×1080) | 88px | 2 | 7 |
-| `.poster.wide` (2100×900) | 104px | 1 | 14 |
+| Field | Value |
+|---|---|
+| Default size on `.poster.xhs` | 96px |
+| Max lines | 2 |
+| Max chars per line | 8 |
+| `em` blocks per title | 1 |
 
-If your title needs 3 Chinese lines on `.poster.xhs`: switch the recipe. Don't shrink `.h-xl` below 80px.
+If your title needs 3 Chinese lines: switch the recipe. Don't shrink below 84px.
+
+## Emphasis Patterns
+
+### `.h-display-zh em` — fill block
+
+```html
+<h2 class="h-display-zh">Demo 漂亮<br><em>上生产翻车</em></h2>
+```
+
+Mustard background, dark text, padded 0 12px, `box-decoration-break: clone` so the highlight stays intact when the line wraps. Use for the single most important phrase per page.
+
+### `.h-section-zh em` — underline
+
+```html
+<h2 class="h-section-zh">LLMOps 像<em>餐厅后厨</em></h2>
+```
+
+Mustard underline (6px thick, 8px offset), no fill. Lighter weight than the block emphasis. Use when the title is medium-size or when fill would feel too heavy.
+
+### `.kicker` — yellow block tag
+
+```html
+<p class="kicker">缺 LLMOps 的典型症状</p>
+```
+
+Mono uppercase, 20px, mustard background, dark text. One per page maximum. Sits above the display title.
+
+### `.kicker-plain` — mono tag without highlight
+
+```html
+<p class="kicker-plain">Indigo Porcelain</p>
+```
+
+Same shape as `.kicker` but plain (no background). Use for series labels or themes that don't deserve emphasis.
 
 ## Image Containers
 
-Use the `.frame-img` system. Always pick a standard ratio class. Never write ad-hoc `aspect-ratio` values.
+Use `.illust-frame` for AI-generated illustrations. Use `.frame-img` for photographic evidence.
 
-| Class | Ratio | Use |
+| Class | Fit | Use |
 |---|---|---|
-| `.r-3x4` | 3:4 | Default for portrait covers and field-note photos |
-| `.r-1x1` | 1:1 | Square portraits, product objects, balanced grids |
-| `.r-4x3` | 4:3 | Classic editorial photo, full-bleed top zone |
-| `.r-3x2` | 3:2 | Magazine inline figure |
-| `.r-16x9` | 16:9 | Landscape photo, infographic |
-| `.r-16x10` | 16:10 | Default for left-text + right-image splits |
-| `.r-21x9` | 21:9 | WeChat 21:9 hero image |
+| `.illust-frame` | contain | AI-generated illustrations — preserves whole image |
+| `.frame-img` | cover | Photographic evidence — cropping is acceptable |
 
-Default `object-fit: cover` keeps `object-position: center 50%`. Use `.fit-contain` for UI screenshots, dense text, code, and infographics.
-
-### Subject-Aware Cropping
-
-**Always set `object-position` inline per photo.** The template default is a fallback, not a recommendation.
-
-| Subject location | Inline value |
-|---|---|
-| Subject near top (sky-heavy, face at top) | `center 25-35%` |
-| Subject centered (default) | `center 50%` (omit) |
-| Subject mid-body (hiker, hands) | `center 55-65%` |
-| Subject low (foreground gear) | `center 70-80%` |
-
-## Illustration Frame (`.illust-frame`)
-
-For AI-generated illustrations (GPT Image 2, etc.), use `.illust-frame` with a standard ratio class:
+The S01 concept page wraps `.illust-frame` inside `.plate` (paper background, grey border, 560px illustration height + mono caption strip).
 
 ```html
-<div class="illust-frame r-4x3">
-  <img src="assets/page-02.png" alt="描述">
+<div class="plate">
+  <figure class="illust-frame">
+    <img src="assets/page-02.png" alt="...">
+  </figure>
+  <p class="plate-caption">Fig. 01 · 后厨的四个工位</p>
 </div>
 ```
-
-- `.illust-frame` uses `object-fit: contain` to preserve generated image content without cropping.
-- `.frame-img` uses `object-fit: cover` for photos where cropping is acceptable.
-- Pick the ratio that matches your generated image's aspect ratio.
 
 ## Minimum Readable Sizes
 
@@ -110,11 +128,11 @@ Every `.poster` must have:
 1. `overflow: hidden` — prevents content from bleeding out
 2. Stable dimensions — never use `vw`/`vh` inside posters
 3. One accent only per deck
-4. No border-radius, no box-shadow, no gradients (Swiss mode)
+4. No border-radius, no box-shadow, no gradients
 
 ## Footer
 
-Use `.foot` for page metadata (series name, page number):
+Use `.foot` for page metadata (series name, page number). It's defined in the seed template and pinned via `margin-top: auto` inside the flex column `.content` — preserve the flex column or footer collision happens (see `style-system.md` Anti-pattern C).
 
 ```html
 <div class="foot">
@@ -123,19 +141,13 @@ Use `.foot` for page metadata (series name, page number):
 </div>
 ```
 
-The `.foot` class is defined in task-scoped CSS (not in the seed template). Define it as:
+## Chrome
 
-```css
-.foot {
-  display: flex;
-  justify-content: space-between;
-  font-size: 18px;
-  letter-spacing: .06em;
-  color: var(--grey-3);
-  padding: 0 80px 40px;
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-}
+Top metadata bar with mono uppercase, hairline border-bottom. Always include category + page number.
+
+```html
+<div class="chrome">
+  <span>核心比喻 · Metaphor</span>
+  <span>02 / 05</span>
+</div>
 ```

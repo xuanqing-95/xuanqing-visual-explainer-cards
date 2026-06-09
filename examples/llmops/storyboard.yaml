@@ -1,0 +1,47 @@
+topic: LLMOps · Day 04
+audience: 在用 / 想用 AI 做项目的开发者、产品、运营
+accent: ikb
+
+beginner_brief:
+  prior_knowledge: 用过 ChatGPT / 豆包,可能把 AI 接进过 demo,但没上过生产
+  plain_definition: LLMOps 是大语言模型的"运维体系"——把 prompt 管理、输出评估、成本控制、安全过滤这些事工程化
+  not_this: 它不是再训练一个模型,也不是简单的"调 prompt"
+  why_it_matters: demo 漂亮、上生产翻车,通常是缺这套体系
+  concrete_example: prompt 写死在代码里 → 改一次要重新发版 → 引入 LLMOps 后 prompt 可配置、低分输出自动转人工
+
+pages:
+  - id: 1
+    message: 同一个模型,效果差距常常不在模型本身,而在有没有"运维"它
+    role: cover
+    layout: S01 Accent Cover
+    cover:
+      series_line: 每天吃透一个 AI 知识点
+      day: Day 04
+      english_term: LLMOps
+      chinese_explanation: 大模型运维体系
+      user_question: 为什么同一个模型,别人用起来效果炸裂,你用起来平平无奇?
+
+  - id: 2
+    message: LLMOps 像餐厅后厨 —— 好厨子(模型)只是第一步,还要采购、品控、反馈、菜单迭代
+    role: concept
+    layout: S02 Concept + Image
+    visual_type: labeled-gpt-image
+    metaphor: 餐厅四个工位(模型 / 数据 / 质量 / 反馈)围着一个中央出菜口
+    illustration:
+      prompt_file: prompts/page-02.md
+      ratio: 4:3
+
+  - id: 3
+    message: 缺 LLMOps 的典型症状:输出不稳定、成本飙涨、安全问题频发
+    role: consequence
+    layout: S09 Tall Ledger
+
+  - id: 4
+    message: 同一个 AI 客服,把 prompt 从代码里搬到 LLMOps 平台后,从"忽高忽低"变成"低分自动转人工"
+    role: case
+    layout: S03 File Card / Evidence Split
+
+  - id: 5
+    message: 今天就检查一件事:你的 prompt 是写死在代码里,还是有专门的地方在管理?
+    role: closing
+    layout: S12 Closing Note

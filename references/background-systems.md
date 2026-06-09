@@ -1,12 +1,10 @@
 # Background Systems
 
-A flat paper color is not enough for social cards. Use layered backgrounds to create atmosphere while keeping text readable.
+A flat paper color is usually fine for dense content. For covers and sparse pages, add one geometric matrix layer to create rhythm.
 
-## Swiss International Mode (default)
+The template ships three Swiss matrix patterns, defined as utility classes.
 
-Swiss backgrounds are geometric and restrained. Use one of these patterns:
-
-### Dot Matrix
+## Dot Matrix
 
 ```css
 .dot-mat {
@@ -17,7 +15,7 @@ Swiss backgrounds are geometric and restrained. Use one of these patterns:
 }
 ```
 
-### Cross Hatch
+## Cross Hatch
 
 ```css
 .cross-mat {
@@ -32,7 +30,7 @@ Swiss backgrounds are geometric and restrained. Use one of these patterns:
 }
 ```
 
-### Ring Pattern
+## Ring Pattern
 
 ```css
 .ring-mat {
@@ -43,62 +41,33 @@ Swiss backgrounds are geometric and restrained. Use one of these patterns:
 }
 ```
 
-Usage: add `<div class="dot-mat"></div>` inside the poster, before `.content`. Use on covers and sparse pages; omit on dense ledger/checklist pages where the pattern would compete with text.
+## Usage
 
-## Editorial Magazine Mode
-
-Editorial backgrounds use paper grain + ink wash atmosphere. See the Editorial seed template (`template-editorial-card.html`) for the full CSS.
-
-### Paper Grain
-
-```css
-.grain {
-  position: absolute; inset: 0; z-index: 1; pointer-events: none;
-  opacity: .35; mix-blend-mode: multiply;
-  background-image: radial-gradient(rgba(0,0,0,.045) 1px, transparent 1px);
-  background-size: 3px 3px;
-}
-```
-
-### Paper Wash
-
-```css
-.paper-wash {
-  position: absolute; inset: 0; z-index: 1; pointer-events: none;
-  background:
-    linear-gradient(180deg, rgba(var(--ink-rgb),.02), rgba(var(--ink-rgb),.05) 60%, rgba(var(--ink-rgb),.08));
-}
-```
-
-### When To Show Stronger Atmosphere
-
-Use stronger visible atmosphere for:
-- Cover
-- Chapter/divider
-- Pull quote
-- Sparse thesis page
-- Closing page
-
-Use subtle atmosphere for:
-- Screenshot pages
-- Dense ledgers
-- Checklists
-
-## Layer Order
+Add the pattern div **before** `.content` inside the poster:
 
 ```html
 <section class="poster xhs">
-  <!-- Background layers (z-index 0-1) -->
-  <div class="dot-mat"></div>   <!-- or grain, ring-mat, etc. -->
+  <!-- Background layer (z-index 1) -->
+  <div class="dot-mat"></div>
   <!-- Content (z-index 2) -->
   <div class="content">...</div>
 </section>
 ```
 
+Use on covers, statement pages, and sparse pages. Omit on dense ledger/checklist pages where the pattern would compete with text.
+
+## Layer Order
+
+```text
+.poster (paper background)
+  └─ .dot-mat / .cross-mat / .ring-mat   (z-index 1)
+  └─ .content                            (z-index 2)
+```
+
 ## Do Not
 
 - Do not use bright gradients
-- Do not use page-wide grid or graph-paper patterns (Swiss uses dot-matrix instead)
+- Do not use page-wide grid or graph-paper patterns (use dot-matrix instead)
 - Do not use decorative blobs or circles with no relationship to the layout
 - Do not place strong background marks behind body text
-- Do not animate the final image sequence unless the task is video
+- Do not stack two matrix layers on the same poster

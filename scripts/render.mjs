@@ -22,11 +22,9 @@ fs.mkdirSync(outputDir, { recursive: true });
 
 const chromium = await loadChromium();
 const browser = await chromium.launch({ headless: true });
-const ctx = await browser.newContext({
-  viewport: { width: 1400, height: 1700 },
-  deviceScaleFactor: 1,
-});
-const page = await ctx.newPage();
+// 1080-wide posters + 64/32 body padding = ~1200 viewport width.
+// Height is generous so multi-poster sheets render fully before screenshot.
+const page = await browser.newPage({ viewport: { width: 1200, height: 1600 } });
 await page.goto(pathToFileURL(path.join(taskDir, "index.html")).href, { waitUntil: "networkidle" });
 await page.evaluate(() => document.fonts.ready);
 await page.waitForTimeout(500);

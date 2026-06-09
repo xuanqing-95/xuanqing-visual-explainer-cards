@@ -1,360 +1,181 @@
-#!/usr/bin/env node
-/*
- * validate-social-deck.mjs
- *
- *   node validate-social-deck.mjs <task-dir|index.html>
- *
- * Checks each <section class="poster …"> in the target HTML against the rules
- * codified in SKILL.md / qa-checklist.md / components.md. Exits 1 if any FAIL.
- *
- * Rules implemented:
- *   R1  overflow              scrollHeight > clientHeight on the poster
- *   R2  footer collision      .foot is position:absolute AND content above reaches into its band
- *   R3  swiss bold display    .h-xl / .h-hero / .h-statement / .num-mega with computed weight >= 600
- *   R4  min readable font     body/lead/caption/label/meta below the mobile-safe floor
- *   R5  4-band density        on 3:4 boards: <75% filled OR any under-filled band > 216px
- *   R6  h-xl hard cap         display title lines/chars exceed the per-board cap
- *   R7  figure margin drift    browser-default <figure> margin offsets media alignment
- */
-import { chromium } from "playwright";
-import { fileURLToPath } from "node:url";
-import path from "node:path";
 import fs from "node:fs";
+import path from "node:path";
+import { pathToFileURL } from "node:url";
 
-const args = process.argv.slice(2);
-let target = null;
-let styleOverride = null;
-for (const a of args) {
-  if (a.startsWith("--style=")) styleOverride = a.slice(8);
-  else if (!target) target = a;
+async function loadChromium() {
+  try {
+    return (await import("playwright")).chromium;
+  } catch {
+    const candidates = [process.env.PLAYWRIGHT_MODULE].filter(Boolean);
+    for (const candidate of candidates) {
+      if (fs.existsSync(candidate)) {
+        return (await import(pathToFileURL(candidate).href)).chromium;
+      }
+    }
+    throw new Error(
+      "Playwright not found. Run `npm install playwright` inside the skill directory or set PLAYWRIGHT_MODULE."
+    );
+  }
 }
-if (!target) {
-  console.error("usage: node validate-social-deck.mjs <task-dir|index.html> [--style=swiss|editorial]");
+
+const taskDir = path.resolve(process.argv[2] || ".");
+const indexPath = path.join(taskDir, "index.html");
+if (!fs.existsSync(indexPath)) {
+  console.error(`[ERROR] index.html not found in ${taskDir}`);
   process.exit(2);
 }
-const abs = path.resolve(target);
-let htmlPath = abs;
-if (fs.statSync(abs).isDirectory()) {
-  htmlPath = path.join(abs, "index.html");
-}
-if (!fs.existsSync(htmlPath)) {
-  console.error(`not found: ${htmlPath}`);
-  process.exit(2);
-}
 
-const url = "file://" + htmlPath;
-const browser = await chromium.launch({
-  args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"],
-});
-const ctx = await browser.newContext({
-  viewport: { width: 1400, height: 1700 },
-  deviceScaleFactor: 1,
-});
-const page = await ctx.newPage();
-await page.goto(url, { waitUntil: "networkidle" });
-await page.waitForTimeout(1200);
+const chromium = await loadChromium();
+const browser = await chromium.launch({ headless: true });
+const page = await browser.newPage({ viewport: { width: 1200, height: 1600 } });
+await page.goto(pathToFileURL(indexPath).href, { waitUntil: "networkidle" });
+await page.evaluate(() => document.fonts.ready);
 
-const style = styleOverride || await page.evaluate(() => {
-  const html = document.documentElement;
-  if (html.dataset.theme) return "editorial";
-  if (html.dataset.accent) return "swiss";
-  // Fallback: any display class using a serif family = editorial; otherwise swiss.
-  // Note: "sans-serif" generic name also contains the substring "serif", so we
-  // match on serif-only families by token, not substring.
-  const SERIF_TOKENS = ["noto serif", "playfair", "source serif", "songti", "stsong", "simsun", "serif sc", "kinfolk", "merriweather"];
-  for (const n of document.querySelectorAll(".h-display, .h-xl, .h-hero, .pullquote, .h-statement")) {
-    const ff = getComputedStyle(n).fontFamily.toLowerCase();
-    if (SERIF_TOKENS.some(t => ff.includes(t))) return "editorial";
-  }
-  return "swiss";
+// Document-level checks (mode-aware font loading, accent count)
+const docChecks = await page.evaluate(() => {
+  const linkFamilies = Array.from(document.querySelectorAll("link[rel='stylesheet']"))
+    .map((l) => l.href)
+    .join(" ");
+  const serifLoaded = /Noto\+Serif|Playfair|Songti|Source\+Serif/i.test(linkFamilies);
+  const mode = document.documentElement.getAttribute("data-mode") || "editorial";
+  const accents = new Set();
+  document.querySelectorAll("[data-accent]").forEach((el) => accents.add(el.getAttribute("data-accent")));
+  return { serifLoaded, accents: [...accents], mode };
 });
 
-const sections = await page.$$("section.poster");
-const report = [];
+const results = await page.locator(".poster").evaluateAll((cards, mode) => {
+  return cards.map((card, idx) => {
+    const failures = [];
+    const warnings = [];
+    const id = card.id || `card-${idx + 1}`;
 
-// "Obviously too small" floors — below these, text becomes unreadable at phone size.
-// Seeds use 26-28px body, 30-32px lead — those are fine. Anything 4+px below is suspect.
-const MIN_FONT = {
-  body: 22,
-  lead: 26,
-  caption: 18,
-  meta: 18,
-  cellTitle: 20,
-  numAnnotation: 20,
-};
-
-const HXL_CAPS = {
-  xhs:    { maxLines: 2, maxChars: 8 },
-  square: { maxLines: 2, maxChars: 7 },
-  wide:   { maxLines: 1, maxChars: 14 },
-};
-
-const DISPLAY_CLASSES = ["h-xl", "h-hero", "h-statement", "h-display", "num-mega", "num-xl"];
-
-for (const s of sections) {
-  const meta = await s.evaluate(el => {
-    const w = el.clientWidth, h = el.clientHeight;
-    let board = el.classList.contains("xhs") ? "xhs"
-              : el.classList.contains("square") ? "square"
-              : el.classList.contains("wide") ? "wide" : null;
-    if (!board) {
-      const ratio = w / h;
-      if (Math.abs(ratio - 0.75) < 0.02) board = "xhs";        // 3:4
-      else if (Math.abs(ratio - 1.0) < 0.02) board = "square"; // 1:1
-      else if (Math.abs(ratio - 7 / 3) < 0.05) board = "wide"; // 21:9
-      else board = "unknown";
+    // R1 — overflow
+    if (card.scrollHeight > card.clientHeight + 1 || card.scrollWidth > card.clientWidth + 1) {
+      failures.push(`R1 overflow ${card.scrollWidth}×${card.scrollHeight} (board ${card.clientWidth}×${card.clientHeight})`);
     }
-    return { id: el.id || "(no-id)", dataId: el.dataset.id || "", board, clientH: h, scrollH: el.scrollHeight, clientW: w };
-  });
-  const fails = [];
-  const warns = [];
 
-  // R1 overflow
-  const overflow = meta.scrollH - meta.clientH;
-  if (overflow > 4) {
-    fails.push({ rule: "R1", msg: `overflow ${overflow}px (scrollH ${meta.scrollH} > clientH ${meta.clientH})`, fix: "tighten content or switch to a higher-capacity recipe" });
-  }
-
-  // R2 footer collision — only flag leaf text or media nodes, not containers
-  // whose bbox merely shares y-space with an absolute-positioned strip.
-  const footIssue = await s.evaluate(el => {
-    const foot = el.querySelector(".foot, .issue-strip, .magazine-foot");
-    if (!foot) return null;
-    const cs = getComputedStyle(foot);
-    if (cs.position !== "absolute") return null;
-    const footTop = foot.offsetTop;
-    const er = el.getBoundingClientRect();
-    const hasOwnText = n => {
-      for (const c of n.childNodes) {
-        if (c.nodeType === 3 && c.textContent.trim().length > 0) return true;
+    // R2 — type caps: .h-display-zh / .h-xl ≤ 2 lines on xhs, ≤ 100px
+    const isXhs = card.classList.contains("xhs");
+    card.querySelectorAll(".h-display-zh, .h-xl").forEach((el) => {
+      const style = getComputedStyle(el);
+      const size = parseFloat(style.fontSize);
+      const lineHeight = parseFloat(style.lineHeight) || size * 1.1;
+      const lines = Math.round(el.getBoundingClientRect().height / lineHeight);
+      if (isXhs && size > 100) {
+        failures.push(`R2 ${el.className} ${Math.round(size)}px exceeds 96px cap on xhs board`);
       }
-      return false;
-    };
-    const isMedia = n => n.tagName === "IMG" || n.tagName === "CANVAS" || n.tagName === "SVG" || n.tagName === "FIGURE";
-    let worstOverlap = 0;
-    let worstSel = "";
-    const posterArea = el.clientWidth * el.clientHeight;
-    for (const node of el.querySelectorAll("*")) {
-      if (node === foot || foot.contains(node)) continue;
-      if (!hasOwnText(node) && !isMedia(node)) continue;
-      const r = node.getBoundingClientRect();
-      // Skip full-bleed background layers (>=95% of poster area + position:absolute).
-      const ncs = getComputedStyle(node);
-      if (ncs.position === "absolute" && r.width * r.height >= posterArea * 0.95) continue;
-      const bottom = r.bottom - er.top;
-      if (bottom > footTop + 2) {
-        const overlap = bottom - footTop;
-        if (overlap > worstOverlap) {
-          worstOverlap = overlap;
-          worstSel = node.className ? "." + node.className.split(" ").filter(Boolean).join(".") : node.tagName.toLowerCase();
-        }
+      if (isXhs && lines > 2) {
+        failures.push(`R2 ${el.className} spans ${lines} lines (max 2 on xhs)`);
       }
-    }
-    return worstOverlap > 6 ? { overlap: Math.round(worstOverlap), sel: worstSel, footTop } : null;
-  });
-  if (footIssue) {
-    fails.push({ rule: "R2", msg: `.foot is position:absolute, ${footIssue.sel} extends ${footIssue.overlap}px past foot top`, fix: "switch .foot to flex margin-top:auto (see style-system.md Anti-pattern C)" });
-  }
-
-  // R3 swiss bold display
-  if (style === "swiss") {
-    const bolds = await s.evaluate((el, cls) => {
-      const out = [];
-      for (const c of cls) {
-        for (const n of el.querySelectorAll("." + c)) {
-          const cs = getComputedStyle(n);
-          const w = parseInt(cs.fontWeight, 10);
-          const size = parseFloat(cs.fontSize);
-          if (size >= 72 && w >= 600) {
-            out.push({ cls: c, weight: w, size: Math.round(size), text: n.textContent.trim().slice(0, 20) });
-          }
-        }
-      }
-      return out;
-    }, DISPLAY_CLASSES);
-    for (const b of bolds) {
-      fails.push({ rule: "R3", msg: `.${b.cls} "${b.text}" is ${b.size}px @ weight ${b.weight} — Swiss "larger = lighter" hard rule`, fix: "remove inline font-weight; use the typed class default (200-300)" });
-    }
-  }
-
-  // R4 min readable font
-  const textChecks = await s.evaluate((el, MIN) => {
-    const out = [];
-    const seen = new Set();
-    const test = (selector, role, min, requireLeaf = true) => {
-      for (const n of el.querySelectorAll(selector)) {
-        if (seen.has(n)) continue;
-        seen.add(n);
-        // Skip containers — typography roles only apply to leaf text nodes.
-        // A real `.lead` is a <p>; `.role-card.lead` is a container with children.
-        if (requireLeaf && n.children.length > 0) continue;
-        // Skip decorative chips inside map pins — labels are sized to fit on the map by design.
-        if (n.closest(".map-pin .card")) continue;
-        const cs = getComputedStyle(n);
-        const size = parseFloat(cs.fontSize);
-        const text = n.textContent.trim();
-        if (!text) continue;
-        if (size > 0 && size < min) {
-          out.push({ role, selector, min, size: Math.round(size), text: text.slice(0, 30) });
-        }
-      }
-    };
-    test(".body, p.body", "body", MIN.body);
-    test(".lead", "lead", MIN.lead);
-    test(".kicker, .cap, .caption, .swiss-img-caption, .h-sub", "caption", MIN.caption);
-    test(".meta, .label, .mono", "meta", MIN.meta);
-    test(".matrix-fill .cell-title, .brief-card .title, .char-grid .name", "cellTitle", MIN.cellTitle);
-    test(".stat-card .lbl, .ledger .sub, .num .sub", "numAnnotation", MIN.numAnnotation);
-    return out;
-  }, MIN_FONT);
-  for (const t of textChecks) {
-    warns.push({ rule: "R4", msg: `${t.role} "${t.text}" at ${t.size}px < ${t.min}px floor`, fix: "cut copy instead of shrinking type (components.md Minimum Readable Sizes)" });
-  }
-
-  // R7 figure margin drift — catches browser-default 40px figure margins on custom media blocks.
-  const figureDrift = await s.evaluate(el => {
-    const out = [];
-    for (const fig of el.querySelectorAll("figure")) {
-      const cs = getComputedStyle(fig);
-      const ml = parseFloat(cs.marginLeft) || 0;
-      const mr = parseFloat(cs.marginRight) || 0;
-      if (ml >= 16 || mr >= 16) {
-        const text = fig.textContent.trim().replace(/\s+/g, " ").slice(0, 32);
-        out.push({
-          cls: fig.className ? "." + fig.className.split(" ").filter(Boolean).join(".") : "figure",
-          ml: Math.round(ml),
-          mr: Math.round(mr),
-          text,
-        });
-      }
-    }
-    return out;
-  });
-  for (const f of figureDrift) {
-    warns.push({ rule: "R7", msg: `${f.cls} has horizontal figure margin ${f.ml}px / ${f.mr}px${f.text ? ` near "${f.text}"` : ""}`, fix: "reset figure margins in the seed or task CSS: .poster figure { margin: 0; }" });
-  }
-
-  // R5 4-band density (3:4 only)
-  if (meta.board === "xhs") {
-    const bands = await s.evaluate(el => {
-      const er = el.getBoundingClientRect();
-      const H = el.clientHeight;
-      // Pixel-row occupancy bitmap. Mark any row covered by a content element.
-      const rows = new Uint8Array(H);
-      const hasDirectText = n => {
-        for (const c of n.childNodes) {
-          if (c.nodeType === 3 && c.textContent.trim().length > 0) return true;
-        }
-        return false;
-      };
-      for (const n of el.querySelectorAll("*")) {
-        const r = n.getBoundingClientRect();
-        if (r.width < 8 || r.height < 8) continue;
-        const tag = n.tagName;
-        const cs = getComputedStyle(n);
-        const isText = hasDirectText(n);
-        const isImg = tag === "IMG" || tag === "CANVAS" || tag === "SVG"
-                    || (cs.backgroundImage && cs.backgroundImage !== "none");
-        const isRule = tag === "HR" || (parseFloat(cs.borderTopWidth) >= 1 && r.height < 4);
-        const hasFill = cs.backgroundColor && !cs.backgroundColor.match(/rgba?\(\s*0\s*,\s*0\s*,\s*0\s*,\s*0?\s*\)/) && cs.backgroundColor !== "transparent";
-        if (!isText && !isImg && !isRule && !hasFill) continue;
-        const top = Math.max(0, Math.floor(r.top - er.top));
-        const bot = Math.min(H, Math.ceil(r.bottom - er.top));
-        for (let y = top; y < bot; y++) rows[y] = 1;
-      }
-      const BAND = H / 4;
-      const occ = [0, 0, 0, 0];
-      for (let i = 0; i < 4; i++) {
-        let count = 0;
-        const bTop = Math.floor(i * BAND), bBot = Math.floor((i + 1) * BAND);
-        for (let y = bTop; y < bBot; y++) count += rows[y];
-        occ[i] = count / (bBot - bTop);
-      }
-      return { H, BAND, occ };
     });
-    const total = bands.occ.reduce((a, b) => a + b, 0) / 4;
-    const pct = (o) => Math.round(o * 100) + "%";
-    if (total < 0.745) {
-      warns.push({ rule: "R5", msg: `density ${pct(total)} (bands ${bands.occ.map(pct).join(" / ")})`, fix: "expand copy or switch recipe — see qa-checklist.md 4-band density" });
-    }
-    for (let i = 0; i < 3; i++) {
-      if (bands.occ[i] < 0.15 && bands.occ[i + 1] < 0.15) {
-        warns.push({ rule: "R5", msg: `bands ${i + 1}+${i + 2} both under-filled (${pct(bands.occ[i])} / ${pct(bands.occ[i + 1])}) — >25% void mid-poster`, fix: "expand body content or insert a marginalia column" });
-        break;
-      }
-    }
-  }
 
-  // R6 h-xl hard cap
-  const cap = HXL_CAPS[meta.board];
-  if (cap) {
-    const titles = await s.evaluate(el => {
-      const out = [];
-      for (const n of el.querySelectorAll(".h-xl, .h-hero, .h-display, .h-statement")) {
-        const cs = getComputedStyle(n);
-        const size = parseFloat(cs.fontSize);
-        const lineH = parseFloat(cs.lineHeight) || size * 1.2;
-        const lines = Math.round(n.getBoundingClientRect().height / lineH);
-        out.push({ cls: n.className.split(" ")[0], text: n.textContent.trim(), lines, size: Math.round(size) });
+    // R3 — footer collision: .foot must not overlap previous sibling content
+    const foot = card.querySelector(".foot");
+    if (foot) {
+      const footRect = foot.getBoundingClientRect();
+      const prev = foot.previousElementSibling;
+      if (prev) {
+        const prevRect = prev.getBoundingClientRect();
+        if (prevRect.bottom > footRect.top + 1) {
+          failures.push(`R3 footer collision: content bottom ${Math.round(prevRect.bottom)} > foot top ${Math.round(footRect.top)}`);
+        }
       }
-      return out;
+    }
+
+    // R4 — 4-band density (≥3 of 4 bands must have meaningful content)
+    const meaningful = [
+      ...card.querySelectorAll(
+        "h1,h2,h3,p,img,.illust-frame,.frame-img,.matrix-cell,.ledger,.ledger .row,.bar-row,.tower-col,.hero-img-wrap,.hr-accent,.foot,.ba-card,.opt,.plate"
+      ),
+    ]
+      .map((node) => node.getBoundingClientRect())
+      .filter((rect) => rect.width > 8 && rect.height > 8);
+    const cardRect = card.getBoundingClientRect();
+    const bands = [0, 0, 0, 0];
+    for (const rect of meaningful) {
+      const top = Math.max(0, rect.top - cardRect.top);
+      const bottom = Math.min(card.clientHeight, rect.bottom - cardRect.top);
+      for (let band = 0; band < 4; band++) {
+        const bandTop = (band * card.clientHeight) / 4;
+        const bandBottom = ((band + 1) * card.clientHeight) / 4;
+        if (bottom > bandTop && top < bandBottom) bands[band] = 1;
+      }
+    }
+    const bandSum = bands.reduce((sum, value) => sum + value, 0);
+    if (bandSum < 3) {
+      failures.push(`R4 underfilled bands [${bands.join("")}] — only ${bandSum}/4 bands have content`);
+    }
+
+    // R5 — frame overflow: .illust-frame / .frame-img children must not overflow
+    card.querySelectorAll(".illust-frame, .frame-img").forEach((frame) => {
+      if (frame.scrollWidth > frame.clientWidth + 1 || frame.scrollHeight > frame.clientHeight + 1) {
+        failures.push(`R5 frame overflow inside ${frame.className}`);
+      }
     });
-    for (const t of titles) {
-      const longestLine = t.text.split(/\s+/).reduce((m, w) => Math.max(m, w.length), t.text.length);
-      if (t.lines > cap.maxLines) {
-        warns.push({ rule: "R6", msg: `.${t.cls} "${t.text}" renders ${t.lines} lines (cap ${cap.maxLines} on ${meta.board})`, fix: "switch to S01/S05 cover recipes that allow taller titles, or trim copy" });
-      } else if (longestLine > cap.maxChars + 2) {
-        // soft warn only — wraps naturally
+
+    // R6 — Mode identity
+    // Swiss mode: every display title ≥72px must have weight ≤300
+    // Editorial mode: skip per-card weight check (display titles are intentionally heavy serif)
+    if (mode === "swiss") {
+      const displayCandidates = [...card.querySelectorAll("h1,h2,h3,.h-hero,.h-statement,.h-xl,.num-mega,.num-xl,.h-display-zh,.h-section-zh,.term-en,.series-zh")];
+      for (const el of displayCandidates) {
+        const style = getComputedStyle(el);
+        const size = parseFloat(style.fontSize);
+        const weight = parseInt(style.fontWeight, 10);
+        if (size >= 72 && weight > 300) {
+          failures.push(
+            `R6 Swiss identity: <${el.tagName.toLowerCase()}.${el.className}> at ${Math.round(size)}px uses weight ${weight} (must be ≤300)`
+          );
+        }
       }
     }
-  }
 
-  report.push({ meta, fails, warns });
+    // R7 — figure margin reset
+    const stretchedFigures = [...card.querySelectorAll("figure")].filter((fig) => {
+      const margin = getComputedStyle(fig).margin;
+      return margin && margin !== "0px" && !/^0px( 0px)*$/.test(margin);
+    });
+    if (stretchedFigures.length) {
+      warnings.push(`R7 ${stretchedFigures.length} <figure> elements have default browser margin (add figure { margin:0 })`);
+    }
+
+    // Evidence density (advisory)
+    const evidence = card.querySelector(".illust-frame, .frame-img, .image-hero, .hero-img-wrap");
+    if (evidence) {
+      const ratio = evidence.getBoundingClientRect().height / card.clientHeight;
+      if (ratio < 0.3) warnings.push(`illustration evidence only ${Math.round(ratio * 100)}% of canvas height`);
+    }
+
+    return { id, failures, warnings };
+  });
+}, docChecks.mode);
+
+// Document-level FAILs
+let failed = false;
+if (docChecks.mode === "swiss" && docChecks.serifLoaded) {
+  console.log(`[FAIL] document: R6 Swiss identity — serif family loaded in <head> (Swiss mode forbids serif)`);
+  failed = true;
+}
+if (docChecks.mode === "editorial" && !docChecks.serifLoaded) {
+  console.log(`[FAIL] document: R6 Editorial identity — no serif family loaded in <head> (Editorial requires Playfair Display + Noto Serif SC)`);
+  failed = true;
+}
+if (docChecks.accents.length > 1) {
+  console.log(`[FAIL] document: R6 identity — multiple accents declared: ${docChecks.accents.join(", ")} (one per set)`);
+  failed = true;
+}
+console.log(`[INFO] mode=${docChecks.mode} accent=${docChecks.accents[0] || "(default)"}`);
+
+for (const result of results) {
+  if (result.failures.length) {
+    failed = true;
+    console.log(`[FAIL] ${result.id}`);
+    for (const failure of result.failures) console.log(`  ${failure}`);
+  } else {
+    console.log(`[PASS] ${result.id}`);
+  }
+  for (const warning of result.warnings) console.log(`  [WARN] ${warning}`);
 }
 
 await browser.close();
-
-let totalFail = 0, totalWarn = 0;
-const ruleCounts = new Map();
-for (const { fails, warns } of report) {
-  totalFail += fails.length;
-  totalWarn += warns.length;
-  for (const v of [...fails, ...warns]) ruleCounts.set(v.rule, (ruleCounts.get(v.rule) || 0) + 1);
-}
-const cleanCount = report.filter(r => r.fails.length === 0 && r.warns.length === 0).length;
-
-const lines = [];
-lines.push(`==== validate-social-deck ====`);
-lines.push(`target:   ${path.relative(process.cwd(), htmlPath)}`);
-lines.push(`style:    ${style}`);
-lines.push(`sections: ${report.length}  ·  ${cleanCount} clean  ·  ${totalFail} fails  ·  ${totalWarn} warns`);
-if (ruleCounts.size > 0) {
-  const ruleSummary = [...ruleCounts.entries()].sort().map(([r, c]) => `${r}=${c}`).join("  ");
-  lines.push(`rules:    ${ruleSummary}`);
-}
-lines.push("");
-
-const fixCache = new Map();
-for (const { meta, fails, warns } of report) {
-  if (fails.length === 0 && warns.length === 0) {
-    lines.push(`[PASS]  ${meta.id} ${meta.dataId ? ` · ${meta.dataId}` : ""} · ${meta.board}`);
-    continue;
-  }
-  const tag = fails.length ? "[FAIL]" : "[WARN]";
-  lines.push(`${tag}  ${meta.id} ${meta.dataId ? ` · ${meta.dataId}` : ""} · ${meta.board}`);
-  for (const v of [...fails, ...warns]) {
-    const sev = fails.includes(v) ? "FAIL" : "WARN";
-    lines.push(`  ${sev} · ${v.rule}  ${v.msg}`);
-    if (!fixCache.has(v.rule)) {
-      lines.push(`         fix: ${v.fix}`);
-      fixCache.set(v.rule, true);
-    }
-  }
-}
-
-lines.push("");
-lines.push(`Legend: R1 overflow · R2 footer collision · R3 swiss bold display · R4 min font · R5 4-band density · R6 h-xl cap · R7 figure margin drift`);
-lines.push(`Exit code 1 only on FAIL. Warnings are advisory.`);
-
-console.log(lines.join("\n"));
-process.exit(totalFail > 0 ? 1 : 0);
+process.exit(failed ? 1 : 0);

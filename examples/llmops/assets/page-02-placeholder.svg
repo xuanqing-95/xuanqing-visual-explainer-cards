@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1200" font-family="Inter, 'Helvetica Neue', Helvetica, 'Noto Sans SC', sans-serif">
+  <!-- Paper background -->
+  <rect width="1600" height="1200" fill="#fafaf8"/>
+
+  <!-- Connector lines (IKB Blue) -->
+  <g stroke="#002FA7" stroke-width="3" fill="none">
+    <line x1="800" y1="280" x2="800" y2="500"/>     <!-- top -->
+    <line x1="800" y1="700" x2="800" y2="920"/>     <!-- bottom -->
+    <line x1="320" y1="600" x2="640" y2="600"/>     <!-- left -->
+    <line x1="960" y1="600" x2="1280" y2="600"/>    <!-- right -->
+  </g>
+
+  <!-- Central MODEL block (IKB filled) -->
+  <rect x="640" y="500" width="320" height="200" fill="#002FA7"/>
+  <text x="800" y="595" font-size="36" font-weight="600" fill="#ffffff" text-anchor="middle">MODEL</text>
+  <text x="800" y="640" font-size="26" font-weight="400" fill="#ffffff" text-anchor="middle">模型</text>
+
+  <!-- Top station: DATA -->
+  <rect x="640" y="160" width="320" height="120" fill="none" stroke="#0a0a0a" stroke-width="2"/>
+  <!-- Ingredient crates icon -->
+  <g stroke="#0a0a0a" stroke-width="1.5" fill="none">
+    <rect x="680" y="190" width="28" height="22"/>
+    <rect x="715" y="190" width="28" height="22"/>
+    <rect x="750" y="190" width="28" height="22"/>
+  </g>
+  <text x="800" y="235" font-size="22" font-weight="600" fill="#0a0a0a" text-anchor="middle">DATA</text>
+  <text x="800" y="265" font-size="20" font-weight="400" fill="#0a0a0a" text-anchor="middle">数据采购</text>
+
+  <!-- Left station: QUALITY -->
+  <rect x="0" y="540" width="320" height="120" fill="none" stroke="#0a0a0a" stroke-width="2"/>
+  <!-- Magnifier icon -->
+  <g stroke="#0a0a0a" stroke-width="1.5" fill="none">
+    <circle cx="56" cy="600" r="16"/>
+    <line x1="69" y1="612" x2="84" y2="624"/>
+  </g>
+  <text x="200" y="590" font-size="22" font-weight="600" fill="#0a0a0a" text-anchor="middle">QUALITY</text>
+  <text x="200" y="620" font-size="20" font-weight="400" fill="#0a0a0a" text-anchor="middle">质量评估</text>
+
+  <!-- Right station: FEEDBACK -->
+  <rect x="1280" y="540" width="320" height="120" fill="none" stroke="#0a0a0a" stroke-width="2"/>
+  <!-- Feedback box icon -->
+  <g stroke="#0a0a0a" stroke-width="1.5" fill="none">
+    <rect x="1310" y="582" width="38" height="32"/>
+    <line x1="1310" y1="592" x2="1348" y2="592"/>
+  </g>
+  <text x="1480" y="590" font-size="22" font-weight="600" fill="#0a0a0a" text-anchor="middle">FEEDBACK</text>
+  <text x="1480" y="620" font-size="20" font-weight="400" fill="#0a0a0a" text-anchor="middle">用户反馈</text>
+
+  <!-- Bottom station: ITERATION -->
+  <rect x="640" y="920" width="320" height="120" fill="none" stroke="#0a0a0a" stroke-width="2"/>
+  <!-- Stepped chart icon -->
+  <g stroke="#0a0a0a" stroke-width="1.5" fill="none">
+    <polyline points="680,990 700,990 700,975 720,975 720,960 740,960"/>
+  </g>
+  <text x="800" y="990" font-size="22" font-weight="600" fill="#0a0a0a" text-anchor="middle">ITERATION</text>
+  <text x="800" y="1020" font-size="20" font-weight="400" fill="#0a0a0a" text-anchor="middle">菜单迭代</text>
+</svg>

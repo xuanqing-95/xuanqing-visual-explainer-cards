@@ -1,8 +1,49 @@
 # Illustration Prompt Protocol
 
-Create the central visual evidence for a Guizang-style educational card.
+Create the central visual evidence for an educational card.
 
-Default mode is now **GPT Image 2 labeled illustration**: the generated image may contain a small number of exact Chinese labels, while the outer card remains HTML-led.
+Default mode is **GPT Image 2 labeled illustration**: the generated image may contain a small number of exact Chinese labels, while the outer card remains HTML-led.
+
+## When to Generate an Illustration (hard rule)
+
+**Illustration is supporting, not primary.** Text carries the load; illustration only earns space when it does something text cannot.
+
+Generate an illustration only if the page meets one of:
+
+1. **Metaphor page** — concept is abstract (LLMOps, RAG, agent loop), reader needs a concrete mental anchor
+2. **Mechanism flow** — input → transform → output where the spatial layout IS the explanation
+3. **Comparison panel** — two states side-by-side where visual contrast is the message
+
+Do NOT generate illustrations for:
+
+- Numbered lists (use S02 ledger — type rhythm is the visual)
+- Before/After text comparisons (use S03 ba — typography carries it)
+- Closing pages with options (use S04 — letter blocks are the visual)
+- Cover pages (use S00 — huge serif term is the visual)
+
+Typical 5-page set: **1 illustration on page 2**. Not one per page.
+
+## Palette Lock (hard rule)
+
+Generated illustrations must match the card's `data-accent` palette. **Never** introduce a color that isn't in the system.
+
+| System palette | Allowed ink colors in illustration |
+|---|---|
+| Indigo Porcelain | IKB Blue `#002FA7`, paper `#fafaf8`, ink `#0a0a0a`, greys. **NO mustard yellow inside illustration.** Mustard is reserved for HTML emphasis. |
+| Lemon Yellow | `#FFD500`, paper, ink, greys |
+| Lemon Green | `#C5E803`, paper, ink, greys |
+| Safety Orange | `#FF6B35`, paper, ink, greys |
+
+The reason mustard is excluded from Indigo Porcelain illustrations: yellow is the page's emphasis surface (kicker, em, ledger numbers). If the illustration also wears yellow, emphasis loses its signal.
+
+Always include this line in every prompt's STYLE section:
+
+```
+PALETTE LOCK
+Only these colors may appear: <ACCENT HEX>, off-white paper #fafaf8, ink black #0a0a0a, light grey lines.
+Do NOT use yellow, orange, red, green, purple, or any other color.
+Do NOT use gradients, glows, shadows, or 3D rendering.
+```
 
 ## Three Illustration Modes
 
@@ -36,7 +77,7 @@ Never duplicate the outer card title inside the generated illustration. If the H
 
 ## Labeled GPT Image Prompt Template
 
-Use this structure for GPT Image 2:
+Use this structure for GPT Image 2 via ZenMux:
 
 ```markdown
 Generate a clean 3:4 vertical Chinese educational illustration panel.
@@ -67,16 +108,18 @@ Use clean modern sans-serif Chinese lettering.
 Use large labels; avoid tiny captions.
 
 STYLE
-Guizang-style Swiss editorial × electronic ink.
-Thin deep-ink linework, precise geometric forms, restrained off-white fills.
-Use IKB blue only as a small analytical accent, not as large chunky filled objects.
-Use hairline arrows, fine rules, quiet whitespace, and magazine-diagram hierarchy.
+Editorial textbook isometric × electronic ink.
+Off-white paper background #fafaf8, visually flat and uniform.
+Thin ink linework, precise geometric forms, restrained fills.
+Use accent color only as a small analytical accent or for one focal object, not as large chunky filled regions.
+Hairline arrows, fine rules, quiet whitespace, magazine-diagram hierarchy.
 No cartoon toy look, no childish icon style, no 3D blocks, no glossy shadows.
-No people, no robots unless the role requires an agent.
+No people unless the role requires an agent (e.g., chef, operator, driver).
 
-BACKGROUND
-Background must be solid #f1f3f5. No gradients, no patterns, no texture.
-This matches the Indigo Porcelain card background and eliminates visible seams.
+PALETTE LOCK
+Only these colors may appear: <ACCENT HEX>, off-white paper #fafaf8, ink black #0a0a0a, light grey lines.
+Do NOT use yellow, orange, red, green, purple, or any other color.
+Do NOT use gradients, glows, shadows, or 3D rendering.
 
 EXCLUDE
 No logos, watermark, decorative clutter, fake UI, extra titles, extra labels, or noisy background.
@@ -112,15 +155,15 @@ For beginner concept pages, prefer `mechanism-flow`, `capacity-scene`, or `compa
 ## GPT Image 2 Command
 
 ```bash
-node <skill-dir>/scripts/generate.mjs \
-  --promptfile prompts/page-01.md \
+python3 <skill-dir>/scripts/generate-labeled-illustration.py \
+  --prompt-file prompts/page-01.md \
   --output assets/page-01.png \
   --ar 3:4 \
   --quality 2k
 ```
 
-The script uses `OPENAI_BASE_URL` and `OPENAI_API_KEY` from environment variables.
-The illustration prompt should specify the exact paper background color (e.g. `BACKGROUND: solid #f1f3f5`) to match the card.
+The wrapper uses ZenMux as the OpenAI-compatible base URL and maps `ZENMUX_API_KEY` to `OPENAI_API_KEY` when needed.
+The wrapper normalizes the edge-connected image background to the exact paper color by default.
 
 Use `--ar 3:4` when the image is a central standalone panel. Use `4:3`, `3:2`, or `16:10` only when the illustration is a smaller embedded well.
 
@@ -173,8 +216,9 @@ Reject and regenerate if:
 - the text becomes too small at phone-thumbnail size;
 - the picture has good labels but weak mechanism;
 - the image panel fights the outer card layout instead of acting as evidence.
-- the style looks like a chunky cartoon icon set instead of a refined Guizang editorial diagram;
-- the image background visibly differs from the outer card paper.
+- the style looks like a chunky cartoon icon set instead of a refined editorial diagram;
+- the image background visibly differs from the outer card paper;
+- the image introduces colors not in the system palette (e.g., yellow in an Indigo Porcelain set).
 
 ## Fallback Modes
 

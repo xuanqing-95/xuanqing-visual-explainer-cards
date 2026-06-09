@@ -2,57 +2,83 @@
 
 ## Canvas
 
-- Xiaohongshu: 1080 x 1440 (3:4).
-- Outer padding: 88px left/right, 96px top, 56px bottom (issue-strip safe area).
-- Spacing scale: 8, 12, 16, 24, 32, 40, 48, 64, 80, 96px.
+- Xiaohongshu: 1080 × 1440 (3:4).
+- Outer padding: 80px on all sides (handled by `.poster.xhs .content` in the template).
+- Spacing scale: 8, 12, 16, 24, 32, 40, 48, 64, 80, 96px (tokens `--sp-3` through `--sp-12`).
 
-## Theme
+## Color System
 
-Default theme is **Indigo Porcelain** (Swiss International mode). One deck — one accent. Never combine.
+Default theme is **Indigo Porcelain** — a deliberate dual-color system:
 
 ```css
-:root {
-  --paper:     #f2f4f5;
-  --paper-2:   #e5ebef;
-  --ink:       #0a1f3d;
-  --muted:     #5f6d78;
-  --line:      rgba(10,31,61,.20);
-  --accent:    #315d93;
-  --accent-soft: #d7e1ec;
-}
+--accent:     #002FA7   /* IKB Klein Blue — system structure */
+--accent-on:  #ffffff
+--highlight:  #F2D24B   /* Mustard Yellow — emphasis only */
+--highlight-on: #0a0a0a
 ```
 
-Do not return to red/yellow/blue primary-color styling unless the user explicitly asks for a brighter variant.
+### Two-Layer Color Logic (hard rule)
 
-### Other Available Themes
+| Token | Role | Use on |
+|---|---|---|
+| `--accent` (IKB Blue) | System structure | Illustrations, brand chrome, link color, structural blocks |
+| `--highlight` (Mustard) | Emphasis only | `.kicker`, `em` inside titles, `.ledger .num`, `.hr-accent`, cover term-en bar, key `.closing .opt.is-key` |
+| `--ink` / `--ink-soft` | Body text | All copy |
+| `--grey-1/2/3` | Surfaces & meta | Card backgrounds, hairlines, metadata |
 
-See `theme-presets.md` for the full palette catalog (6 Editorial + 4 Swiss). Switch via `data-theme` on `<html>` (Editorial) or `data-accent` (Swiss).
+**Never use `--accent` for emphasis. Never use `--highlight` for structure.** This separation is what gives the system its calm + accent rhythm. Mixing breaks the visual hierarchy.
+
+### Alt Accents
+
+3 single-color alternatives in `theme-presets.md` (Lemon Yellow, Lemon Green, Safety Orange). They collapse `--accent` and `--highlight` to one color — use only when Indigo Porcelain truly doesn't fit. The dual-color logic above does not apply.
 
 ## Typography
 
-### Swiss International Mode (default for this skill)
+**Editorial-first**: Serif for display, sans for body, mono for meta.
 
-**Hard rule: "the larger, the lighter"**
-
-| Role | Weight | Size (3:4) | Font | Notes |
+| Role | Class | Font | Size | Weight |
 |---|---|---|---|---|
-| Hero display | 200 | 168px | sans | ≤2 lines |
-| Statement | 200 | 124px | sans | Pull-quote size |
-| Page title (h-xl) | 300 | 96px | sans | 2-3 lines max |
-| Mid title (h-md) | 400 | 56px | sans | Section headers |
-| Category kicker | 600 | 22px | sans | Uppercase, accent color, +.08em tracking |
-| Lead | 400 | 30px | sans-zh | Introductions |
-| Body | 400 | 26px | sans-zh | Main content |
-| Metadata | 500 | 20px | mono | Uppercase, +.14em tracking |
+| Series ZH (cover) | `.series-zh` | serif-zh | 84px | 700 |
+| English term (cover) | `.term-en` | serif-en (Playfair Display) | 240px | 900 |
+| Display title | `.h-display-zh` | serif-zh | 96px | 700 |
+| Section title | `.h-section-zh` | serif-zh | 64px | 700 |
+| Ledger number | `.ledger .num` | serif-en | 104px | 900 |
+| Closing letter | `.closing .opt .letter` | serif-en | 64px | 900 |
+| Lead | `.lead` | sans-zh | 30px | 400 |
+| Body | `.body` | sans-zh | 26px | 400 |
+| Caption | `.concept-page .caption` | sans-zh | 26px | 500 |
+| Kicker | `.kicker` | mono | 20px | 500 |
+| Chrome / foot meta | `.chrome` / `.foot` | mono | 18px | 500 |
 
-Anti-patterns:
-- **Do not** use weight 700-900 for display titles — it collapses Swiss into "infographic banner" look
-- **Do not** use serif body text in Swiss mode (that's Editorial mode)
-- **Do not** use negative tracking on large type
+### Fonts
 
-### Editorial Magazine Mode (optional)
+- `--serif-en`: Playfair Display (loaded from Google Fonts)
+- `--serif-zh`: Noto Serif SC
+- `--sans-zh`: Noto Sans SC
+- `--mono`: IBM Plex Mono
 
-See `style-system.md` "Mode A" for Editorial typography rules (serif display, Songti body, wide tracking on kicker/meta).
+Hard rules:
+
+- **Do not** use sans-serif for display titles in Editorial mode.
+- **Do not** load additional serif families. Stick to Playfair + Noto Serif SC.
+- **Do not** use mono outside chrome/meta/kicker. Mono in body copy reads as code.
+- **Do not** stretch `em` highlights across more than 4-6 characters. Long highlight blocks lose emphasis.
+
+## Emphasis Pattern
+
+`em` inside a display title gets a mustard background with white-on-black ink. The padding + `box-decoration-break: clone` keeps the highlight block intact when wrapping.
+
+```html
+<h2 class="h-display-zh">Demo 漂亮<br><em>上生产翻车</em></h2>
+```
+
+Use this for the single most important phrase per page. **One em block per title.** Two em blocks on one title look like decoration, not emphasis.
+
+`h-section-zh em` is different — it uses an underline instead of a fill, lighter visual weight, for inline highlighting.
+
+```html
+<h2 class="h-section-zh">LLMOps 像<em>餐厅后厨</em></h2>
+```
 
 ## Portrait Composition
 
@@ -60,46 +86,30 @@ Plan every 3:4 page as intentional vertical zones:
 
 | Zone | Height | Purpose |
 |---|---|---|
-| Header | 0-90px | chrome-min row: category, date, issue |
-| Hook | 240-380px | dominant title and promise |
-| Evidence | 520-720px | illustration, diagram, comparison, ledger |
-| Takeaway | 100-180px | consequence, formula, compressed conclusion |
-| Footer | 52-86px | issue-strip or next-page cue |
+| Chrome | 0-60px | category / day / page no. |
+| Kicker | 60-110px | yellow highlight tag |
+| Display title | 130-360px | dominant message |
+| Evidence | 380-1000px | illustration / ledger / split / options |
+| Foot | 1340-1400px | tagline + page no. |
 
 **Content density rule (hard)**: content must cover ≥75% of canvas height. Any pure-whitespace band >15% canvas height (>216px) needs a stated reason.
 
-Do NOT use `<div style="flex: 1"></div>` to push content to the vertical centre — social cards are scrolled one at a time, under-filled cards read as "PowerPoint with a missing element."
-
-## Background
-
-A flat paper color is not enough. Use the layered background system from `background-systems.md`:
-
-1. Paper base from theme preset
-2. Procedural paper grain (CSS dots or noise)
-3. Optional ink wash / contour atmosphere (stronger on covers, subtler on content pages)
-4. Content layer
-
-For Swiss mode, use subtle dot-matrix or cross-mat patterns instead of ink wash. See `background-systems.md` for CSS.
-
-## Information Hierarchy
-
-Each page should contain:
-
-1. One dominant message
-2. One evidence or explanation zone
-3. Optional supporting note or takeaway
-
-Use one accent color per set. Align elements to a visible grid.
-
 ## Page Rhythm
 
-Alternate between dense pages and breathing pages. Do not stack three heavy ledger pages in a row. End with a closing page, not a content page.
+Alternate between dense pages and breathing pages. End with a closing page, not a content page.
+
+Typical 5-page set:
+1. Cover (S00)
+2. Concept + Image (S01) — only page with illustration
+3. Tall Ledger (S02) — pure type rhythm
+4. Before / After (S03) — split contrast
+5. Closing (S04) — options + action
 
 ## Hard Rules
 
-- Exactly one `--accent` in the entire deck
-- No border-radius on frames (Swiss mode uses square corners)
-- No box-shadow, no gradients (Swiss mode)
-- `frame-img` / `frame-shot` use `object-fit: contain` for screenshots (never crop UI)
-- "The larger, the lighter" — ≥200px must use weight 200
-- Content density ≥75% on 3:4 cards
+- Exactly one `--accent` per set
+- `--highlight` only on emphasis surfaces listed above
+- No border-radius, no box-shadow, no gradients
+- Content density ≥ 75% on 3:4 cards
+- One `em` block per display title
+- 1-3 illustrations per 5-page set, not one on every page
