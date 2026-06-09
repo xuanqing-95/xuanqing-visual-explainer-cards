@@ -22,7 +22,7 @@ fs.mkdirSync(outputDir, { recursive: true });
 
 const chromium = await loadChromium();
 const browser = await chromium.launch({ headless: true });
-const page = await browser.newPage({ viewport: { width: 1400, height: 1800 } });
+const page = await browser.newPage({ viewport: { width: 1200, height: 1600 }, deviceScaleFactor: 1 });
 await page.goto(pathToFileURL(path.join(taskDir, "index.html")).href, { waitUntil: "networkidle" });
 await page.evaluate(() => document.fonts.ready);
 await page.waitForTimeout(500);
