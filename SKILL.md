@@ -7,37 +7,28 @@ description: Create illustrated Xiaohongshu/Rednote knowledge-card series that c
 
 | Dependency | Install | Purpose |
 |---|---|---|
-| Playwright (npm) | `npm install playwright` in the skill directory | Renders HTML to PNG |
-| bun | `curl -fsSL https://bun.sh/install \| bash` | Required by some image generation skills |
+| Playwright (npm) | `npm install playwright` in the skill directory | Renders HTML to PNG and validates cards |
 
 > `<skill-dir>` in the commands below refers to the directory containing this SKILL.md file.
 
 ## Image Generation
 
-This skill does not bundle image generation. Use your own image generation skill (e.g. `baoyu-imagine`, `mz-image-gen`, or any other tool that produces PNG images).
-
-For `labeled-gpt-image` mode, your image generation tool needs to:
-- Accept a text prompt with Chinese labels
-- Output a PNG image
-- Support aspect ratio (3:4 for cards)
-
-Typical invocation pattern:
+Built-in `scripts/generate.mjs` — standalone, no npm dependencies, uses Node.js built-in fetch.
 
 ```bash
-# Example with baoyu-imagine:
-bun ~/.openclaw/skills/baoyu-imagine/scripts/main.ts \
-  --promptfiles prompts/page-02.md \
-  --image assets/page-02.png \
-  --ar 3:4
+# Generate with prompt text
+node <skill-dir>/scripts/generate.mjs --prompt "描述" --output assets/page-02.png --ar 3:4
 
-# Example with mz-image-gen:
-python3 ~/.openclaw/skills/mz-image-gen/scripts/main.py \
-  --prompt-file prompts/page-02.md \
-  --output assets/page-02.png \
-  --ar 4:3
+# Generate from prompt file
+node <skill-dir>/scripts/generate.mjs --promptfile prompts/page-02.md --output assets/page-02.png --ar 3:4 --quality 2k
 ```
 
-After generating illustrations, verify the background color matches your card's `--paper` value. If not, adjust the illustration prompt to specify the exact background color.
+Environment variables:
+- `OPENAI_API_KEY` (or `ZENMUX_API_KEY`) — required
+- `OPENAI_BASE_URL` — API base URL (default: `https://api.openai.com/v1`, use `https://zenmux.ai/api/v1` for ZenMux)
+- `OPENAI_IMAGE_MODEL` — model override (default: `gpt-image-1.5`)
+
+After generating illustrations, verify the background color matches your card's `--paper` value. Add `BACKGROUND: solid #f1f3f5` to your prompt if colors don't match.
 
 ---
 
@@ -58,6 +49,7 @@ Default to a hybrid composition:
 0. Verify dependencies are ready:
    ```bash
    node -e "require('playwright')" 2>/dev/null || (cd <skill-dir> && npm install playwright)
+   echo $OPENAI_API_KEY > /dev/null || echo "WARN: OPENAI_API_KEY not set"
    ```
 
 1. Read the source and verify unstable facts when necessary.
@@ -69,7 +61,13 @@ Default to a hybrid composition:
 7. Select one of the layouts in `references/layouts.md`. Reject side-by-side portrait layouts that leave large empty upper or lower bands.
 8. For every illustration-led page, choose one illustration mode using `references/illustration-prompts.md`: `labeled-gpt-image`, `html-label-overlay`, or `no-text`.
 9. For the default `labeled-gpt-image` mode, write a compact prompt with 3-8 exact in-image labels and no duplicate card title inside the illustration. Follow the prompt template in `references/illustration-prompts.md`.
-10. Generate illustrations using your image generation skill. Save prompts in `prompts/` and output images in `assets/`. Ensure the illustration background color matches the card's `--paper` value (default: `#f1f3f5` for Indigo Porcelain).
+10. Generate illustrations:
+
+```bash
+node <skill-dir>/scripts/generate.mjs --promptfile prompts/page-02.md --output assets/page-02.png --ar 3:4 --quality 2k
+```
+
+Save prompts in `prompts/` and output images in `assets/`. Ensure the illustration background color matches the card's `--paper` value (default: `#f1f3f5` for Indigo Porcelain).
 
 12. Copy `assets/template.html` into the task directory as `index.html`. The template is a Swiss International seed template with IKB Blue accent, dot-matrix backgrounds, and full component system. Switch `data-accent` on `<html>` to change accent color.
 13. Replace the example posters with the real pages. Use layout recipes from `references/layouts.md`. Add background layers (dot-mat, cross-mat, ring-mat) from `references/background-systems.md` on covers and sparse pages. Add task-scoped CSS only when necessary.
@@ -84,6 +82,8 @@ node <skill-dir>/scripts/render.mjs <task-dir>
 ```bash
 node <skill-dir>/scripts/validate.mjs <task-dir>
 ```
+
+Checks: R1 overflow · R2 footer collision · R3 swiss bold display · R4 min font · R5 4-band density · R6 h-xl cap · R7 figure margin drift. Exit code 1 on FAIL.
 
 16. Inspect the final PNGs. Run both image-only and full-page explanation checks, then check generated Chinese text accuracy, factual accuracy, readability, page rhythm, and series consistency.
 
