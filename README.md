@@ -10,65 +10,56 @@ Turn abstract concepts, tutorials, AI knowledge, and educational content into cl
 
 ### Dependencies
 
+Only one external dependency — [Playwright](https://playwright.dev/) for HTML→PNG rendering and card validation:
+
 ```bash
-# Node (Playwright for HTML→PNG rendering)
 npm install playwright
-
-# Python (background normalization for generated illustrations)
-pip install Pillow
-# or
-pip install -r requirements.txt
-
-# bun (required by baoyu-imagine)
-curl -fsSL https://bun.sh/install | bash
-```
-
-### External Skills
-
-This skill relies on two companion skills for image generation:
-
-| Skill | Purpose |
-|---|---|
-| [baoyu-imagine](https://github.com/xuanqing-95/baoyu-imagine) | GPT Image 2 labeled illustration generation |
-| [mz-image-gen](https://github.com/xuanqing-95/mz-image-gen) | No-text fallback illustration generation |
-
-Install them into your skills directory before using this skill.
-
-### Playwright Browsers
-
-```bash
 npx playwright install chromium
 ```
+
+### Environment Variables
+
+Set these for image generation (`scripts/generate.mjs`):
+
+| Variable | Required | Default | Description |
+|---|---|---|---|
+| `OPENAI_API_KEY` | Yes | — | API key (also accepts `ZENMUX_API_KEY`) |
+| `OPENAI_BASE_URL` | No | `https://api.openai.com/v1` | API endpoint (use `https://zenmux.ai/api/v1` for ZenMux) |
+| `OPENAI_IMAGE_MODEL` | No | `gpt-image-1.5` | Image model to use |
 
 ## Quick Start
 
 ```
-Use $visual-explainer-cards to turn "Token 是什么" into an illustrated Xiaohongshu knowledge-card series.
+Use xuanqing-visual-explainer-cards to turn "Token 是什么" into an illustrated Xiaohongshu knowledge-card series.
 ```
 
-## Structure
+## What's Included
 
 ```
-visual-explainer-cards/
-├── SKILL.md                  # Skill instructions
-├── assets/template.html      # Guizang-style HTML card template
+xuanqing-visual-explainer-cards/
+├── SKILL.md                    # Skill instructions
+├── assets/template.html        # Guizang-style HTML card template (Indigo Porcelain)
 ├── scripts/
-│   ├── generate-labeled-illustration.py  # GPT Image 2 labeled illustrations
-│   ├── generate-illustration.py          # No-text fallback illustrations
-│   ├── render.mjs                        # HTML → PNG via Playwright
-│   └── validate.mjs                      # Automated card validation
-├── references/
-│   ├── beginner-explanation.md   # Teaching protocol
-│   ├── design-system.md          # Canvas, typography, color tokens
-│   ├── illustration-prompts.md   # Illustration mode & prompt guide
-│   ├── layouts.md                # Page layout catalog
-│   ├── metaphor-library.md       # Abstract→concrete visual mappings
-│   ├── prompt-strategy-audit.md  # Prompt design rationale
-│   ├── qa-checklist.md           # Pre-delivery QA checks
-│   └── visual-routing.md         # Information shape → visual type routing
-├── agents/openai.yaml            # Agent config for OpenAI/Codex
-└── requirements.txt              # Python dependencies
+│   ├── generate.mjs            # Image generation via OpenAI-compatible API
+│   ├── render.mjs              # HTML → PNG via Playwright
+│   └── validate.mjs            # Automated card validation (R1-R7 rules)
+└── references/
+    ├── beginner-explanation.md # Teaching protocol
+    ├── design-system.md        # Canvas, typography, color tokens
+    ├── illustration-prompts.md # Illustration mode & prompt guide
+    ├── layouts.md              # Page layout catalog
+    ├── metaphor-library.md     # Abstract→concrete visual mappings
+    ├── qa-checklist.md         # Pre-delivery QA checks
+    └── visual-routing.md       # Information shape → visual type routing
 ```
+
+### Scripts
+
+| Script | Function |
+|---|---|
+| `generate.mjs` | Standalone image generation. No npm deps, uses Node.js built-in fetch. Supports `--prompt`, `--promptfile`, `--ar`, `--quality`, `--model`. |
+| `render.mjs` | Renders all `<section class="poster">` in `index.html` to PNG at 1200×1600 (3:4) via Playwright. |
+| `validate.mjs` | 7-rule automated validation: R1 overflow, R2 footer collision, R3 Swiss bold display, R4 min font, R5 4-band density, R6 h-xl cap, R7 figure margin drift. Exits 1 on FAIL. |
 
 ## License
 
@@ -76,4 +67,4 @@ See [LICENSE.txt](LICENSE.txt).
 
 ## Credits
 
-Built by [玄清 (xuanqing-95)](https://github.com/xuanqing-95). Design language inspired by Guizang's editorial PPT style.
+Built by [玄清 (xuanqing-95)](https://github.com/xuanqing-95). Design language inspired by Guizang's editorial PPT style. Validation rules from guizang-social-card-skill.
