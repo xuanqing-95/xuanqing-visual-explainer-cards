@@ -2,6 +2,25 @@
 
 Each page carries one layout recipe. Content shape decides layout — do not pick a pretty layout first and invent content to fit it.
 
+## Table of Contents
+
+- [Content Density Rule (Hard)](#content-density-rule-hard)
+- [Swiss International Recipes](#swiss-international-recipes)
+  - [S01 Accent Cover](#s01-accent-cover)
+  - [S02 Concept + Image](#s02-concept--image)
+  - [S03 File Card / Evidence Split](#s03-file-card--evidence-split)
+  - [S04 Pull Quote / Thesis](#s04-pull-quote--thesis)
+  - [S05 Checklist / Trap Rows](#s05-checklist--trap-rows)
+  - [S06 KPI Tower](#s06-kpi-tower)
+  - [S07 H-Bar Chart](#s07-h-bar-chart)
+  - [S08 Image Hero](#s08-image-hero)
+  - [S09 Tall Ledger](#s09-tall-ledger)
+  - [S10 Stacked Ledger + Image](#s10-stacked-ledger--image)
+  - [S11 Matrix + Hero Stat](#s11-matrix--hero-stat)
+  - [S12 Closing Note](#s12-closing-note)
+- [Editorial Magazine Recipes](#editorial-magazine-recipes)
+- [WeChat Adaptation](#wechat-adaptation)
+
 ## Content Density Rule (Hard)
 
 On 1080×1440 cards, content must cover ≥75% of canvas height. Any pure-whitespace band >15% canvas height (>216px) needs a stated reason. Do NOT use `<div style="flex: 1"></div>` to push content to the vertical centre.

@@ -1,6 +1,8 @@
-# Visual Explainer Cards
+# xuanqing-visual-explainer-cards
 
 An OpenClaw / Claude Code / Codex skill that creates illustrated Xiaohongshu/Rednote knowledge-card series combining GPT Image 2 explanatory illustrations with Guizang-style editorial HTML layout.
+
+By **玄清 (xuanqing-95)** — a Guizang-style visual explanation skill for AI knowledge content.
 
 Turn abstract concepts, tutorials, AI knowledge, and educational content into clear 3:4 social cards with small in-image Chinese labels, accurate outer typography, and automated validation.
 
@@ -71,3 +73,7 @@ visual-explainer-cards/
 ## License
 
 See [LICENSE.txt](LICENSE.txt).
+
+## Credits
+
+Built by [玄清 (xuanqing-95)](https://github.com/xuanqing-95). Design language inspired by Guizang's editorial PPT style.
