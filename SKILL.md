@@ -24,8 +24,8 @@ node <skill-dir>/scripts/generate.mjs --promptfile prompts/page-02.md --output a
 ```
 
 Environment variables:
-- `OPENAI_API_KEY` (or `ZENMUX_API_KEY`) — required
-- `OPENAI_BASE_URL` — API base URL (default: `https://api.openai.com/v1`, use `https://zenmux.ai/api/v1` for ZenMux)
+- `OPENAI_API_KEY` — required
+- `OPENAI_BASE_URL` — API base URL (default: `https://api.openai.com/v1`)
 - `OPENAI_IMAGE_MODEL` — model override (default: `gpt-image-1.5`)
 
 After generating illustrations, verify the background color matches your card's `--paper` value. Add `BACKGROUND: solid #f1f3f5` to your prompt if colors don't match.

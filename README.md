@@ -23,8 +23,8 @@ Set these for image generation (`scripts/generate.mjs`):
 
 | Variable | Required | Default | Description |
 |---|---|---|---|
-| `OPENAI_API_KEY` | Yes | — | API key (also accepts `ZENMUX_API_KEY`) |
-| `OPENAI_BASE_URL` | No | `https://api.openai.com/v1` | API endpoint (use `https://zenmux.ai/api/v1` for ZenMux) |
+| `OPENAI_API_KEY` | Yes | — | API key |
+| `OPENAI_BASE_URL` | No | `https://api.openai.com/v1` | API endpoint (OpenAI-compatible) |
 | `OPENAI_IMAGE_MODEL` | No | `gpt-image-2` | Image model to use |
 
 ## Quick Start

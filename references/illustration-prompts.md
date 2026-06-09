@@ -36,7 +36,7 @@ Never duplicate the outer card title inside the generated illustration. If the H
 
 ## Labeled GPT Image Prompt Template
 
-Use this structure for GPT Image 2 via ZenMux:
+Use this structure for GPT Image 2:
 
 ```markdown
 Generate a clean 3:4 vertical Chinese educational illustration panel.
