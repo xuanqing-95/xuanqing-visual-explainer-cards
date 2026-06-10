@@ -47,7 +47,7 @@ npx playwright install chromium
 Use $xuanqing-visual-explainer-cards to turn "Token 是什么" into an illustrated Xiaohongshu knowledge-card series.
 ```
 
-A complete worked example lives in [`examples/llmops/`](examples/llmops/) — source, storyboard, prompts, HTML, and rendered output for a 5-page LLMOps knowledge-card series.
+A complete worked example lives in [`examples/llmops/`](examples/llmops/) — source, storyboard, prompts, HTML, and rendered output for one LLMOps knowledge-card series.
 
 ## Visual System
 
@@ -57,7 +57,7 @@ A complete worked example lives in [`examples/llmops/`](examples/llmops/) — so
 - One fixed series cover plus content-page composition primitives
 - Single board size: 1080×1440 (3:4)
 - Hairline rules, off-white paper (`#fafaf8`), no shadows / gradients / rounded corners
-- 3-4 supporting illustrations in a typical 5-page set, each placed inside `.evidence-figure`
+- Content-led 4-7 page sets, with supporting illustrations placed inside `.evidence-figure`
 
 ## Structure
 

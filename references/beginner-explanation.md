@@ -27,7 +27,7 @@ If one of questions 1-5 is unanswered, the educational card set is incomplete.
 
 ## Card-Set Teaching Arc
 
-Recommended 5-7 page sequence:
+Recommended teaching arc. Let the source decide the exact page count; most card sets land at 4-7 pages including the cover.
 
 1. **Problem / hook:** a familiar symptom or question.
 2. **Plain definition:** what it is, plus what it is not.

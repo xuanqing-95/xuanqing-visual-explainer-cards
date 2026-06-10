@@ -52,7 +52,7 @@ Default to a hybrid composition:
 2. Build a beginner explanation brief using `references/beginner-explanation.md`. Do not begin layout work until the concept can be explained without jargon.
 3. Create `storyboard.yaml` before designing. Give each page one message and one visual role.
 4. For recurring AI knowledge series, make page 1 a fixed `series-cover`: series line, English term, Chinese explanation, and one user-scenario question. Do not generate a cover illustration unless the user explicitly asks.
-5. Add a page-rhythm plan before coding: list each content page's silhouette and evidence type. Use at least four distinct silhouettes in a 5-7 page set after the cover.
+5. Add a page-rhythm plan before coding: first list the source's natural message units and resulting page count, then list each content page's silhouette and evidence type. Use varied silhouettes after the cover; in longer sets, avoid repeating the same page shape back to back.
 6. Route each content page using `references/visual-routing.md`.
 7. The cover (page 1) uses the fixed S00 layout in `references/layouts.md`. For pages 2 onwards, do NOT pick a pre-named recipe — read `references/layouts.md` to choose a layout pattern based on the content shape, and compose the page fresh from primitives.
 8. For every illustration-led page, choose one illustration mode using `references/illustration-prompts.md`: `labeled-gpt-image`, `html-label-overlay`, or `no-text`.
@@ -151,11 +151,12 @@ Hard rules:
 - State important boundaries or misconceptions. Avoid teaching an analogy as if it were the literal mechanism.
 - Use HTML as the default expression. Use illustrations to explain, not decorate.
 - Do not generate an illustration when a comparison, process, ledger, or number communicates better.
+- Decide page count from the source content, not from a fixed template. First extract the source's natural message units; use one page per core message. Typical sets are 4-7 pages including the cover. Do not force content into 5 pages, and do not merge or delete necessary causal steps just to hit a target page count.
 - Keep long explanations, caveats, prices, dates, and unstable facts out of generated images.
 - In `labeled-gpt-image` mode, generated images may contain only short exact labels that make the picture self-explanatory.
 - Never duplicate the outer HTML title inside the generated illustration. The illustration should explain the mechanism, while the outer card introduces the topic.
 - Do not add top metadata/category/page labels by default. Use them only when the user requests an editorial issue system.
-- Use 3-4 illustrations in a typical 5-page set (most content pages should pair text + small illustration). Not one giant illustration per set, not one on every single page either.
+- Use enough illustrations to support the natural page count. For a 4-7 page set, most content pages should pair text with a small illustration; as a rough guide, 3-4 illustrated pages usually works. Not one giant illustration per set, not one on every single page by default.
 - Reserve composition safe zones before generating illustrations.
 - Prefer concrete actions over static collections of objects.
 - Illustration presence is not success. Every illustration-led page must visibly communicate a causal chain and pass both image-only and full-page explanation checks.

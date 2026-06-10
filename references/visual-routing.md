@@ -34,12 +34,13 @@ Do not generate an illustration when:
 
 ## Page Rhythm
 
-For a 5-page set:
+For a typical 4-7 page set, let the content decide the exact count:
 
-1. HTML-led hero with one supporting illustration
+1. Cover or HTML-led hero
 2. Concept explanation with one evidence illustration
-3. Structured comparison or data
-4. HTML mechanism/process, optionally one supporting illustration
-5. Closing action
+3. Mechanism, comparison, or structured data
+4. Concrete example or use case
+5. Boundary, misconception, or tradeoff when needed
+6. Closing action
 
 Avoid using the same layout twice in a row.

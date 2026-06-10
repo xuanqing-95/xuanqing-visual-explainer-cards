@@ -58,7 +58,7 @@ Skip illustration only when:
 - The page is a checklist of abstract verbs ("review", "decide", "ship") that has no clear visual
 - The page is the cover (already covered by S00)
 
-Typical 5-page set: **3-4 pages with illustrations, 1-2 type-only pages**. Avoid both extremes (one giant illustration on page 2 only / illustration on every single page).
+Let the source content decide the exact page count before choosing layouts. Typical sets are **4-7 pages including the cover**. As a rough rhythm, use **3-4 pages with illustrations, 1-2 type-led pages** when the set lands in that range. Avoid both extremes (one giant illustration on page 2 only / illustration on every single page).
 
 ### Step 3 — Size the illustration to support, not dominate
 

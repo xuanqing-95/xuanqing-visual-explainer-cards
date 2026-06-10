@@ -91,12 +91,15 @@ Yellow background fills on em are forbidden on content pages. Yellow lives only 
 
 Most content pages pair **text + small illustration**. Text leads, illustration explains.
 
-Typical 5-page set:
+Common 4-7 page rhythm:
 1. Cover (S00) — typography only, mustard yellow bar
-2. Concept / metaphor — large illustration (480-560px) + short caption
-3. Numbered list / multi-item — 3 small illustrations (160-260px each) inline with text
-4. Comparison or mechanism — 2 small illustrations side-by-side
-5. Closing / call to action — type-led, optional small illustration
+2. Concept / metaphor — one evidence illustration + short caption
+3. Mechanism / causal chain — workflow, comparison, or labeled scene
+4. Example / use case — concrete scenario with supporting visual evidence
+5. Boundary / misconception / tradeoff — type-led or comparison-led
+6. Closing / action — type-led, optional small illustration
+
+Do not treat this as a fixed 6-page template. Extract the source's natural message units first, then keep only the pages needed to explain them clearly.
 
 Avoid both extremes: "one illustration on page 2 only" (boring) or "one big illustration on every single page" (overwhelming).
 
