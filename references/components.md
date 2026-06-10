@@ -114,6 +114,7 @@ IKB color, 500 weight, inside serif body copy.
 | `.evidence-figure.hero` | 500-600px band | Concept/metaphor page where image is the main explanation |
 | `.evidence-figure.wide` | 340-460px band | Workflow/comparison/metaphor strip |
 | `.evidence-figure.square` | 1:1 centered 520-560px slot | Square object or compact scene that should not be stretched across the full card width |
+| `.evidence-figure.portrait` | 2:3 centered 440×660 slot | Vertical mechanism, stacked steps, or tall scene generated as `1024x1536` |
 | `.evidence-figure.compact` | 220-300px band | Small support mark or action page image |
 | `.illust-frame` | contain | AI-generated illustrations — preserves whole image |
 | `.illust-frame.wide-flow` | contain + 118% enlargement | Wide process/metaphor/comparison diagrams that otherwise look too small |
@@ -131,6 +132,8 @@ IKB color, 500 weight, inside serif body copy.
 For normal generated content-page diagrams, prefer `.evidence-figure.landscape`: the local generator outputs landscape requests as `1536x1024`, so a natural 3:2 slot prevents `object-fit: contain` from shrinking the picture. Use `.evidence-figure.wide` only when the final visual is truly a long strip or an HTML-native diagram.
 
 Avoid square images in wide slots; they leave the page looking underfilled. Put square images in `.evidence-figure.square`, a side-by-side module, or row thumbnails.
+
+For vertical generated images, use `.evidence-figure.portrait` or a deliberate text-image composition. Do not put portrait images into full-width shallow bands.
 
 For content-page generated images, do not use `.illust-frame` alone as the outer layout block. Wrap it:
 

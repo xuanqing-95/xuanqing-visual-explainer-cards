@@ -42,6 +42,44 @@ The text content should still occupy at least 60% of the page's visual weight. I
 
 Generate the image for its final slot, not for a generic square canvas.
 
+## Slot-First Generation Protocol (hard rule)
+
+Do not start from the image. Start from the card layout.
+
+For every illustration-led page, define the final `image_slot` in `storyboard.yaml` **before** writing the prompt or running generation. The prompt, `--ar`, pixel margin contract, and HTML wrapper must all be derived from that slot.
+
+Required shape:
+
+```yaml
+image_slot:
+  html_wrapper: evidence-figure landscape
+  slot_px: 904x603
+  slot_ratio: 3:2
+  generator_ar: 4:3
+  generator_canvas: 1536x1024
+  subject_bbox: x=120-1416,y=128-896
+  fit: contain
+```
+
+Slot registry for the 1080×1440 card seed:
+
+| Slot | HTML wrapper | Typical frame on card | Slot ratio | Generator `--ar` | Expected canvas | Subject bbox |
+|---|---|---:|---:|---|---:|---|
+| `landscape` | `.evidence-figure.landscape` | `904x603` | `3:2` | `4:3` or `16:10` | `1536x1024` | `x=120-1416,y=128-896` |
+| `hero` | `.evidence-figure.hero` | `904x500-600` | about `3:2` | `4:3` or `16:10` | `1536x1024` | `x=120-1416,y=128-896` |
+| `wide-strip` | `.evidence-figure.wide` | `904x340-460` | about `2:1` | `16:10` only when truly horizontal | `1536x1024` | `x=72-1464,y=200-824` |
+| `square` | `.evidence-figure.square` | `560x560` | `1:1` | `1:1` | `1024x1024` | `x=112-912,y=112-912` |
+| `portrait` | `.evidence-figure.portrait` | `440x660` | `2:3` | `3:4` | `1024x1536` | `x=112-912,y=180-1356` |
+| `compact` | `.evidence-figure.compact` or row thumb | `220-300px` tall | variable | `1:1` or `4:3` | `1024x1024` or `1536x1024` | use matching compact bbox |
+
+Decision rules:
+
+- If the page needs one main explanatory image, use `landscape` by default.
+- If the image is a single object or compact scene, use `square`; place it centered, beside text, or in a grid. Do not stretch it into a wide band.
+- If the concept is a vertical stack, timeline, or step-down mechanism, use `portrait`.
+- If the concept is a long left-to-right pipeline, use `wide-strip`, but keep the text above or below the image. Do not use a left/right split for long horizontal flows.
+- If no slot fits the explanation cleanly, change the page layout before generating. Do not generate first and patch the layout afterward.
+
 | Final slot | Use `--ar` | Prompt opening | Composition requirement |
 |---|---|---|---|
 | Wide workflow / process strip | `16:10` or `4:3` | `Generate a wide 16:10 Chinese educational illustration panel.` | Main diagram spans 82-90% of canvas width; no large empty margins |
@@ -61,7 +99,7 @@ The local GPT Image wrapper currently maps image requests to these physical canv
 |---|---:|---:|---|
 | `4:3`, `16:10`, or any landscape request | `1536x1024` | `3:2` | `.evidence-figure.landscape` or `.evidence-figure.hero` |
 | `1:1` compact mark | `1024x1024` | `1:1` | `.evidence-figure.square`, side-by-side modules, or row thumbnails |
-| `3:4` vertical mechanism | `1024x1536` | `2:3` | a tall evidence well or a left/right text-image composition |
+| `3:4` vertical mechanism | `1024x1536` | `2:3` | `.evidence-figure.portrait`, a tall evidence well, or a left/right text-image composition |
 
 Do **not** put a `1536x1024` generated illustration into a shallow full-width strip whose frame is much wider than `3:2`. It will be height-constrained and shrink horizontally. Use `.evidence-figure.landscape` for the normal generated-image case; reserve `.evidence-figure.wide` for HTML-native wide diagrams or genuinely horizontal generated diagrams where labels stay readable after enlargement.
 
@@ -137,8 +175,12 @@ Before writing the prompt, define:
 
 ```yaml
 slot:
-  html_wrapper: evidence-figure landscape | evidence-figure hero | evidence-figure wide | evidence-figure square | evidence-figure compact
-  final_frame_height: 220-600px
+  html_wrapper: evidence-figure landscape | evidence-figure hero | evidence-figure wide | evidence-figure square | evidence-figure portrait | evidence-figure compact
+  slot_px: 904x603
+  generator_ar: 4:3
+  generator_canvas: 1536x1024
+  subject_bbox: x=120-1416,y=128-896
+  final_frame_height: 220-680px
   final_frame_shape: wide | tall | square
   optical_center: center | slightly_above_center
 ```
@@ -149,6 +191,7 @@ Prompt implications:
 - For `.evidence-figure.hero`, ask for a complete diagram that fills 74-86% of image width and 62-78% of image height.
 - For `.evidence-figure.wide`, ask for a horizontal diagram that fills 82-90% of image width and 46-62% of image height.
 - For `.evidence-figure.square`, ask for one centered square scene or object that fills the square safe box.
+- For `.evidence-figure.portrait`, ask for a vertical mechanism that fills the portrait safe box without tiny side labels.
 - For `.evidence-figure.compact`, ask for one strong object or mini scene that fills 62-76% of the image area.
 - Tell the model to keep the main subject optically centered, not stuck to the top edge.
 - Avoid huge empty paper margins inside the generated image. The HTML page already provides the quiet paper space.
@@ -307,14 +350,14 @@ For beginner concept pages, prefer `mechanism-flow`, `capacity-scene`, or `compa
 python3 <skill-dir>/scripts/generate-labeled-illustration.py \
   --prompt-file prompts/page-01.md \
   --output assets/page-01.png \
-  --ar 3:4 \
+  --ar <image_slot.generator_ar> \
   --quality 2k
 ```
 
 The wrapper uses ZenMux as the OpenAI-compatible base URL and maps `ZENMUX_API_KEY` to `OPENAI_API_KEY` when needed.
 The wrapper normalizes the edge-connected image background to the exact paper color by default, then runs conservative `auto-frame` to remove excessive blank paper margins. Disable only with `--no-auto-frame`.
 
-Use `--ar 3:4` only when the image is a central vertical standalone panel. Use `16:10` or `4:3` for wide workflow, comparison, and metaphor wells. Use `1:1` only for inline icons or row thumbnails.
+Use the `--ar` value from `image_slot.generator_ar`. Use `3:4` only when the chosen slot is `portrait`. Use `4:3` or `16:10` for `landscape` / `hero`. Use `1:1` for `square` or compact row thumbnails.
 
 ## Good Token Prompt Shape
 

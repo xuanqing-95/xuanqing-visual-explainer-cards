@@ -30,6 +30,8 @@
 ## Composition
 
 - Is the illustration clearly visible and not merely decorative?
+- Was `image_slot` defined before writing the prompt or generating the image?
+- Does the prompt's `--ar`, `generator_canvas`, and `subject_bbox` match the chosen `image_slot`?
 - Does every major generated illustration use an `.evidence-figure` wrapper instead of a naked `.illust-frame`?
 - Does the illustration feel native to the card: optically centered, balanced top/bottom margin, not pasted in, not stuck to the top?
 - Does each generated illustration visually fill its intended slot, rather than appearing as a small centered diagram with excessive paper margin?

@@ -55,34 +55,35 @@ Default to a hybrid composition:
 5. Add a page-rhythm plan before coding: first list the source's natural message units and resulting page count, then list each content page's silhouette and evidence type. Use varied silhouettes after the cover; in longer sets, avoid repeating the same page shape back to back.
 6. Route each content page using `references/visual-routing.md`.
 7. The cover (page 1) uses the fixed S00 layout in `references/layouts.md`. For pages 2 onwards, do NOT pick a pre-named recipe — read `references/layouts.md` to choose a layout pattern based on the content shape, and compose the page fresh from primitives.
-8. For every illustration-led page, choose one illustration mode using `references/illustration-prompts.md`: `labeled-gpt-image`, `html-label-overlay`, or `no-text`.
-9. For the default `labeled-gpt-image` mode, write a compact GPT Image 2 prompt with 3-8 exact in-image labels and no duplicate card title inside the illustration.
-10. Generate labeled GPT Image 2 illustrations:
+8. For every illustration-led page, define `image_slot` before writing any image prompt. The slot must state the final HTML wrapper, slot dimensions, slot ratio, generator aspect ratio, expected output canvas, and subject bounding box. Use `references/illustration-prompts.md` as the slot registry.
+9. Choose one illustration mode using `references/illustration-prompts.md`: `labeled-gpt-image`, `html-label-overlay`, or `no-text`.
+10. For the default `labeled-gpt-image` mode, write a compact GPT Image 2 prompt derived from `image_slot`, with 3-8 exact in-image labels and no duplicate card title inside the illustration.
+11. Generate labeled GPT Image 2 illustrations using the `--ar` from `image_slot.generator_ar`:
 
 ```bash
 python3 <skill-dir>/scripts/generate-labeled-illustration.py \
   --prompt-file prompts/page-01.md \
   --output assets/page-01.png \
-  --ar 3:4
+  --ar <image_slot.generator_ar>
 ```
 
 The script uses an OpenAI-compatible base URL (configurable via `OPENAI_BASE_URL`) and accepts `ZENMUX_API_KEY` as an `OPENAI_API_KEY` fallback when configured.
 It normalizes the paper background and runs conservative `auto-frame` by default so generated illustrations do not remain small inside a large blank canvas. Use `--no-auto-frame` only when intentionally preserving large blank space.
 
-11. Generate no-text fallback illustrations with:
+12. Generate no-text fallback illustrations with the `--ar` from `image_slot.generator_ar`:
 
 ```bash
 python3 <skill-dir>/scripts/generate-illustration.py \
   --prompt-file prompts/page-01.md \
   --output assets/page-01.png \
-  --ar 4:3
+  --ar <image_slot.generator_ar>
 ```
 
 The generation script normalizes the generated edge-connected background to the page paper color `#fafaf8` by default. Add `--remove-background` only for isolated objects or characters that must overlap HTML regions. Add `--skip-background-normalize` only when preserving an intentional scene background.
 Default no-text generation also runs conservative `auto-frame` after normalization. Use `--no-auto-frame` only when large blank space is part of the visual concept.
 
-12. Copy `assets/template.html` into the task directory as `index.html`. The template is an Editorial seed (Indigo Porcelain default) with serif display fonts, IKB Blue as the visible system color, and ONE fixed layout: the S00 Series Cover. Switch `data-accent` on `<html>` to change palette (`indigo-porcelain` | `lemon-yellow` | `lemon-green` | `safety-orange`). The alt accents collapse to single-color (no separate highlight) — only Indigo Porcelain carries the cover-bar yellow.
-13. Keep the cover (S00) structure verbatim, replacing only the placeholders. For content pages, **copy a named snippet from the bottom of `assets/template.html`** as your starting point and adjust:
+13. Copy `assets/template.html` into the task directory as `index.html`. The template is an Editorial seed (Indigo Porcelain default) with serif display fonts, IKB Blue as the visible system color, and ONE fixed layout: the S00 Series Cover. Switch `data-accent` on `<html>` to change palette (`indigo-porcelain` | `lemon-yellow` | `lemon-green` | `safety-orange`). The alt accents collapse to single-color (no separate highlight) — only Indigo Porcelain carries the cover-bar yellow.
+14. Keep the cover (S00) structure verbatim, replacing only the placeholders. For content pages, **copy a named snippet from the bottom of `assets/template.html`** as your starting point and adjust:
     - **P-METAPHOR** — concept + large 540px illustration
     - **P-LIST** — numbered list with 200px thumb illustrations per row
     - **P-COMPARE** — two-column before/after with 240px illustrations
@@ -91,13 +92,13 @@ Default no-text generation also runs conservative `auto-frame` after normalizati
     - **P-ACTION** — closing self-check with 200px illustration + options
 
     Read `references/layouts.md` for which snippet maps to which content shape, and `references/components.md` for the full type scale. Two hard rules from the reference system: **(a) "the larger, the lighter"** — display weights are 500, never 700+; **(b) body and lead are serif-zh, not sans**. Most content pages should pair text + small illustration. Every major generated illustration must be placed as `.evidence-figure` containing `.illust-frame`, so it sits natively inside the card instead of floating, shrinking, or sticking to the top. Add task-scoped CSS in the page's `<style>` only when necessary — do NOT add it back into the seed.
-14. Render:
+15. Render:
 
 ```bash
 node <skill-dir>/scripts/render.mjs <task-dir>
 ```
 
-15. **Validate before showing final results.** After rendering, run the validator by default unless the user explicitly says "先别跑校验，只看效果" or asks for an intentionally rough visual draft:
+16. **Validate before showing final results.** After rendering, run the validator by default unless the user explicitly says "先别跑校验，只看效果" or asks for an intentionally rough visual draft:
 
 ```bash
 node <skill-dir>/scripts/validate.mjs <task-dir>
@@ -105,7 +106,7 @@ node <skill-dir>/scripts/validate.mjs <task-dir>
 
 Fix every FAIL before final delivery. WARN is advisory: report important WARNs briefly, but do not block delivery unless the visual issue is obvious.
 
-16. Inspect the final PNGs. Run both image-only and full-page explanation checks, then check generated Chinese text accuracy, factual accuracy, readability, page rhythm, and series consistency. Show the user the rendered PNGs only after validation and inspection, with absolute paths and a short note summarizing validator status.
+17. Inspect the final PNGs. Run both image-only and full-page explanation checks, then check generated Chinese text accuracy, factual accuracy, readability, page rhythm, and series consistency. Show the user the rendered PNGs only after validation and inspection, with absolute paths and a short note summarizing validator status.
 
 ## Storyboard Contract
 
@@ -136,6 +137,14 @@ pages:
     visual_type: labeled-gpt-image
     metaphor: 一整句话被拆成积木块
     layout: annotated-canvas
+    image_slot:
+      html_wrapper: evidence-figure landscape
+      slot_px: 904x603
+      slot_ratio: 3:2
+      generator_ar: 4:3
+      generator_canvas: 1536x1024
+      subject_bbox: x=120-1416,y=128-896
+      fit: contain
 ```
 
 Hard rules:
@@ -162,9 +171,10 @@ Hard rules:
 - Illustration presence is not success. Every illustration-led page must visibly communicate a causal chain and pass both image-only and full-page explanation checks.
 - Generated illustrations explain one decisive visual moment. HTML completes exact causal chains, labels, definitions, and caveats.
 - Generate for the final image slot. Do not default every embedded illustration to 3:4.
+- Decide the final `image_slot` before writing or running any image prompt. Do not generate first and then hunt for a slot that happens to fit.
 - Match the generated image's physical canvas to the HTML slot before accepting it. Landscape GPT Image output is normally `1536x1024`; use `.evidence-figure.landscape` or another near-3:2 slot by default so `object-fit: contain` does not shrink it inside a shallow wide band.
 - Every generated illustration prompt must include both a percentage-based composition contract and a pixel margin contract for the actual output canvas.
-- Place generated content-page illustrations inside `.evidence-figure landscape|hero|wide|square|compact`; do not use a naked `.illust-frame` for major illustrations.
+- Place generated content-page illustrations inside `.evidence-figure landscape|hero|wide|square|portrait|compact`; do not use a naked `.illust-frame` for major illustrations.
 - Reuse a textual style anchor across the series. Use the first approved illustration as a reference only when the active generator supports reference images; the default local OpenAI-compatible wrapper does not.
 - When using GPT Image 2, visually inspect every generated Chinese label. Regenerate if any label is wrong, fuzzy, cramped, duplicated, or invented.
 

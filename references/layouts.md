@@ -80,6 +80,7 @@ Use these defaults:
 - Concept / metaphor evidence: `<figure class="evidence-figure hero"><div class="illust-frame wide-flow">...</div></figure>`
 - Wide workflow / comparison strip: `<figure class="evidence-figure wide"><div class="illust-frame wide-flow">...</div></figure>`
 - Square object / compact scene: `<figure class="evidence-figure square"><div class="illust-frame">...</div></figure>`
+- Tall mechanism / stacked scene: `<figure class="evidence-figure portrait"><div class="illust-frame">...</div></figure>`
 - Small support mark or action image: `<figure class="evidence-figure compact"><div class="illust-frame">...</div></figure>`
 
 Placement rules:
@@ -90,13 +91,28 @@ Placement rules:
 - If a generated image still feels pasted in, first adjust the frame class (`wide-flow`, `zoom-110`, `zoom-125`) and band height; only regenerate if labels or composition remain wrong.
 - Avoid task-specific CSS like `margin-top:-40px` or arbitrary absolute positioning. That fixes one card and breaks the next.
 
-### Step 3.5 — Make the generated image match the slot
+### Step 3.5 — Define the slot before generating
 
-Before generating, decide the final image slot shape:
+Before writing an image prompt, define the final `image_slot`. The slot decides the HTML wrapper, the approximate rendered size, the generator `--ar`, the expected physical canvas, and the pixel-safe subject box. Do not generate an image first and then pick a slot afterward.
+
+Minimum `image_slot` shape:
+
+```yaml
+image_slot:
+  html_wrapper: evidence-figure landscape
+  slot_px: 904x603
+  slot_ratio: 3:2
+  generator_ar: 4:3
+  generator_canvas: 1536x1024
+  subject_bbox: x=120-1416,y=128-896
+  fit: contain
+```
+
+Slot choice:
 
 - Normal generated concept/metaphor/mechanism image: generate `4:3` or `16:10`, then place in `.evidence-figure.landscape`. The local generator returns a `1536x1024` landscape image; the slot must stay close to 3:2 or the image will shrink.
 - Wide process/metaphor/comparison wells: use `.evidence-figure.wide` only for genuinely long horizontal diagrams or HTML-native diagrams. If the generated bitmap is `1536x1024`, prefer `.evidence-figure.landscape` unless you intentionally crop/enlarge after inspecting labels.
-- Tall standalone evidence: generate `3:4`, then place in a 480-560px vertical evidence well.
+- Tall standalone evidence: generate `3:4`, then place in `.evidence-figure.portrait` or another deliberate vertical evidence well.
 - Square objects: generate `1:1`, then use `.evidence-figure.square`, a side-by-side text/image module, or row thumbnails.
 - Row thumbnails or small mechanism marks: generate `1:1` or `4:3`, then place in 100-260px wells.
 
