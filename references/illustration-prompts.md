@@ -38,6 +38,81 @@ Text-led pages need small, supporting illustrations. Illustration-led pages can 
 
 The text content should still occupy at least 60% of the page's visual weight. If the illustration is louder than the title, shrink it.
 
+## Aspect Ratio and Cropping Contract
+
+Generate the image for its final slot, not for a generic square canvas.
+
+| Final slot | Use `--ar` | Prompt opening | Composition requirement |
+|---|---|---|---|
+| Wide workflow / process strip | `16:10` or `4:3` | `Generate a wide 16:10 Chinese educational illustration panel.` | Main diagram spans 82-90% of canvas width; no large empty margins |
+| Large concept evidence well | `4:3` | `Generate a wide 4:3 Chinese educational illustration panel.` | Main subject fills 72-84% of canvas width and 60-78% height |
+| Tall standalone mechanism | `3:4` | `Generate a clean 3:4 vertical Chinese educational illustration panel.` | Use only when the image itself is the main vertical evidence |
+| Inline icon / row thumbnail | `1:1` or `4:3` | `Generate a compact icon-like illustration.` | One object, centered, no labels unless essential |
+
+For content-page illustrations, avoid square-looking compositions unless the final HTML slot is square. A square drawing inside a wide slot will render too small. The local generator maps `4:3` to a landscape canvas; if your output log says `1024x1024` for a `4:3` request, stop and fix the generator before accepting the image.
+
+Always add this to `SCENE` for wide content-page illustrations:
+
+```text
+Fill the central 82-90% of the image width with the diagram. Keep only a narrow paper margin. Do not create a small centered diagram surrounded by empty paper.
+All labels must be horizontal and placed inside or directly below their modules.
+```
+
+If GPT Image 2 returns a valid but margin-heavy image, use the HTML class `.wide-flow`, `.zoom-110`, `.zoom-125`, or `.zoom-140` on `.illust-frame` after checking no labels are cropped.
+
+## Composition Contract
+
+Every generated illustration prompt must include a measurable subject-size contract. Do not rely on vague words like "large" or "balanced".
+
+Use one of these contracts:
+
+| Illustration role | Required content width | Required content height |
+|---|---:|---:|
+| Wide workflow / process / comparison | 88-94% of canvas | 50-64% of canvas |
+| Concept explanation / mechanism | 82-90% of canvas | 62-76% of canvas |
+| Metaphor scene | 84-92% of canvas | 58-72% of canvas |
+| Compact icon / action mark | 68-80% of canvas | 68-80% of canvas |
+
+Add this block to prompts:
+
+```text
+COMPOSITION CONTRACT
+The main diagram, including labels and arrows, must occupy {{role width}} of the canvas width and {{role height}} of the canvas height.
+Keep balanced margins on all sides.
+The visual center of the diagram must align with the canvas center.
+Do not create a small centered illustration surrounded by large blank paper.
+```
+
+After generation, the wrapper runs `auto-frame` by default: it detects the real content bounds, trims excessive paper margin conservatively, then re-centers the image on the original aspect-ratio canvas. Use `--no-auto-frame` only when a scene intentionally needs large blank space.
+
+## Native Placement Contract
+
+The generated bitmap should feel as if it was drawn for the card, not pasted onto the card afterward.
+
+Before writing the prompt, define:
+
+```yaml
+slot:
+  html_wrapper: evidence-figure hero | evidence-figure wide | evidence-figure compact
+  final_frame_height: 220-600px
+  final_frame_shape: wide | tall | square
+  optical_center: center | slightly_above_center
+```
+
+Prompt implications:
+
+- For `.evidence-figure.hero`, ask for a complete diagram that fills 74-86% of image width and 62-78% of image height.
+- For `.evidence-figure.wide`, ask for a horizontal diagram that fills 82-90% of image width and 46-62% of image height.
+- For `.evidence-figure.compact`, ask for one strong object or mini scene that fills 62-76% of the image area.
+- Tell the model to keep the main subject optically centered, not stuck to the top edge.
+- Avoid huge empty paper margins inside the generated image. The HTML page already provides the quiet paper space.
+
+Add this to `SCENE` when placement matters:
+
+```text
+Compose for a centered editorial evidence well. Keep the main subject optically centered in the canvas, with balanced top and bottom paper margin. The image should feel native to a 3:4 social card, not like a pasted screenshot.
+```
+
 ## Palette Lock (hard rule)
 
 Generated illustrations must match the card's `data-accent` palette. **Never** introduce a color that isn't in the system.
@@ -93,7 +168,7 @@ Never duplicate the outer card title inside the generated illustration. If the H
 Use this structure for GPT Image 2 via ZenMux:
 
 ```markdown
-Generate a clean 3:4 vertical Chinese educational illustration panel.
+Generate a clean {{wide 16:10 | wide 4:3 | 3:4 vertical}} Chinese educational illustration panel.
 
 PURPOSE
 The reader should understand: {{one mechanism or relationship}}.
@@ -114,6 +189,15 @@ Do not render an internal big title.
 
 SCENE
 {{specific objects and actions}}
+Fill the central {{82-90% for wide layouts | 70-82% for vertical layouts}} of the image with the diagram. Keep only a narrow paper margin.
+Compose for a centered editorial evidence well. Keep the main subject optically centered in the canvas, with balanced top and bottom paper margin.
+All labels must be horizontal and placed inside or directly below their modules.
+
+COMPOSITION CONTRACT
+The main diagram, including labels and arrows, must occupy {{role width}} of the canvas width and {{role height}} of the canvas height.
+Keep balanced margins on all sides.
+The visual center of the diagram must align with the canvas center.
+Do not create a small centered illustration surrounded by large blank paper.
 
 TEXT QUALITY
 All Chinese must be simplified Chinese, crisp, upright, readable, and typo-free.
@@ -176,9 +260,9 @@ python3 <skill-dir>/scripts/generate-labeled-illustration.py \
 ```
 
 The wrapper uses ZenMux as the OpenAI-compatible base URL and maps `ZENMUX_API_KEY` to `OPENAI_API_KEY` when needed.
-The wrapper normalizes the edge-connected image background to the exact paper color by default.
+The wrapper normalizes the edge-connected image background to the exact paper color by default, then runs conservative `auto-frame` to remove excessive blank paper margins. Disable only with `--no-auto-frame`.
 
-Use `--ar 3:4` when the image is a central standalone panel. Use `4:3`, `3:2`, or `16:10` only when the illustration is a smaller embedded well.
+Use `--ar 3:4` only when the image is a central vertical standalone panel. Use `16:10` or `4:3` for wide workflow, comparison, and metaphor wells. Use `1:1` only for inline icons or row thumbnails.
 
 ## Good Token Prompt Shape
 

@@ -68,8 +68,8 @@ function getSize(model, ar, quality) {
     ? { sq: "1024x1024", ls: "1792x1024", pt: "1024x1792" }
     : { sq: "1024x1024", ls: "1536x1024", pt: "1024x1536" };
   if (Math.abs(ratio - 1) < 0.1) return sizes.sq;
-  if (ratio > 1.5) return sizes.ls;
-  if (ratio < 0.67) return sizes.pt;
+  if (ratio > 1.1) return sizes.ls;
+  if (ratio < 0.9) return sizes.pt;
   return sizes.sq;
 }
 

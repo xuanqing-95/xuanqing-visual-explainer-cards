@@ -37,10 +37,10 @@ Cover-only specials:
 
 | Role | Class | Size | Weight | Tracking | Family |
 |---|---|---|---|---|---|
-| Series title | `.cover-series .series-zh` | 124px | 500 | +.04em | serif-zh |
-| Series accent letter ("AI") | `.series-zh .ai-accent` | 124px | 700 italic (IKB) | inherit | serif-en |
+| Series title | `.cover-series .series-zh` | 96px | 500 | +.04em | serif-zh |
+| Series accent letter ("AI") | `.series-zh .ai-accent` | 96px | 700 italic (IKB) | inherit | serif-en |
 | Big English term | `.cover-series .term-en` | **240px** | 900 | −.02em | serif-en |
-| Cover sub line | `.cover-series .term-zh` | 36px | 400 italic (IKB) | normal | serif-en |
+| Cover Chinese explanation | `.cover-series .term-zh` | 42px | 500 (IKB) | +.04em | serif-zh |
 | Cover question | `.cover-series .term-question` | 56px | 500 | +.02em | serif-zh |
 
 ### Chinese Title Length Bands
@@ -109,7 +109,15 @@ IKB color, 500 weight, inside serif body copy.
 
 | Class | Fit | Use |
 |---|---|---|
+| `.evidence-figure` | layout wrapper | Major generated illustrations; centers the visual in a stable evidence band |
+| `.evidence-figure.hero` | 500-600px band | Concept/metaphor page where image is the main explanation |
+| `.evidence-figure.wide` | 340-460px band | Workflow/comparison/metaphor strip |
+| `.evidence-figure.compact` | 220-300px band | Small support mark or action page image |
 | `.illust-frame` | contain | AI-generated illustrations — preserves whole image |
+| `.illust-frame.wide-flow` | contain + 118% enlargement | Wide process/metaphor/comparison diagrams that otherwise look too small |
+| `.illust-frame.zoom-110` | contain + 110% enlargement | Subtle enlargement after background normalization |
+| `.illust-frame.zoom-125` | contain + 125% enlargement | Margin-heavy generated images |
+| `.illust-frame.zoom-140` | contain + 140% enlargement | Very margin-heavy images; inspect labels before accepting |
 | `.frame-img` | cover | Photographic evidence — cropping is acceptable |
 
 `.illust-frame` heights (per `illustration-prompts.md`):
@@ -117,6 +125,21 @@ IKB color, 500 weight, inside serif body copy.
 - Concept page (image-led): 480-560px
 - List item thumb: 160-260px
 - Inline step mark: 100-160px
+
+For wide diagrams, prefer generating `16:10` or `4:3` images and placing them in `.illust-frame.wide-flow`. Avoid square images in wide slots; they leave the page looking underfilled.
+
+For content-page generated images, do not use `.illust-frame` alone as the outer layout block. Wrap it:
+
+```html
+<figure class="evidence-figure wide">
+  <div class="illust-frame wide-flow">
+    <img src="assets/page-03.png" alt="...">
+  </div>
+  <figcaption class="img-cap">Fig. 03 · caption</figcaption>
+</figure>
+```
+
+The wrapper makes the image optically centered and keeps the caption attached to the visual.
 
 Captions use `.img-cap` (18px mono, +.20em tracking, IKB color).
 

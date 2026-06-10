@@ -56,7 +56,7 @@ The second most important rule: **body and lead use serif-zh, not sans-zh.** San
 | Kicker / section-label | `.kicker` / `.section-label` | 21px | 500 | +.22em | mono |
 | Meta / label / caption / chrome | `.meta` / `.label` / `.img-cap` / `.chrome` | 18px | 500 | +.20em | mono |
 
-Cover-only: `.cover-series .term-en` = 240px Playfair weight 900; `.cover-series .term-zh` = 36px Playfair italic IKB; `.cover-series .term-question` = 56px serif-zh.
+Cover-only: `.cover-series .series-zh` = 96px serif-zh; `.cover-series .term-en` = 240px Playfair weight 900; `.cover-series .term-zh` = 42px serif-zh IKB Chinese explanation of the English term; `.cover-series .term-question` = 56px serif-zh.
 
 ### Fonts
 

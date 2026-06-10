@@ -17,20 +17,23 @@ pip install Pillow
 # or
 pip install -r requirements.txt
 
-# bun (required by baoyu-imagine)
-curl -fsSL https://bun.sh/install | bash
+# Image generation
+# Configure any OpenAI-compatible image endpoint:
+export OPENAI_API_KEY=...
+export OPENAI_BASE_URL=https://api.openai.com/v1
+# or use ZENMUX_API_KEY; the wrappers will map it automatically.
 ```
 
-### External Skills
+### Optional External Skills
 
-This skill relies on two companion skills for image generation:
+This skill does **not** require `baoyu-imagine` or `mz-image-gen`.
+
+By default, image generation uses the local `scripts/generate.mjs` OpenAI-compatible wrapper. The older companion skills can still be used manually if you prefer their CLIs, but they are not installation requirements.
 
 | Skill | Purpose |
 |---|---|
-| [baoyu-imagine](https://github.com/xuanqing-95/baoyu-imagine) | GPT Image 2 labeled illustration generation |
-| [mz-image-gen](https://github.com/xuanqing-95/mz-image-gen) | No-text fallback illustration generation |
-
-Install them into your skills directory before using this skill.
+| baoyu-imagine | Optional GPT Image 2 CLI backend |
+| mz-image-gen | Optional no-text fallback backend |
 
 ### Playwright Browsers
 
@@ -51,10 +54,10 @@ A complete worked example lives in [`examples/llmops/`](examples/llmops/) — so
 **Editorial-first** (Indigo Porcelain default). Magazine-style serif display + sans body + mono meta, dual-color palette (IKB Blue for system structure + Mustard Yellow for emphasis only).
 
 - 1 dual-color default (Indigo Porcelain) + 3 single-color alternates (Lemon Yellow, Lemon Green, Safety Orange)
-- 5 layout recipes (S00 series cover, S01 concept+image, S02 tall ledger, S03 before/after, S04 closing)
+- One fixed series cover plus content-page composition primitives
 - Single board size: 1080×1440 (3:4)
 - Hairline rules, off-white paper (`#fafaf8`), no shadows / gradients / rounded corners
-- 1 illustration per 5-page set (metaphor page only), not one per page
+- 3-4 supporting illustrations in a typical 5-page set, each placed inside `.evidence-figure`
 
 ## Structure
 
@@ -103,4 +106,13 @@ Per `SKILL.md` Step 15, the validator is opt-in: show the rendered PNGs first, a
 
 ## License
 
-See [LICENSE.txt](LICENSE.txt).
+This project is licensed under the **GNU Affero General Public License v3.0**.
+See [`LICENSE`](LICENSE) for the full license text and [`NOTICE.md`](NOTICE.md)
+for attribution notes.
+
+What this means in plain language:
+
+- You may use, modify, and redistribute this skill.
+- If you distribute a modified version, keep it under AGPL-3.0-compatible terms and provide the complete corresponding source code.
+- If you run a modified version as a network service for others, provide users access to the corresponding source code as required by AGPL-3.0.
+- Keep copyright notices, license text, and attribution notices intact.

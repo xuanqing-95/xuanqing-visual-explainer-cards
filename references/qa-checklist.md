@@ -30,6 +30,14 @@
 ## Composition
 
 - Is the illustration clearly visible and not merely decorative?
+- Does every major generated illustration use an `.evidence-figure` wrapper instead of a naked `.illust-frame`?
+- Does the illustration feel native to the card: optically centered, balanced top/bottom margin, not pasted in, not stuck to the top?
+- Does each generated illustration visually fill its intended slot, rather than appearing as a small centered diagram with excessive paper margin?
+- Did the prompt include a measurable composition contract for content width, content height, balanced margins, and visual centering?
+- Did the generation wrapper run default `auto-frame`, or was `--no-auto-frame` intentionally justified?
+- For wide workflow/comparison/metaphor pages, was the image generated as `16:10` or `4:3`, or enlarged with `.wide-flow` / `.zoom-*` after label-crop inspection?
+- Does the cover bar under `.term-en` follow the real English term width instead of stretching across the full row?
+- Is the cover `term-zh` a Chinese explanation of the English professional term, not an English subtitle?
 - Does HTML remain the dominant layout system?
 - Does active content fill at least 75% of the canvas height?
 - Does the evidence zone occupy 40%-60% height when an illustration is the main explanation?

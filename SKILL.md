@@ -11,9 +11,14 @@ This skill requires the following to be installed:
 |---|---|---|
 | Playwright (npm) | `npm install playwright` in the skill directory | Renders HTML to PNG |
 | Pillow (Python) | `pip install Pillow` | Background normalization for generated illustrations |
-| [baoyu-imagine](~/.openclaw/skills/baoyu-imagine) | OpenClaw skill | GPT Image 2 labeled illustration generation (Step 10) |
-| [mz-image-gen](~/.openclaw/skills/mz-image-gen) | OpenClaw skill | No-text fallback illustration generation (Step 11) |
-| bun | `curl -fsSL https://bun.sh/install \| bash` | Required by baoyu-imagine |
+
+Image generation uses this repository's local OpenAI-compatible wrapper:
+
+```bash
+export OPENAI_API_KEY=...
+export OPENAI_BASE_URL=https://api.openai.com/v1
+# or set ZENMUX_API_KEY; the wrapper maps it automatically.
+```
 
 > `<skill-dir>` in the commands below refers to the directory containing this SKILL.md file.
 
@@ -40,8 +45,7 @@ Default to a hybrid composition:
    ```bash
    python3 -c "import PIL" 2>/dev/null || pip install Pillow
    node -e "require('playwright')" 2>/dev/null || (cd <skill-dir> && npm install playwright)
-   test -f ~/.openclaw/skills/baoyu-imagine/scripts/main.ts || echo "WARN: baoyu-imagine skill not installed"
-   test -f ~/.openclaw/skills/mz-image-gen/scripts/main.py || echo "WARN: mz-image-gen skill not installed"
+   test -n "$OPENAI_API_KEY$ZENMUX_API_KEY" || echo "WARN: set OPENAI_API_KEY or ZENMUX_API_KEY before image generation"
    ```
 
 1. Read the source and verify unstable facts when necessary.
@@ -63,6 +67,7 @@ python3 <skill-dir>/scripts/generate-labeled-illustration.py \
 ```
 
 The script uses an OpenAI-compatible base URL (configurable via `OPENAI_BASE_URL`) and accepts `ZENMUX_API_KEY` as an `OPENAI_API_KEY` fallback when configured.
+It normalizes the paper background and runs conservative `auto-frame` by default so generated illustrations do not remain small inside a large blank canvas. Use `--no-auto-frame` only when intentionally preserving large blank space.
 
 11. Generate no-text fallback illustrations with:
 
@@ -74,6 +79,7 @@ python3 <skill-dir>/scripts/generate-illustration.py \
 ```
 
 The generation script normalizes the generated edge-connected background to the page paper color `#fafaf8` by default. Add `--remove-background` only for isolated objects or characters that must overlap HTML regions. Add `--skip-background-normalize` only when preserving an intentional scene background.
+Default no-text generation also runs conservative `auto-frame` after normalization. Use `--no-auto-frame` only when large blank space is part of the visual concept.
 
 12. Copy `assets/template.html` into the task directory as `index.html`. The template is an Editorial seed (Indigo Porcelain default) with serif display fonts, IKB Blue as the visible system color, and ONE fixed layout: the S00 Series Cover. Switch `data-accent` on `<html>` to change palette (`indigo-porcelain` | `lemon-yellow` | `lemon-green` | `safety-orange`). The alt accents collapse to single-color (no separate highlight) — only Indigo Porcelain carries the cover-bar yellow.
 13. Keep the cover (S00) structure verbatim, replacing only the placeholders. For content pages, **copy a named snippet from the bottom of `assets/template.html`** as your starting point and adjust:
@@ -84,7 +90,7 @@ The generation script normalizes the generated edge-connected background to the 
     - **P-QUOTE** — pull-quote + 420px supporting illustration
     - **P-ACTION** — closing self-check with 200px illustration + options
 
-    Read `references/layouts.md` for which snippet maps to which content shape, and `references/components.md` for the full type scale. Two hard rules from the reference system: **(a) "the larger, the lighter"** — display weights are 500, never 700+; **(b) body and lead are serif-zh, not sans**. Most content pages should pair text + small illustration (`.illust-frame` 130-560px depending on role). Add task-scoped CSS in the page's `<style>` only when necessary — do NOT add it back into the seed.
+    Read `references/layouts.md` for which snippet maps to which content shape, and `references/components.md` for the full type scale. Two hard rules from the reference system: **(a) "the larger, the lighter"** — display weights are 500, never 700+; **(b) body and lead are serif-zh, not sans**. Most content pages should pair text + small illustration. Every major generated illustration must be placed as `.evidence-figure` containing `.illust-frame`, so it sits natively inside the card instead of floating, shrinking, or sticking to the top. Add task-scoped CSS in the page's `<style>` only when necessary — do NOT add it back into the seed.
 14. Render:
 
 ```bash
@@ -138,6 +144,7 @@ Hard rules:
 - Page 1 of a recurring AI concept series should use the fixed `series-cover` layout unless the user asks for another cover format.
 - The cover must contain exactly four content units: series line, English technical term, Chinese explanation, and one scenario question.
 - Cover typography must be rendered in HTML, not generated into an image.
+- The cover's `term-zh` must be the Chinese explanation of `term-en`, not an English subtitle or slogan.
 - A core message must be a complete sentence with a subject, mechanism, and consequence. A keyword is not a message.
 - Introduce every necessary technical term with plain-language meaning on first appearance.
 - For every abstract definition, include at least one concrete example and one "why it matters" consequence in the card set.
@@ -154,7 +161,8 @@ Hard rules:
 - Illustration presence is not success. Every illustration-led page must visibly communicate a causal chain and pass both image-only and full-page explanation checks.
 - Generated illustrations explain one decisive visual moment. HTML completes exact causal chains, labels, definitions, and caveats.
 - Generate for the final image slot. Do not default every embedded illustration to 3:4.
-- Reuse a textual style anchor across the series. Use the first approved illustration as a reference only when the active generator supports reference images; the default `mz-image-gen` backend currently does not.
+- Place generated content-page illustrations inside `.evidence-figure hero|wide|compact`; do not use a naked `.illust-frame` for major illustrations.
+- Reuse a textual style anchor across the series. Use the first approved illustration as a reference only when the active generator supports reference images; the default local OpenAI-compatible wrapper does not.
 - When using GPT Image 2, visually inspect every generated Chinese label. Regenerate if any label is wrong, fuzzy, cramped, duplicated, or invented.
 
 ## Required References

@@ -1,8 +1,10 @@
 # Prompt Strategy Audit
 
-## Source Strengths Retained
+## External Patterns Reviewed
 
-### Guizang
+These notes record high-level design and prompting patterns reviewed during development. They are not a license to copy third-party code, template text, prompts, assets, or repository structure.
+
+### Editorial card systems
 
 - Expression comes before decoration.
 - Decide the image's evidence role and final slot before generation.
@@ -10,7 +12,7 @@
 - Preserve quiet zones and predictable crops for editorial integration.
 - Prompts should be short and role-specific.
 
-### Baoyu
+### Image-prompting systems
 
 - Separate meaning from style, rendering, palette, mood, and composition.
 - Select a visual strategy before prompting.

@@ -13,7 +13,7 @@ Use the cover skeleton in `assets/template.html` verbatim. Replace these placeho
 | `Day NN` | `Day 04` | top-right chrome |
 | Section label | `Indigo Porcelain` | small IKB tag with square mark |
 | `term-en` | `LLMOps` | huge serif English, mustard yellow bar underneath |
-| `term-zh` | `大模型运维体系` | IKB blue sub-line |
+| `term-zh` | `AI 代码编辑器` | Chinese explanation of the English technical term; do not use an English subtitle here |
 | `term-question` | `为什么同一个模型,别人用起来效果炸裂,你用起来平平无奇?` | open-ended hook |
 | `foot-tagline` | `LLMOPS · 从能跑到可控` | bottom-left tag |
 
@@ -21,6 +21,7 @@ Hard rules for the cover:
 - The mustard yellow bar under `term-en` is the **only** place mustard yellow appears in the entire card set.
 - The cover does NOT carry an illustration. The huge English term IS the visual.
 - `term-en` should fit on one line. If your term is >8 characters, switch to two lines or shorten.
+- `term-zh` must be the Chinese meaning/explanation of `term-en`, e.g. `AI 代码编辑器`, `上下文窗口`, `智能体`; it is not an English subtitle or slogan.
 - `term-question` is one open question, not a sentence summarizing the topic.
 
 ## Content Pages: Compose Fresh
@@ -69,6 +70,39 @@ This is the rule that prevents illustrations from taking over the page:
 
 The text content should still occupy at least 60% of the page's visual weight. If the illustration is louder than the title, shrink it.
 
+### Step 3.1 — Place the illustration as a native card element
+
+Do not drop generated images into a raw empty block and hope they look balanced. Every major generated illustration must sit inside an `.evidence-figure` wrapper so the image reads as part of the card, not as a pasted screenshot.
+
+Use these defaults:
+
+- Concept / metaphor evidence: `<figure class="evidence-figure hero"><div class="illust-frame wide-flow">...</div></figure>`
+- Wide workflow / comparison strip: `<figure class="evidence-figure wide"><div class="illust-frame wide-flow">...</div></figure>`
+- Small support mark or action image: `<figure class="evidence-figure compact"><div class="illust-frame">...</div></figure>`
+
+Placement rules:
+
+- The evidence block should sit between title and explanatory copy, vertically centered in its own band.
+- Do not align the image to the top of the available space. If the band has extra room, center the image optically.
+- Do not leave more than one-third of the evidence band as blank paper above or below the visual subject.
+- If a generated image still feels pasted in, first adjust the frame class (`wide-flow`, `zoom-110`, `zoom-125`) and band height; only regenerate if labels or composition remain wrong.
+- Avoid task-specific CSS like `margin-top:-40px` or arbitrary absolute positioning. That fixes one card and breaks the next.
+
+### Step 3.5 — Make the generated image match the slot
+
+Before generating, decide the final image slot shape:
+
+- Wide process/metaphor/comparison wells: generate `16:10` or `4:3`, then place in `.illust-frame.wide-flow`.
+- Tall standalone evidence: generate `3:4`, then place in a 480-560px vertical evidence well.
+- Row thumbnails or small mechanism marks: generate `1:1` or `4:3`, then place in 100-260px wells.
+
+Do not put a square generated image into a wide workflow slot unless you intentionally add `.zoom-125` or `.zoom-140` and verify no label is cropped. If the image looks correct but too small because of safe margins, use these classes on the frame:
+
+- `.wide-flow` for wide workflow diagrams that should fill the available width.
+- `.zoom-110` for a subtle crop-safe enlargement.
+- `.zoom-125` for margin-heavy generated images.
+- `.zoom-140` only when the image has very large paper margins and all labels remain visible.
+
 ### Step 4 — Use only primitives from the seed
 
 Build with these classes (all defined in `assets/template.html`):
@@ -82,6 +116,8 @@ Build with these classes (all defined in `assets/template.html`):
 - `.lead` (28px serif) / `.body` (24px serif) — body copy
 - `.kicker` (21px mono) / `.meta` `.label` (18px mono) — small meta text
 - `.illust-frame` — AI-generated illustrations (object-fit: contain)
+- `.evidence-figure` — stable wrapper for generated illustrations; use for every major content-page illustration
+- `.illust-frame.wide-flow`, `.zoom-110`, `.zoom-125`, `.zoom-140` — controlled enlargement for generated images with too much paper margin
 - `.frame-img` — photographic evidence (object-fit: cover)
 - `.hr-accent` (IKB) / `.hr-hairline` (grey) — dividers
 - `.img-cap` — IKB mono caption under illustrations

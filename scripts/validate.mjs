@@ -54,6 +54,23 @@ const results = await page.locator(".poster").evaluateAll((cards, mode) => {
       failures.push(`R1 overflow ${card.scrollWidth}×${card.scrollHeight} (board ${card.clientWidth}×${card.clientHeight})`);
     }
 
+    // R1b — content padding breach: any single display element extending into
+    // the safe-area padding (within 24px of board edge) on a 1080×1440 xhs board.
+    // Catches "the term is so big it touches the edge" cases that R1 misses
+    // because scrollWidth still fits within the board.
+    {
+      const cardRect = card.getBoundingClientRect();
+      const SAFE = 24; // minimum gap from board edge
+      card.querySelectorAll(".term-en, .h-display, .h-xl, .series-zh, .pullquote").forEach((el) => {
+        const r = el.getBoundingClientRect();
+        const leftGap = r.left - cardRect.left;
+        const rightGap = (cardRect.left + cardRect.width) - r.right;
+        if (leftGap < SAFE || rightGap < SAFE) {
+          failures.push(`R1b ${el.className} breaches safe area (left ${Math.round(leftGap)}px / right ${Math.round(rightGap)}px, min ${SAFE}px)`);
+        }
+      });
+    }
+
     // R2 — type caps: .h-display / .h-xl ≤ 2 lines on xhs, ≤ 132px (display) / 100px (xl)
     const isXhs = card.classList.contains("xhs");
     card.querySelectorAll(".h-display, .h-xl, .series-zh").forEach((el) => {

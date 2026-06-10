@@ -11,8 +11,8 @@
     /* =========================================================
        Visual Explainer Cards — Editorial Seed (Indigo Porcelain)
        ---------------------------------------------------------
-       Type scale + weights ported from the reference Guizang
-       editorial card system. Hard rule: "the larger, the lighter".
+       Type scale + weights designed for an editorial knowledge-card
+       system. Hard rule: "the larger, the lighter".
        Display sizes use weight 500 (not 700). Body uses serif-zh
        (not sans-zh).
 
@@ -104,10 +104,10 @@
     .poster{position:relative;background:var(--paper);color:var(--ink);overflow:hidden;isolation:isolate;}
     .poster.xhs{width:1080px;height:1440px;}
     .poster figure{margin:0;}
-    /* Content padding ported from reference: 96px top/bottom, 88px sides */
+    /* Content padding: 96px top/bottom, 88px sides */
     .poster.xhs .content{padding:96px 88px;position:relative;width:100%;height:100%;display:flex;flex-direction:column;z-index:2;}
 
-    /* ---------- 7. Typography roles (ported from reference) ----------
+    /* ---------- 7. Typography roles ----------
        The larger, the lighter. Display weights are 500, not 700.
        Body family is serif-zh, not sans-zh. Tracking on display is
        positive (+.03 to +.04em); kicker/meta tracking is +.20em+.
@@ -231,6 +231,26 @@
       overflow:hidden;margin:0;
     }
     .illust-frame img{width:100%;height:100%;object-fit:contain;display:block;}
+    .illust-frame.zoom-110 img{width:110%;height:110%;max-width:none;max-height:none;}
+    .illust-frame.zoom-125 img{width:125%;height:125%;max-width:none;max-height:none;}
+    .illust-frame.zoom-140 img{width:140%;height:140%;max-width:none;max-height:none;}
+    .illust-frame.wide-flow img{width:118%;height:118%;max-width:none;max-height:none;}
+    .illust-frame.wide-flow.zoom-110 img{width:125%;height:125%;}
+    .illust-frame.wide-flow.zoom-125 img{width:140%;height:140%;}
+    .illust-frame.wide-flow.zoom-140 img{width:155%;height:155%;}
+    .evidence-figure{
+      width:100%;display:flex;flex-direction:column;justify-content:center;
+      margin:0;min-height:420px;
+    }
+    .evidence-figure .illust-frame{
+      height:100%;min-height:420px;max-height:560px;
+    }
+    .evidence-figure.compact{min-height:260px;}
+    .evidence-figure.compact .illust-frame{min-height:220px;max-height:300px;}
+    .evidence-figure.wide{min-height:380px;}
+    .evidence-figure.wide .illust-frame{min-height:340px;max-height:460px;}
+    .evidence-figure.hero{min-height:520px;}
+    .evidence-figure.hero .illust-frame{min-height:500px;max-height:600px;}
     .frame-img{position:relative;overflow:hidden;background:var(--paper-2);}
     .frame-img img{width:100%;height:100%;object-fit:cover;display:block;}
     .img-cap{
@@ -243,10 +263,10 @@
     /* Cover composition (top to bottom):
          .chrome             — IKB hairline + IKB category + day no.
          .section-label      — small IKB tag with square
-         .series-zh          — large serif series title (uses .h-display 124px)
+         .series-zh          — medium-large serif series title (96px)
          hr-hairline         — quiet divider
          .term-en            — huge serif English term (240px) with yellow bar
-         .term-zh            — italic Playfair English sub (.h-sub) — IKB recolor
+         .term-zh            — Chinese explanation of the English term
          .term-question      — serif Chinese question (.h-md size)
          .grow               — pushes foot down
          .foot               — IKB hairline + tag + day no.
@@ -254,7 +274,7 @@
     */
     .cover-series .series-zh{
       font-family:var(--serif-zh);font-weight:500;
-      font-size:124px;line-height:1.06;letter-spacing:.04em;
+      font-size:96px;line-height:1.12;letter-spacing:.04em;
       color:var(--ink);margin:0;
     }
     .cover-series .series-zh .ai-accent{
@@ -263,6 +283,7 @@
     }
     .cover-series .term-en{
       position:relative;display:inline-block;
+      align-self:flex-start;width:max-content;max-width:100%;
       font-family:var(--serif-en);font-weight:900;
       font-size:240px;line-height:1;letter-spacing:-.02em;
       color:var(--ink);margin:0;
@@ -272,8 +293,9 @@
       height:56px;background:var(--highlight);z-index:-1;  /* ← yellow bar (cover only) */
     }
     .cover-series .term-zh{
-      font-family:var(--serif-en);font-style:italic;font-weight:400;
-      font-size:36px;line-height:1.3;color:var(--accent);margin:0;
+      font-family:var(--serif-zh);font-style:normal;font-weight:500;
+      font-size:42px;line-height:1.35;letter-spacing:.04em;
+      color:var(--accent);margin:0;
     }
     .cover-series .term-question{
       font-family:var(--serif-zh);font-weight:500;
@@ -339,7 +361,7 @@
         <hr class="hr-hairline">
         <div style="display:flex;flex-direction:column;gap:18px;">
           <p class="term-en">TERM</p>
-          <p class="term-zh">A working subtitle in English</p>
+          <p class="term-zh">中文专业解释</p>
         </div>
         <p class="term-question">一个具体的用户场景问题,引出本日主题。</p>
         <div class="grow"></div>
