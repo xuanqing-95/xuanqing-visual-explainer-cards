@@ -76,8 +76,10 @@ Do not drop generated images into a raw empty block and hope they look balanced.
 
 Use these defaults:
 
+- Default generated content-page image: `<figure class="evidence-figure landscape"><div class="illust-frame">...</div></figure>`
 - Concept / metaphor evidence: `<figure class="evidence-figure hero"><div class="illust-frame wide-flow">...</div></figure>`
 - Wide workflow / comparison strip: `<figure class="evidence-figure wide"><div class="illust-frame wide-flow">...</div></figure>`
+- Square object / compact scene: `<figure class="evidence-figure square"><div class="illust-frame">...</div></figure>`
 - Small support mark or action image: `<figure class="evidence-figure compact"><div class="illust-frame">...</div></figure>`
 
 Placement rules:
@@ -92,8 +94,10 @@ Placement rules:
 
 Before generating, decide the final image slot shape:
 
-- Wide process/metaphor/comparison wells: generate `16:10` or `4:3`, then place in `.illust-frame.wide-flow`.
+- Normal generated concept/metaphor/mechanism image: generate `4:3` or `16:10`, then place in `.evidence-figure.landscape`. The local generator returns a `1536x1024` landscape image; the slot must stay close to 3:2 or the image will shrink.
+- Wide process/metaphor/comparison wells: use `.evidence-figure.wide` only for genuinely long horizontal diagrams or HTML-native diagrams. If the generated bitmap is `1536x1024`, prefer `.evidence-figure.landscape` unless you intentionally crop/enlarge after inspecting labels.
 - Tall standalone evidence: generate `3:4`, then place in a 480-560px vertical evidence well.
+- Square objects: generate `1:1`, then use `.evidence-figure.square`, a side-by-side text/image module, or row thumbnails.
 - Row thumbnails or small mechanism marks: generate `1:1` or `4:3`, then place in 100-260px wells.
 
 Do not put a square generated image into a wide workflow slot unless you intentionally add `.zoom-125` or `.zoom-140` and verify no label is cropped. If the image looks correct but too small because of safe margins, use these classes on the frame:

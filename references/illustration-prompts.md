@@ -51,6 +51,27 @@ Generate the image for its final slot, not for a generic square canvas.
 
 For content-page illustrations, avoid square-looking compositions unless the final HTML slot is square. A square drawing inside a wide slot will render too small. The local generator maps `4:3` to a landscape canvas; if your output log says `1024x1024` for a `4:3` request, stop and fix the generator before accepting the image.
 
+## Slot Fit Contract (hard rule)
+
+The generated bitmap and the HTML slot must have compatible aspect ratios. Otherwise `object-fit: contain` preserves the whole image by shrinking it, which makes the illustration look small even when the prompt asked for a large subject.
+
+The local GPT Image wrapper currently maps image requests to these physical canvases:
+
+| Requested role | Generator output | Natural aspect | Use this HTML slot |
+|---|---:|---:|---|
+| `4:3`, `16:10`, or any landscape request | `1536x1024` | `3:2` | `.evidence-figure.landscape` or `.evidence-figure.hero` |
+| `1:1` compact mark | `1024x1024` | `1:1` | `.evidence-figure.square`, side-by-side modules, or row thumbnails |
+| `3:4` vertical mechanism | `1024x1536` | `2:3` | a tall evidence well or a left/right text-image composition |
+
+Do **not** put a `1536x1024` generated illustration into a shallow full-width strip whose frame is much wider than `3:2`. It will be height-constrained and shrink horizontally. Use `.evidence-figure.landscape` for the normal generated-image case; reserve `.evidence-figure.wide` for HTML-native wide diagrams or genuinely horizontal generated diagrams where labels stay readable after enlargement.
+
+Layout choice:
+
+- Landscape generated image: stack it between title and copy; use `.evidence-figure.landscape` when the picture carries the explanation.
+- Square generated image: use it as a centered 520-560px object, or put it beside text / inside a grid. Do not stretch it across a wide band.
+- Long horizontal workflow: place image above/below text, not in a left-right split. The flow should read left-to-right inside the image.
+- Tall mechanism: use a vertical evidence well or pair it with short side text. Do not force it into a wide strip.
+
 Always add this to `SCENE` for wide content-page illustrations:
 
 ```text
@@ -83,6 +104,29 @@ The visual center of the diagram must align with the canvas center.
 Do not create a small centered illustration surrounded by large blank paper.
 ```
 
+## Pixel Margin Contract (hard rule)
+
+When the generator output size is known, include pixel margins as well as percentages. Percentages tell the model the scale; pixel margins make the safe area concrete.
+
+Use one of these contracts:
+
+| Output canvas | Use case | Subject bounding box | Edge margin rule |
+|---|---|---|---|
+| `1536x1024` landscape | concept, metaphor, mechanism | x `120-1416`, y `128-896` | left/right 120px, top/bottom 128px |
+| `1536x1024` landscape | long workflow / comparison | x `72-1464`, y `200-824` | left/right 72px, top/bottom about 200px |
+| `1024x1024` square | compact object / icon scene | x `112-912`, y `112-912` | 112px on all sides |
+| `1024x1536` portrait | vertical mechanism | x `112-912`, y `180-1356` | left/right 112px, top/bottom 180px |
+
+Add this block immediately after `COMPOSITION CONTRACT`:
+
+```text
+PIXEL MARGIN CONTRACT
+The full image canvas is {{1536x1024 | 1024x1024 | 1024x1536}}.
+Place all important objects, arrows, and readable labels inside x={{left}}-{{right}} and y={{top}}-{{bottom}}.
+The main subject should touch this safe box visually; do not leave an extra blank ring inside it.
+No important label may sit outside this box.
+```
+
 After generation, the wrapper runs `auto-frame` by default: it detects the real content bounds, trims excessive paper margin conservatively, then re-centers the image on the original aspect-ratio canvas. Use `--no-auto-frame` only when a scene intentionally needs large blank space.
 
 ## Native Placement Contract
@@ -93,7 +137,7 @@ Before writing the prompt, define:
 
 ```yaml
 slot:
-  html_wrapper: evidence-figure hero | evidence-figure wide | evidence-figure compact
+  html_wrapper: evidence-figure landscape | evidence-figure hero | evidence-figure wide | evidence-figure square | evidence-figure compact
   final_frame_height: 220-600px
   final_frame_shape: wide | tall | square
   optical_center: center | slightly_above_center
@@ -101,8 +145,10 @@ slot:
 
 Prompt implications:
 
+- For `.evidence-figure.landscape`, ask for a `1536x1024` landscape panel and use the landscape pixel contract. This is the default for generated content-page illustrations.
 - For `.evidence-figure.hero`, ask for a complete diagram that fills 74-86% of image width and 62-78% of image height.
 - For `.evidence-figure.wide`, ask for a horizontal diagram that fills 82-90% of image width and 46-62% of image height.
+- For `.evidence-figure.square`, ask for one centered square scene or object that fills the square safe box.
 - For `.evidence-figure.compact`, ask for one strong object or mini scene that fills 62-76% of the image area.
 - Tell the model to keep the main subject optically centered, not stuck to the top edge.
 - Avoid huge empty paper margins inside the generated image. The HTML page already provides the quiet paper space.
@@ -198,6 +244,12 @@ The main diagram, including labels and arrows, must occupy {{role width}} of the
 Keep balanced margins on all sides.
 The visual center of the diagram must align with the canvas center.
 Do not create a small centered illustration surrounded by large blank paper.
+
+PIXEL MARGIN CONTRACT
+The full image canvas is {{1536x1024 | 1024x1024 | 1024x1536}}.
+Place all important objects, arrows, and readable labels inside x={{left}}-{{right}} and y={{top}}-{{bottom}}.
+The main subject should touch this safe box visually; do not leave an extra blank ring inside it.
+No important label may sit outside this box.
 
 TEXT QUALITY
 All Chinese must be simplified Chinese, crisp, upright, readable, and typo-free.

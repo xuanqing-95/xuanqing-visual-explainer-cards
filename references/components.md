@@ -110,8 +110,10 @@ IKB color, 500 weight, inside serif body copy.
 | Class | Fit | Use |
 |---|---|---|
 | `.evidence-figure` | layout wrapper | Major generated illustrations; centers the visual in a stable evidence band |
+| `.evidence-figure.landscape` | 3:2 natural slot | Default slot for GPT Image landscape output (`1536x1024`) so the image does not shrink inside an overly wide band |
 | `.evidence-figure.hero` | 500-600px band | Concept/metaphor page where image is the main explanation |
 | `.evidence-figure.wide` | 340-460px band | Workflow/comparison/metaphor strip |
+| `.evidence-figure.square` | 1:1 centered 520-560px slot | Square object or compact scene that should not be stretched across the full card width |
 | `.evidence-figure.compact` | 220-300px band | Small support mark or action page image |
 | `.illust-frame` | contain | AI-generated illustrations — preserves whole image |
 | `.illust-frame.wide-flow` | contain + 118% enlargement | Wide process/metaphor/comparison diagrams that otherwise look too small |
@@ -126,13 +128,15 @@ IKB color, 500 weight, inside serif body copy.
 - List item thumb: 160-260px
 - Inline step mark: 100-160px
 
-For wide diagrams, prefer generating `16:10` or `4:3` images and placing them in `.illust-frame.wide-flow`. Avoid square images in wide slots; they leave the page looking underfilled.
+For normal generated content-page diagrams, prefer `.evidence-figure.landscape`: the local generator outputs landscape requests as `1536x1024`, so a natural 3:2 slot prevents `object-fit: contain` from shrinking the picture. Use `.evidence-figure.wide` only when the final visual is truly a long strip or an HTML-native diagram.
+
+Avoid square images in wide slots; they leave the page looking underfilled. Put square images in `.evidence-figure.square`, a side-by-side module, or row thumbnails.
 
 For content-page generated images, do not use `.illust-frame` alone as the outer layout block. Wrap it:
 
 ```html
-<figure class="evidence-figure wide">
-  <div class="illust-frame wide-flow">
+<figure class="evidence-figure landscape">
+  <div class="illust-frame">
     <img src="assets/page-03.png" alt="...">
   </div>
   <figcaption class="img-cap">Fig. 03 · caption</figcaption>

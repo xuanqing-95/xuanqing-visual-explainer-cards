@@ -34,6 +34,8 @@
 - Does the illustration feel native to the card: optically centered, balanced top/bottom margin, not pasted in, not stuck to the top?
 - Does each generated illustration visually fill its intended slot, rather than appearing as a small centered diagram with excessive paper margin?
 - Did the prompt include a measurable composition contract for content width, content height, balanced margins, and visual centering?
+- Did the prompt include a pixel margin contract for the actual generator output size (`1536x1024`, `1024x1024`, or `1024x1536`)?
+- Does the HTML slot match the generated image's physical aspect ratio, e.g. `1536x1024` landscape output placed in `.evidence-figure.landscape` or another near-3:2 slot instead of a shallow wide band?
 - Did the generation wrapper run default `auto-frame`, or was `--no-auto-frame` intentionally justified?
 - For wide workflow/comparison/metaphor pages, was the image generated as `16:10` or `4:3`, or enlarged with `.wide-flow` / `.zoom-*` after label-crop inspection?
 - Does the cover bar under `.term-en` follow the real English term width instead of stretching across the full row?

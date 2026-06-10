@@ -162,7 +162,9 @@ Hard rules:
 - Illustration presence is not success. Every illustration-led page must visibly communicate a causal chain and pass both image-only and full-page explanation checks.
 - Generated illustrations explain one decisive visual moment. HTML completes exact causal chains, labels, definitions, and caveats.
 - Generate for the final image slot. Do not default every embedded illustration to 3:4.
-- Place generated content-page illustrations inside `.evidence-figure hero|wide|compact`; do not use a naked `.illust-frame` for major illustrations.
+- Match the generated image's physical canvas to the HTML slot before accepting it. Landscape GPT Image output is normally `1536x1024`; use `.evidence-figure.landscape` or another near-3:2 slot by default so `object-fit: contain` does not shrink it inside a shallow wide band.
+- Every generated illustration prompt must include both a percentage-based composition contract and a pixel margin contract for the actual output canvas.
+- Place generated content-page illustrations inside `.evidence-figure landscape|hero|wide|square|compact`; do not use a naked `.illust-frame` for major illustrations.
 - Reuse a textual style anchor across the series. Use the first approved illustration as a reference only when the active generator supports reference images; the default local OpenAI-compatible wrapper does not.
 - When using GPT Image 2, visually inspect every generated Chinese label. Regenerate if any label is wrong, fuzzy, cramped, duplicated, or invented.
 
