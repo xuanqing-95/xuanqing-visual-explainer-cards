@@ -97,15 +97,15 @@ Default no-text generation also runs conservative `auto-frame` after normalizati
 node <skill-dir>/scripts/render.mjs <task-dir>
 ```
 
-15. **Show first, validate on request.** Show the user the rendered PNGs (absolute paths) with a one-sentence summary. Ask once: "先你自己看,还是我先跑核查?" (Review first, or auto-check?) Only run the validator if the user asks:
+15. **Validate before showing final results.** After rendering, run the validator by default unless the user explicitly says "先别跑校验，只看效果" or asks for an intentionally rough visual draft:
 
 ```bash
 node <skill-dir>/scripts/validate.mjs <task-dir>
 ```
 
-Fix every FAIL before final delivery. WARN is advisory.
+Fix every FAIL before final delivery. WARN is advisory: report important WARNs briefly, but do not block delivery unless the visual issue is obvious.
 
-16. Inspect the final PNGs. Run both image-only and full-page explanation checks, then check generated Chinese text accuracy, factual accuracy, readability, page rhythm, and series consistency.
+16. Inspect the final PNGs. Run both image-only and full-page explanation checks, then check generated Chinese text accuracy, factual accuracy, readability, page rhythm, and series consistency. Show the user the rendered PNGs only after validation and inspection, with absolute paths and a short note summarizing validator status.
 
 ## Storyboard Contract
 

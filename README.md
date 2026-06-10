@@ -102,7 +102,7 @@ xuanqing-visual-explainer-cards/
 - **R6** Mode identity — Editorial mode requires serif loaded; Swiss mode (`data-mode="swiss"`) rejects serif + requires weight ≤300 at ≥72px
 - **R7** Figure margin — browser-default `<figure>` margins not reset
 
-Per `SKILL.md` Step 15, the validator is opt-in: show the rendered PNGs first, ask the user whether to auto-check.
+Per `SKILL.md` Step 15, the validator runs by default after rendering and before final delivery. Skip it only when the user explicitly asks to see an unvalidated visual draft first.
 
 ## License
 
