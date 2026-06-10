@@ -1,5 +1,5 @@
 ---
-name: visual-explainer-cards
+name: xuanqing-visual-explainer-cards
 description: Create illustrated Xiaohongshu/Rednote knowledge-card series that combine GPT Image 2 explanatory illustrations with editorial HTML layout (serif display + IKB Blue structure + Mustard Yellow emphasis). Use when turning abstract concepts, tutorials, AI knowledge, product mechanisms, comparisons, or educational content into clear 3:4 social cards with small in-image Chinese labels, accurate outer typography, reusable layouts, and automated validation. Use this skill whenever the user mentions creating social cards, knowledge posts, visual explanations, educational infographics, Xiaohongshu/Rednote content, or illustrated explainer series — even if they don't explicitly ask for "visual explainer cards."
 ---
 

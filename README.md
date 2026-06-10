@@ -41,7 +41,7 @@ npx playwright install chromium
 ## Quick Start
 
 ```
-Use $visual-explainer-cards to turn "Token 是什么" into an illustrated Xiaohongshu knowledge-card series.
+Use $xuanqing-visual-explainer-cards to turn "Token 是什么" into an illustrated Xiaohongshu knowledge-card series.
 ```
 
 A complete worked example lives in [`examples/llmops/`](examples/llmops/) — source, storyboard, prompts, HTML, and rendered output for a 5-page LLMOps knowledge-card series.
@@ -59,7 +59,7 @@ A complete worked example lives in [`examples/llmops/`](examples/llmops/) — so
 ## Structure
 
 ```
-visual-explainer-cards/
+xuanqing-visual-explainer-cards/
 ├── SKILL.md                                # Skill instructions (Core Workflow)
 ├── README.md
 ├── assets/template.html                    # Editorial HTML seed (Indigo Porcelain)

@@ -1,6 +1,6 @@
 # Example · LLMOps · Day 04
 
-完整跑通 visual-explainer-cards 的样例 —— 把"每天吃透一个 AI 知识点"系列的 Day 04 LLMOps 内容做成 5 张小红书知识卡。
+完整跑通 xuanqing-visual-explainer-cards 的样例 —— 把"每天吃透一个 AI 知识点"系列的 Day 04 LLMOps 内容做成 5 张小红书知识卡。
 
 ## 内容
 
