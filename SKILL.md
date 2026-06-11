@@ -206,13 +206,3 @@ visual-cards/<slug>/
 ```
 
 Keep prompts and source files so the result can be revised and reproduced.
-
-## Server 模式兼容
-
-当环境变量 `XHS_PIPELINE_MODE=server` 存在时，本 Skill 可以被 XHS Pipeline 的 Skill Runtime Contract v2 调用。平台契约由 `skill-server` 维护；本 Skill 不复制平台协议、不写 Supabase、不处理积分、价格表或 API Key。
-
-Server 模式下仍然使用本 Skill 的核心工作流：读取输入内容，建立 beginner brief 和 storyboard，生成 prompts/assets/index.html，渲染并校验最终 3:4 小红书知识卡。标签只作为理解主题的上下文，不要画进卡片。
-
-需要调用付费图片模型时，使用运行时提供的 `XHS_IMAGE_GENERATOR`；最终可上传图片放入运行时指定的 `output/` 目录。
-
-环境变量 `XHS_PIPELINE_MODE` 不存在时，保持本 Skill 前面所有章节的原有个人模式行为。
