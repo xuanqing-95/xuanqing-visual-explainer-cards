@@ -49,16 +49,17 @@ Default to a hybrid composition:
    ```
 
 1. Read the source and verify unstable facts when necessary.
-2. Build a beginner explanation brief using `references/beginner-explanation.md`. Do not begin layout work until the concept can be explained without jargon.
-3. Create `storyboard.yaml` before designing. Give each page one message and one visual role.
-4. For recurring AI knowledge series, make page 1 a fixed `series-cover`: series line, English term, Chinese explanation, and one user-scenario question. Do not generate a cover illustration unless the user explicitly asks.
-5. Add a page-rhythm plan before coding: first list the source's natural message units and resulting page count, then list each content page's silhouette and evidence type. Use varied silhouettes after the cover; in longer sets, avoid repeating the same page shape back to back.
-6. Route each content page using `references/visual-routing.md`.
-7. The cover (page 1) uses the fixed S00 layout in `references/layouts.md`. For pages 2 onwards, do NOT pick a pre-named recipe — read `references/layouts.md` to choose a layout pattern based on the content shape, and compose the page fresh from primitives.
-8. For every illustration-led page, define `image_slot` before writing any image prompt. The slot must state the final HTML wrapper, slot dimensions, slot ratio, generator aspect ratio, expected output canvas, and subject bounding box. Use `references/illustration-prompts.md` as the slot registry.
-9. Choose one illustration mode using `references/illustration-prompts.md`: `labeled-gpt-image`, `html-label-overlay`, or `no-text`.
-10. For the default `labeled-gpt-image` mode, write a compact GPT Image 2 prompt derived from `image_slot`, with 3-8 exact in-image labels and no duplicate card title inside the illustration.
-11. Generate labeled GPT Image 2 illustrations using the `--ar` from `image_slot.generator_ar`:
+2. Split the source into `content_source` and `publish_metadata` before storyboarding. Lines under `标签:` / `Tags:` / `Hashtags:` and standalone hashtag lines such as `#AI学习 #TTS` are publish metadata only. They must not become page messages, cover text, footer text, illustration labels, captions, or generated-image prompt text.
+3. Build a beginner explanation brief using `references/beginner-explanation.md`. Do not begin layout work until the concept can be explained without jargon.
+4. Create `storyboard.yaml` before designing. Give each page one message and one visual role. Keep user-provided hashtags under `source_tags`, outside `pages`.
+5. For recurring AI knowledge series, make page 1 a fixed `series-cover`: series line, English term, Chinese explanation, and one user-scenario question. Do not generate a cover illustration unless the user explicitly asks.
+6. Add a page-rhythm plan before coding: first list the source's natural message units and resulting page count, then list each content page's silhouette and evidence type. Use varied silhouettes after the cover; in longer sets, avoid repeating the same page shape back to back.
+7. Route each content page using `references/visual-routing.md`.
+8. The cover (page 1) uses the fixed S00 layout in `references/layouts.md`. For pages 2 onwards, do NOT pick a pre-named recipe — read `references/layouts.md` to choose a layout pattern based on the content shape, and compose the page fresh from primitives.
+9. For every illustration-led page, define `image_slot` before writing any image prompt. The slot must state the final HTML wrapper, slot dimensions, slot ratio, generator aspect ratio, expected output canvas, and subject bounding box. Use `references/illustration-prompts.md` as the slot registry.
+10. Choose one illustration mode using `references/illustration-prompts.md`: `labeled-gpt-image`, `html-label-overlay`, or `no-text`.
+11. For the default `labeled-gpt-image` mode, write a compact GPT Image 2 prompt derived from `image_slot`, with 3-8 exact in-image labels and no duplicate card title inside the illustration. Never include `source_tags` or any text beginning with `#`.
+12. Generate labeled GPT Image 2 illustrations using the `--ar` from `image_slot.generator_ar`:
 
 ```bash
 python3 <skill-dir>/scripts/generate-labeled-illustration.py \
@@ -70,7 +71,7 @@ python3 <skill-dir>/scripts/generate-labeled-illustration.py \
 The script uses an OpenAI-compatible base URL (configurable via `OPENAI_BASE_URL`) and accepts `ZENMUX_API_KEY` as an `OPENAI_API_KEY` fallback when configured.
 It normalizes the paper background and runs conservative `auto-frame` by default so generated illustrations do not remain small inside a large blank canvas. Use `--no-auto-frame` only when intentionally preserving large blank space.
 
-12. Generate no-text fallback illustrations with the `--ar` from `image_slot.generator_ar`:
+13. Generate no-text fallback illustrations with the `--ar` from `image_slot.generator_ar`:
 
 ```bash
 python3 <skill-dir>/scripts/generate-illustration.py \
@@ -82,8 +83,8 @@ python3 <skill-dir>/scripts/generate-illustration.py \
 The generation script normalizes the generated edge-connected background to the page paper color `#fafaf8` by default. Add `--remove-background` only for isolated objects or characters that must overlap HTML regions. Add `--skip-background-normalize` only when preserving an intentional scene background.
 Default no-text generation also runs conservative `auto-frame` after normalization. Use `--no-auto-frame` only when large blank space is part of the visual concept.
 
-13. Copy `assets/template.html` into the task directory as `index.html`. The template is an Editorial seed (Indigo Porcelain default) with serif display fonts, IKB Blue as the visible system color, and ONE fixed layout: the S00 Series Cover. Switch `data-accent` on `<html>` to change palette (`indigo-porcelain` | `lemon-yellow` | `lemon-green` | `safety-orange`). The alt accents collapse to single-color (no separate highlight) — only Indigo Porcelain carries the cover-bar yellow.
-14. Keep the cover (S00) structure verbatim, replacing only the placeholders. For content pages, **copy a named snippet from the bottom of `assets/template.html`** as your starting point and adjust:
+14. Copy `assets/template.html` into the task directory as `index.html`. The template is an Editorial seed (Indigo Porcelain default) with serif display fonts, IKB Blue as the visible system color, and ONE fixed layout: the S00 Series Cover. Switch `data-accent` on `<html>` to change palette (`indigo-porcelain` | `lemon-yellow` | `lemon-green` | `safety-orange`). The alt accents collapse to single-color (no separate highlight) — only Indigo Porcelain carries the cover-bar yellow.
+15. Keep the cover (S00) structure verbatim, replacing only the placeholders. For content pages, **copy a named snippet from the bottom of `assets/template.html`** as your starting point and adjust:
     - **P-METAPHOR** — concept + large 540px illustration
     - **P-LIST** — numbered list with 200px thumb illustrations per row
     - **P-COMPARE** — two-column before/after with 240px illustrations
@@ -92,13 +93,13 @@ Default no-text generation also runs conservative `auto-frame` after normalizati
     - **P-ACTION** — closing self-check with 200px illustration + options
 
     Read `references/layouts.md` for which snippet maps to which content shape, and `references/components.md` for the full type scale. Two hard rules from the reference system: **(a) "the larger, the lighter"** — display weights are 500, never 700+; **(b) body and lead are serif-zh, not sans**. Most content pages should pair text + small illustration. Every major generated illustration must be placed as `.evidence-figure` containing `.illust-frame`, so it sits natively inside the card instead of floating, shrinking, or sticking to the top. Add task-scoped CSS in the page's `<style>` only when necessary — do NOT add it back into the seed.
-15. Render:
+16. Render:
 
 ```bash
 node <skill-dir>/scripts/render.mjs <task-dir>
 ```
 
-16. **Validate before showing final results.** After rendering, run the validator by default unless the user explicitly says "先别跑校验，只看效果" or asks for an intentionally rough visual draft:
+17. **Validate before showing final results.** After rendering, run the validator by default unless the user explicitly says "先别跑校验，只看效果" or asks for an intentionally rough visual draft:
 
 ```bash
 node <skill-dir>/scripts/validate.mjs <task-dir>
@@ -106,7 +107,7 @@ node <skill-dir>/scripts/validate.mjs <task-dir>
 
 Fix every FAIL before final delivery. WARN is advisory: report important WARNs briefly, but do not block delivery unless the visual issue is obvious.
 
-17. Inspect the final PNGs. Run both image-only and full-page explanation checks, then check generated Chinese text accuracy, factual accuracy, readability, page rhythm, and series consistency. Show the user the rendered PNGs only after validation and inspection, with absolute paths and a short note summarizing validator status.
+18. Inspect the final PNGs. Run both image-only and full-page explanation checks, then check generated Chinese text accuracy, factual accuracy, readability, page rhythm, and series consistency. Confirm no publish hashtags or `#...` strings appear inside cards or generated images. Show the user the rendered PNGs only after validation and inspection, with absolute paths and a short note summarizing validator status.
 
 ## Storyboard Contract
 
@@ -121,6 +122,10 @@ beginner_brief:
   not_this: 它不一定等于一个汉字或一个单词
   why_it_matters: 它会影响费用、可处理内容长度和对话记忆
   concrete_example: 今天天气真好会被拆成若干小块处理
+source_tags:
+  - AI入门
+  - ChatGPT
+  - AI小白
 pages:
   - id: 1
     message: Token 会影响 AI 怎么读文字、花多少钱、能记住多少上下文
@@ -150,6 +155,7 @@ pages:
 Hard rules:
 
 - Keep one core message per page.
+- Treat user-provided labels/hashtags as `source_tags`, not content. Do not place `source_tags` into page messages, cover copy, footers, captions, image prompts, or generated in-image labels unless the user explicitly asks to design a hashtag page.
 - Page 1 of a recurring AI concept series should use the fixed `series-cover` layout unless the user asks for another cover format.
 - The cover must contain exactly four content units: series line, English technical term, Chinese explanation, and one scenario question.
 - Cover typography must be rendered in HTML, not generated into an image.

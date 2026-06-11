@@ -241,6 +241,13 @@ Generated illustration may contain:
 - arrows, braces, simple stage labels;
 - one compact explanatory sentence only when the illustration is standalone.
 
+Generated illustration must never contain:
+
+- user-provided publish hashtags such as `#AI学习` or `#TTS`;
+- source section labels such as `标签`, `正文`, or `标题`;
+- any text beginning with `#`;
+- social-platform metadata, post categories, or footer tags.
+
 HTML must contain:
 
 - outer title and hook;
@@ -249,6 +256,8 @@ HTML must contain:
 - pricing, dates, model names, and unstable facts;
 - long sentences;
 - series metadata and page rhythm.
+
+HTML cards also should not show user-provided publish hashtags by default. Keep hashtags as export/caption metadata outside the card images unless the user explicitly asks for a hashtag page.
 
 Never duplicate the outer card title inside the generated illustration. If the HTML title says `Token 是 AI 处理文字的小单位`, the illustration should show the mechanism, not repeat `Token 是什么？`.
 
@@ -275,6 +284,7 @@ Only render these Chinese labels, exactly:
 
 Do not add any other words.
 Do not render an internal big title.
+Do not render hashtags, source tags, section labels, or any text beginning with #.
 
 SCENE
 {{specific objects and actions}}
@@ -314,7 +324,7 @@ Do NOT use yellow, orange, red, green, purple, or any other color.
 Do NOT use gradients, glows, shadows, or 3D rendering.
 
 EXCLUDE
-No logos, watermark, decorative clutter, fake UI, extra titles, extra labels, or noisy background.
+No logos, watermark, decorative clutter, fake UI, extra titles, extra labels, hashtags, source tags, social media metadata, or noisy background.
 ```
 
 ## Text Budget
@@ -326,6 +336,7 @@ For generated labels:
 - Each Chinese label should usually be 2-5 characters.
 - One optional sentence may appear only when it is central and short, under 24 Chinese characters.
 - Do not place paragraphs inside the image.
+- Do not use publish hashtags as generated labels. Hashtags are metadata, not visual explanation.
 
 If the page needs more text than this, use HTML outside or overlay mode.
 

@@ -197,6 +197,19 @@ const underlineStats = await page.locator(".poster").evaluateAll((cards) => {
   };
 });
 
+const hashtagStats = await page.locator(".poster").evaluateAll((cards) => {
+  return cards
+    .map((card) => {
+      const text = card.innerText || "";
+      const matches = text.match(/#[^\s#]+/g) || [];
+      return {
+        id: card.id || "(unnamed)",
+        matches: [...new Set(matches)],
+      };
+    })
+    .filter((entry) => entry.matches.length > 0);
+});
+
 // Document-level FAILs
 let failed = false;
 if (docChecks.mode === "swiss" && docChecks.serifLoaded) {
@@ -218,6 +231,11 @@ if (
 ) {
   console.log(
     `[WARN] document: title underline appears on ${underlineStats.underlinedCount}/${underlineStats.contentCount} content pages; use .title-underline only for 0-2 key turning points`
+  );
+}
+for (const entry of hashtagStats) {
+  console.log(
+    `[WARN] ${entry.id}: visible publish hashtag(s) found: ${entry.matches.join(", ")} — keep source hashtags outside card images unless explicitly requested`
   );
 }
 
