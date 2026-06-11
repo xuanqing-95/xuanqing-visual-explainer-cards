@@ -131,7 +131,7 @@ Build with these classes (all defined in `assets/template.html`):
 - `.content` — the flex column inside
 - `.chrome` + `.foot` — top/bottom IKB hairline bars (required on every page)
 - `.section-label` — the per-page IKB tag with square mark
-- `.h-display` (124px) / `.h-xl` (88px) / `.h-md` (56px) / `.pullquote` (64px italic) — display titles, with IKB underline `em`
+- `.h-display` (124px) / `.h-xl` (88px) / `.h-md` (56px) / `.pullquote` (64px italic) — display titles; add `.title-underline` only for rare in-title emphasis
 - `.h-sub` (36px italic Playfair) — English subtitles
 - `.lead` (28px serif) / `.body` (24px serif) — body copy
 - `.kicker` (21px mono) / `.meta` `.label` (18px mono) — small meta text

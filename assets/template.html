@@ -20,8 +20,8 @@
 
        Two-layer color logic:
          --accent     IKB Klein Blue   — visible system color on every
-                      page (chrome / foot / section-label / em underline
-                      / page numbers / body strong / captions).
+                      page (chrome / foot / section-label / optional title
+                      underline / page numbers / body strong / captions).
          --highlight  Mustard Yellow   — cover-bar ONLY (the horizontal
                       bar under .term-en on the series cover).
 
@@ -154,15 +154,19 @@
     }
     .body strong{color:var(--accent);font-weight:500;}
 
-    /* Em underline emphasis — IKB blue, never yellow on content pages. */
+    /* Title emphasis is opt-in. Plain <em> keeps copy editable without adding noise. */
     .h-display em,.h-xl em,.h-md em{
       font-style:normal;color:var(--ink);
+    }
+    .h-display.title-underline em,
+    .h-xl.title-underline em,
+    .h-md.title-underline em{
       text-decoration:underline;
       text-decoration-color:var(--accent);
       text-decoration-thickness:6px;
       text-underline-offset:10px;
     }
-    .h-md em{text-decoration-thickness:5px;text-underline-offset:8px;}
+    .h-md.title-underline em{text-decoration-thickness:5px;text-underline-offset:8px;}
 
     /* Kicker — mono uppercase, +.22em tracking. NOT yellow. */
     .kicker{
@@ -336,7 +340,7 @@
                 .pullquote (64 italic) /
                 .lead (28 serif) / .body (24 serif) /
                 .kicker (21 mono) / .meta (18 mono)
-              - em inside any heading                 → IKB underline
+              - .title-underline on heading + em      → optional IKB underline
               - .illust-frame                         AI-generated illustration
               - .frame-img                            photo evidence
               - .hr-accent (IKB) / .hr-hairline (grey)
@@ -344,7 +348,7 @@
 
          3. Color rules (HARD):
               - IKB blue MUST be visible on every page (chrome / foot /
-                section-label / em underline / page numbers).
+                section-label / optional title underline / page numbers).
               - Mustard yellow appears EXACTLY ONCE per set: the cover bar.
 
          4. Type rules (HARD):
@@ -448,7 +452,7 @@
           <span class="c-num">03 / 05</span>
         </div>
         <p class="section-label">典型症状</p>
-        <h2 class="h-xl">Demo 漂亮<br><em>上生产翻车</em></h2>
+        <h2 class="h-xl title-underline">Demo 漂亮<br><em>上生产翻车</em></h2>
         <div class="list-rows" style="display:flex;flex-direction:column;gap:24px;flex:1;">
           <div class="list-row" style="display:grid;grid-template-columns:200px 1fr;gap:32px;align-items:center;padding-bottom:24px;border-bottom:1px solid var(--line);">
             <figure class="illust-frame" style="height:200px;">

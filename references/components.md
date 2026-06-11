@@ -64,19 +64,21 @@ If the title still does not fit, **shorten the copy first**. Never solve overflo
 | Default size on `.poster.xhs` | 88px |
 | Max lines | 2 |
 | Max chars per line | 9 |
-| `em` blocks per title | 1 |
+| Title underline | Optional; use on 0-2 content pages per set |
 
 If your title needs 3 Chinese lines: shorten the copy or split the page. Don't shrink `.h-xl` below 78px — small + heavy reads as Web1.0.
 
 ## Emphasis Patterns
 
-### `em` inside `.h-display` / `.h-xl` / `.h-md` — IKB underline
+### `.title-underline` on `.h-display` / `.h-xl` / `.h-md` — optional IKB underline
 
 ```html
-<h2 class="h-xl">Demo 漂亮<br><em>上生产翻车</em></h2>
+<h2 class="h-xl title-underline">Demo 漂亮<br><em>上生产翻车</em></h2>
 ```
 
-Thick IKB underline (6px on display/xl, 5px on md), large offset (10/8px). Use for the single most important phrase per page. **One em block per title.**
+Plain `em` inside a heading does not draw a line. Add `.title-underline` only for the single most important contrast or turning point in the set. Thick IKB underline (6px on display/xl, 5px on md), large offset (10/8px).
+
+Do not underline every content-page title. That makes the system look templated instead of editorial.
 
 Yellow background fills on em are forbidden. Yellow lives only on the cover bar.
 

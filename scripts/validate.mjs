@@ -186,6 +186,17 @@ const results = await page.locator(".poster").evaluateAll((cards, mode) => {
   });
 }, docChecks.mode);
 
+const underlineStats = await page.locator(".poster").evaluateAll((cards) => {
+  const contentCards = cards.filter((card) => !card.classList.contains("cover-series"));
+  const underlined = contentCards.filter((card) =>
+    card.querySelector(".h-display.title-underline em, .h-xl.title-underline em, .h-md.title-underline em")
+  );
+  return {
+    contentCount: contentCards.length,
+    underlinedCount: underlined.length,
+  };
+});
+
 // Document-level FAILs
 let failed = false;
 if (docChecks.mode === "swiss" && docChecks.serifLoaded) {
@@ -201,6 +212,14 @@ if (docChecks.accents.length > 1) {
   failed = true;
 }
 console.log(`[INFO] mode=${docChecks.mode} accent=${docChecks.accents[0] || "(default)"}`);
+if (
+  underlineStats.contentCount > 0 &&
+  (underlineStats.underlinedCount > 2 || underlineStats.underlinedCount === underlineStats.contentCount)
+) {
+  console.log(
+    `[WARN] document: title underline appears on ${underlineStats.underlinedCount}/${underlineStats.contentCount} content pages; use .title-underline only for 0-2 key turning points`
+  );
+}
 
 for (const result of results) {
   if (result.failures.length) {

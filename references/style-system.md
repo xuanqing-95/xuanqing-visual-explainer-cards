@@ -91,7 +91,7 @@ A Swiss poster is Swiss only if **all three** hold:
 <span class="letter" style="background:var(--highlight);">C</span>
 ```
 
-**Mustard yellow is for the cover bar. That's it.** When yellow appears on three content pages, the cover stops looking like a cover and the set turns into a yellow-themed deck. Use IKB blue for everything that needs to read as "structure" or "system marker"; use IKB underline for in-title emphasis.
+**Mustard yellow is for the cover bar. That's it.** When yellow appears on three content pages, the cover stops looking like a cover and the set turns into a yellow-themed deck. Use IKB blue for everything that needs to read as "structure" or "system marker"; use `.title-underline` only when one or two content pages need a sharp in-title emphasis.
 
 ### Anti-pattern B: IKB blue invisible on the page
 

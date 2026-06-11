@@ -21,7 +21,7 @@ Default theme is **Indigo Porcelain** — a deliberate dual-color system:
 
 | Token | Role | Use on |
 |---|---|---|
-| `--accent` (IKB Blue) | The visible system color | Chrome hairline + category label, foot hairline + page number, `.section-label`, `.hr-accent`, `em` underline inside `.h-display`/`.h-xl`/`.h-md`, `.img-cap`, `.body strong`, illustrations |
+| `--accent` (IKB Blue) | The visible system color | Chrome hairline + category label, foot hairline + page number, `.section-label`, `.hr-accent`, optional `.title-underline` heading emphasis, `.img-cap`, `.body strong`, illustrations |
 | `--highlight` (Mustard) | Cover bar ONLY | The horizontal bar under `.term-en` on the cover. Nowhere else. |
 | `--ink` / `--ink-soft` | Body text | All copy |
 | `--grey-1/2/3` | Surfaces & meta | Card backgrounds, hairlines, metadata |
@@ -77,13 +77,17 @@ Hard rules:
 
 ## Emphasis Pattern
 
-`em` inside `.h-display` / `.h-xl` / `.h-md` gets an IKB blue underline. Thick (6px on display/xl, 5px on md) with large offset (10/8px) so it reads as deliberate, not as a hyperlink.
+Plain `em` inside `.h-display` / `.h-xl` / `.h-md` only marks the phrase semantically. It does not draw a line.
+
+Add `.title-underline` to the heading only when the page needs a sharp visual turn. The underline is thick IKB blue (6px on display/xl, 5px on md) with large offset (10/8px) so it reads as deliberate, not as a hyperlink.
 
 ```html
-<h2 class="h-xl">Demo 漂亮<br><em>上生产翻车</em></h2>
+<h2 class="h-xl title-underline">Demo 漂亮<br><em>上生产翻车</em></h2>
 ```
 
-Use for the single most important phrase per page. **One em block per title.**
+Use title underline sparingly: 0-2 content pages per set, usually for the key contrast or turning point. If every content page has one, the set looks templated and noisy.
+
+If you only need a readable title, use no `em` or use plain `em` without `.title-underline`.
 
 Yellow background fills on em are forbidden on content pages. Yellow lives only on the cover bar.
 
@@ -110,6 +114,6 @@ Avoid both extremes: "one illustration on page 2 only" (boring) or "one big illu
 - Mustard yellow appears exactly once per set, on the cover bar only
 - No border-radius, no box-shadow, no gradients
 - Content density ≥ 75% on 3:4 cards
-- One `em` block per display title (IKB underline, not yellow fill)
+- Title underline is opt-in and should appear on no more than 0-2 content pages per set
 - Most content pages should pair text + small illustration
 - The cover is the only fixed layout. Content pages are composed fresh from primitives.
