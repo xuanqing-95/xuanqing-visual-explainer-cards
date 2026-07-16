@@ -70,9 +70,10 @@
     .body{font-family:var(--serif-zh);font-weight:400;font-size:24px;line-height:1.65;color:rgba(var(--ink-rgb),.80);margin:0;}
     .body strong{color:var(--accent);font-weight:500;}
 
-    /* Em — IKB underline */
-    .h-display em,.h-xl em,.h-md em{font-style:normal;color:var(--ink);text-decoration:underline;text-decoration-color:var(--accent);text-decoration-thickness:6px;text-underline-offset:10px;}
-    .h-md em{text-decoration-thickness:5px;text-underline-offset:8px;}
+    /* Em — semantic by default; underline only on selected turning points */
+    .h-display em,.h-xl em,.h-md em{font-style:normal;color:var(--ink);}
+    .h-display.title-underline em,.h-xl.title-underline em,.h-md.title-underline em{text-decoration:underline;text-decoration-color:var(--accent);text-decoration-thickness:6px;text-underline-offset:10px;}
+    .h-md.title-underline em{text-decoration-thickness:5px;text-underline-offset:8px;}
 
     /* Kicker / meta */
     .kicker{font-family:var(--mono);font-weight:500;font-size:21px;letter-spacing:.22em;text-transform:uppercase;color:rgba(var(--ink-rgb),.55);margin:0;}
@@ -97,17 +98,44 @@
     /* Image containers */
     .illust-frame{width:100%;background:var(--paper);display:flex;align-items:center;justify-content:center;overflow:hidden;margin:0;}
     .illust-frame img{width:100%;height:100%;object-fit:contain;display:block;}
+    .evidence-figure{width:100%;display:flex;flex-direction:column;justify-content:center;margin:0;}
+    .evidence-figure.landscape .illust-frame{height:540px;}
     .frame-img{position:relative;overflow:hidden;background:var(--paper-2);}
     .frame-img img{width:100%;height:100%;object-fit:cover;display:block;}
     .img-cap{font-family:var(--mono);font-weight:500;font-size:18px;letter-spacing:.20em;text-transform:uppercase;color:var(--accent);margin-top:14px;}
 
     /* === Cover (S00) === */
-    .cover-series .series-zh{font-family:var(--serif-zh);font-weight:500;font-size:124px;line-height:1.06;letter-spacing:.04em;color:var(--ink);margin:0;}
+    .cover-series .series-zh{font-family:var(--serif-zh);font-weight:500;font-size:96px;line-height:1.12;letter-spacing:.04em;color:var(--ink);margin:0;}
     .cover-series .series-zh .ai-accent{color:var(--accent);font-family:var(--serif-en);font-style:italic;font-weight:700;}
-    .cover-series .term-en{position:relative;display:inline-block;font-family:var(--serif-en);font-weight:900;font-size:240px;line-height:1;letter-spacing:-.02em;color:var(--ink);margin:0;}
+    .cover-series .term-en{position:relative;display:inline-block;align-self:flex-start;width:max-content;max-width:100%;font-family:var(--serif-en);font-weight:900;font-size:240px;line-height:1;letter-spacing:-.02em;color:var(--ink);margin:0;}
     .cover-series .term-en::before{content:"";position:absolute;left:-8px;right:-8px;bottom:14px;height:56px;background:var(--highlight);z-index:-1;}
-    .cover-series .term-zh{font-family:var(--serif-en);font-style:italic;font-weight:400;font-size:36px;line-height:1.3;color:var(--accent);margin:0;}
+    .cover-series .term-zh{font-family:var(--serif-zh);font-style:normal;font-weight:500;font-size:42px;line-height:1.35;letter-spacing:.04em;color:var(--accent);margin:0;}
     .cover-series .term-question{font-family:var(--serif-zh);font-weight:500;font-size:56px;line-height:1.18;letter-spacing:.02em;color:var(--ink);margin:0;max-width:880px;}
+
+    /* HTML-native evidence used when a diagram explains better than generated art */
+    .mini-plot{width:200px;height:170px;border-left:2px solid var(--ink);border-bottom:2px solid var(--ink);display:flex;align-items:flex-end;justify-content:center;gap:14px;padding:18px 18px 0;}
+    .mini-plot span{display:block;width:28px;background:var(--accent);}
+    .mini-plot.variance span:nth-child(1){height:44px}.mini-plot.variance span:nth-child(2){height:116px}.mini-plot.variance span:nth-child(3){height:70px}.mini-plot.variance span:nth-child(4){height:128px}
+    .mini-plot.cost span:nth-child(1){height:34px}.mini-plot.cost span:nth-child(2){height:58px}.mini-plot.cost span:nth-child(3){height:92px}.mini-plot.cost span:nth-child(4){height:134px}
+    .mini-plot.guard{align-items:center;justify-content:center;position:relative;padding:0;border:2px solid var(--ink);}
+    .guard-core{width:72px;height:90px;border:8px solid var(--accent);border-top-width:18px;position:relative;}
+    .guard-core::after{content:"";position:absolute;width:52px;height:10px;background:var(--paper);left:34px;top:30px;transform:rotate(-35deg);}
+    .system-visual{height:240px;border:1px solid var(--line);display:flex;flex-direction:column;justify-content:center;gap:18px;padding:24px;background:var(--paper);}
+    .code-lines{display:flex;flex-direction:column;gap:10px;}
+    .code-lines span{height:8px;background:var(--ink);}
+    .code-lines span:nth-child(2){width:72%;background:var(--grey-3)}
+    .code-lines span:nth-child(3){width:86%}
+    .system-arrow{height:2px;background:var(--accent);position:relative;}
+    .system-arrow::after{content:"";position:absolute;right:0;top:-6px;border-left:12px solid var(--accent);border-top:7px solid transparent;border-bottom:7px solid transparent;}
+    .ops-flow{display:grid;grid-template-columns:1fr 22px 1fr 22px 1fr;align-items:center;gap:8px;}
+    .ops-node{border:2px solid var(--accent);padding:12px 6px;text-align:center;font-family:var(--mono);font-size:14px;letter-spacing:.08em;color:var(--accent);}
+    .ops-link{height:2px;background:var(--accent);}
+    .path-visual{height:190px;display:grid;grid-template-columns:1fr 44px 1fr 44px 1fr;align-items:center;}
+    .path-step{height:132px;border:2px solid var(--ink);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;font-family:var(--mono);font-size:18px;letter-spacing:.12em;}
+    .path-step strong{font-family:var(--serif-zh);font-size:28px;font-weight:500;letter-spacing:0;}
+    .path-step.recommended{border-color:var(--accent);color:var(--accent);}
+    .path-link{height:2px;background:var(--accent);position:relative;}
+    .path-link::after{content:"";position:absolute;right:0;top:-6px;border-left:12px solid var(--accent);border-top:7px solid transparent;border-bottom:7px solid transparent;}
   </style>
 </head>
 <body>
@@ -127,7 +155,7 @@
         <hr class="hr-hairline">
         <div style="display:flex;flex-direction:column;gap:18px;">
           <p class="term-en">LLMOps</p>
-          <p class="term-zh">A working ops layer for large language models</p>
+          <p class="term-zh">大模型运维体系</p>
         </div>
         <p class="term-question">为什么同一个模型,别人用起来效果炸裂,你用起来平平无奇?</p>
         <div class="grow"></div>
@@ -149,10 +177,12 @@
         </div>
         <p class="section-label">打个比方</p>
         <h2 class="h-xl">LLMOps 像 <em>餐厅后厨</em></h2>
-        <figure class="illust-frame" style="height:540px;">
-          <img src="assets/page-02.png" alt="餐厅后厨示意:中央 MODEL 模型,四周分别是 DATA 数据、QUALITY 质量、FEEDBACK 反馈、ITERATION 迭代">
+        <figure class="evidence-figure landscape">
+          <div class="illust-frame">
+            <img src="assets/page-02.png" alt="餐厅后厨示意:中央 MODEL 模型,四周分别是 DATA 数据、QUALITY 质量、FEEDBACK 反馈、ITERATION 迭代">
+          </div>
+          <figcaption class="img-cap">Fig. 01 · 后厨的四个工位</figcaption>
         </figure>
-        <p class="img-cap">Fig. 01 · 后厨的四个工位</p>
         <p class="body">好厨子(<strong>模型</strong>)只是第一步。<strong>采购</strong>、<strong>品控</strong>、<strong>反馈</strong>、<strong>菜单迭代</strong> —— 这些"后厨管理"做不好,厨子再厉害也白搭。</p>
         <div class="foot">
           <span class="f-tag">—— 模型不是终点,运维才是</span>
@@ -171,30 +201,24 @@
           <span class="c-num">03 / 05</span>
         </div>
         <p class="section-label">典型症状</p>
-        <h2 class="h-xl">Demo 漂亮<br><em>上生产翻车</em></h2>
+        <h2 class="h-xl title-underline">Demo 漂亮<br><em>上生产翻车</em></h2>
         <div class="list-rows" style="display:flex;flex-direction:column;gap:24px;flex:1;">
           <div class="list-row" style="display:grid;grid-template-columns:200px 1fr;gap:32px;align-items:center;padding-bottom:24px;border-bottom:1px solid var(--line);">
-            <figure class="illust-frame" style="height:200px;">
-              <img src="assets/placeholder.svg" alt="输出忽高忽低 — 一条波动的折线小图">
-            </figure>
+            <figure class="mini-plot variance" data-visual-evidence aria-label="四次输出质量高低波动"><span></span><span></span><span></span><span></span></figure>
             <div>
               <p class="meta" style="color:var(--accent);margin:0 0 8px;">01</p>
               <p class="body" style="margin:0;"><strong>输出忽高忽低</strong> · 同样的 prompt,昨天给出漂亮回复,今天却出错。</p>
             </div>
           </div>
           <div class="list-row" style="display:grid;grid-template-columns:200px 1fr;gap:32px;align-items:center;padding-bottom:24px;border-bottom:1px solid var(--line);">
-            <figure class="illust-frame" style="height:200px;">
-              <img src="assets/placeholder.svg" alt="成本悄悄飙升 — 一根上扬的成本柱状图">
-            </figure>
+            <figure class="mini-plot cost" data-visual-evidence aria-label="成本从左到右持续上升"><span></span><span></span><span></span><span></span></figure>
             <div>
               <p class="meta" style="color:var(--accent);margin:0 0 8px;">02</p>
               <p class="body" style="margin:0;"><strong>成本悄悄飙涨</strong> · 没人盯 token 消耗,月底账单出来才发现超预算两倍。</p>
             </div>
           </div>
           <div class="list-row" style="display:grid;grid-template-columns:200px 1fr;gap:32px;align-items:center;">
-            <figure class="illust-frame" style="height:200px;">
-              <img src="assets/placeholder.svg" alt="安全问题频发 — 被绕过的过滤器小图">
-            </figure>
+            <figure class="mini-plot guard" data-visual-evidence aria-label="安全防线被绕过"><div class="guard-core"></div></figure>
             <div>
               <p class="meta" style="color:var(--accent);margin:0 0 8px;">03</p>
               <p class="body" style="margin:0;"><strong>安全问题频发</strong> · 用户绕过 prompt,模型说出不该说的话,事后才知道没过滤层。</p>
@@ -222,8 +246,10 @@
         <div class="compare" style="display:grid;grid-template-columns:1fr 1fr;gap:32px;flex:1;">
           <div class="compare-col" style="display:flex;flex-direction:column;gap:16px;">
             <p class="meta">Before · 上线初期</p>
-            <figure class="illust-frame" style="height:240px;">
-              <img src="assets/placeholder.svg" alt="prompt 硬编码在代码块里的示意图">
+            <figure class="system-visual" data-visual-evidence aria-label="Prompt 写死在代码中并随发布上线">
+              <div class="code-lines"><span></span><span></span><span></span></div>
+              <div class="system-arrow"></div>
+              <p class="meta" style="margin:0;color:var(--ink);">CODE → RELEASE</p>
             </figure>
             <p class="body" style="margin:0;"><strong>硬编码 prompt</strong></p>
             <ul class="body" style="margin:0;padding-left:1.1em;line-height:1.55;">
@@ -234,8 +260,13 @@
           </div>
           <div class="compare-col" style="display:flex;flex-direction:column;gap:16px;">
             <p class="meta" style="color:var(--accent);">After · 引入 LLMOps</p>
-            <figure class="illust-frame" style="height:240px;">
-              <img src="assets/placeholder.svg" alt="prompt 可视化管理与质量监控仪表板示意">
+            <figure class="system-visual" data-visual-evidence aria-label="Prompt 经过质量评分后低分转人工">
+              <div class="ops-flow">
+                <div class="ops-node">PROMPT</div><div class="ops-link"></div>
+                <div class="ops-node">SCORE</div><div class="ops-link"></div>
+                <div class="ops-node">HUMAN</div>
+              </div>
+              <p class="meta" style="margin:0;color:var(--accent);">CONFIG → EVAL → REVIEW</p>
             </figure>
             <p class="body" style="margin:0;"><strong>可配置 + 可监控</strong></p>
             <ul class="body" style="margin:0;padding-left:1.1em;line-height:1.55;">
@@ -263,8 +294,12 @@
         </div>
         <p class="section-label">今天检查一件事</p>
         <h2 class="h-xl">你的 prompt<br><em>写在哪?</em></h2>
-        <figure class="illust-frame" style="height:200px;">
-          <img src="assets/placeholder.svg" alt="三种 prompt 管理方式对比小插图">
+        <figure class="path-visual" data-visual-evidence aria-label="Prompt 管理从代码到配置再到可观测平台">
+          <div class="path-step"><span>A</span><strong>代码</strong></div>
+          <div class="path-link"></div>
+          <div class="path-step"><span>B</span><strong>配置</strong></div>
+          <div class="path-link"></div>
+          <div class="path-step recommended"><span>C</span><strong>平台</strong></div>
         </figure>
         <div class="options" style="display:flex;flex-direction:column;gap:12px;">
           <div class="opt" style="display:grid;grid-template-columns:64px 1fr;gap:24px;align-items:baseline;padding:12px 0;border-bottom:1px solid var(--line);">

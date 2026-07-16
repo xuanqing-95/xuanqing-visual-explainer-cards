@@ -1,118 +1,110 @@
 # Visual Explainer Cards
 
-An OpenClaw / Claude Code / Codex skill that creates illustrated Xiaohongshu/Rednote knowledge-card series combining GPT Image 2 explanatory illustrations with editorial HTML layout.
+Create illustrated Xiaohongshu/Rednote knowledge-card series with an editorial HTML layout and explanatory image evidence.
 
-Turn abstract concepts, tutorials, AI knowledge, and educational content into clear 3:4 social cards with small in-image Chinese labels, accurate outer typography, and automated validation.
+The final card is always rendered from HTML at **1080×1440 (3:4)**. Generated illustrations live inside the card and use the canvas that matches their HTML slot, such as landscape, square, or portrait.
 
 ## Install
 
-### Dependencies
+Requirements: Node.js 20+, Python 3.9+, network access for fonts and image generation.
+
+### Codex
 
 ```bash
-# Node (Playwright for HTML→PNG rendering)
-npm install playwright
+git clone https://github.com/xuanqing-95/xuanqing-visual-explainer-cards.git \
+  "$HOME/.agents/skills/xuanqing-visual-explainer-cards"
+```
 
-# Python (background normalization for generated illustrations)
-pip install Pillow
-# or
-pip install -r requirements.txt
+### Claude Code
 
-# Image generation
-# Configure any OpenAI-compatible image endpoint:
+```bash
+git clone https://github.com/xuanqing-95/xuanqing-visual-explainer-cards.git \
+  "$HOME/.claude/skills/xuanqing-visual-explainer-cards"
+```
+
+### OpenClaw
+
+```bash
+openclaw skills install \
+  git:xuanqing-95/xuanqing-visual-explainer-cards@main \
+  --global
+```
+
+Then install the runtime dependencies inside the installed skill directory:
+
+```bash
+npm ci
+npx playwright install chromium
+python3 -m pip install -r requirements.txt
+```
+
+Configure an OpenAI-compatible image endpoint:
+
+```bash
 export OPENAI_API_KEY=...
 export OPENAI_BASE_URL=https://api.openai.com/v1
-# or use ZENMUX_API_KEY; the wrappers will map it automatically.
+# Optional model override:
+export OPENAI_IMAGE_MODEL=gpt-image-2
 ```
 
-### Optional External Skills
+If `ZENMUX_API_KEY` is set instead, the local wrapper uses the ZenMux-compatible endpoint automatically. Image generation can incur provider charges.
 
-This skill does **not** require `baoyu-imagine` or `mz-image-gen`.
+## Use
 
-By default, image generation uses the local `scripts/generate.mjs` OpenAI-compatible wrapper. The older companion skills can still be used manually if you prefer their CLIs, but they are not installation requirements.
-
-| Skill | Purpose |
-|---|---|
-| baoyu-imagine | Optional GPT Image 2 CLI backend |
-| mz-image-gen | Optional no-text fallback backend |
-
-### Playwright Browsers
-
-```bash
-npx playwright install chromium
-```
-
-## Quick Start
-
-```
+```text
 Use $xuanqing-visual-explainer-cards to turn "Token 是什么" into an illustrated Xiaohongshu knowledge-card series.
 ```
 
-A complete worked example lives in [`examples/llmops/`](examples/llmops/) — source, storyboard, prompts, HTML, and rendered output for one LLMOps knowledge-card series.
+The workflow:
 
-## Visual System
+1. Turn the source into a beginner-friendly explanation.
+2. Build a content-driven storyboard.
+3. Define each illustration's final HTML slot before prompting.
+4. Generate slot-matched illustrations.
+5. Compose the cards in HTML.
+6. Render 1080×1440 PNGs.
+7. Validate the HTML, media, fonts, and final PNG artifacts.
 
-**Editorial-first** (Indigo Porcelain default). Magazine-style serif display + sans body + mono meta, dual-color palette (IKB Blue for system structure + Mustard Yellow for emphasis only).
+## Output contract
 
-- 1 dual-color default (Indigo Porcelain) + 3 single-color alternates (Lemon Yellow, Lemon Green, Safety Orange)
-- One fixed series cover plus content-page composition primitives
-- Single board size: 1080×1440 (3:4)
-- Hairline rules, off-white paper (`#fafaf8`), no shadows / gradients / rounded corners
-- Content-led 4-7 page sets, with supporting illustrations placed inside `.evidence-figure`
+- Final cards: `1080x1440`, 3:4.
+- Cover: fixed S00 editorial cover with HTML typography.
+- Content pages: composed from content shape, not fixed numbered templates.
+- Illustration slot: declared before generation.
+- Model output: explicit `model_output_size`; it does not have to be 3:4.
+- Generated image fit: `object-fit: contain`; photographs may use `cover`.
+- Source hashtags remain publishing metadata and never enter cards or image prompts by default.
 
-## Structure
+## Commands
 
-```
-xuanqing-visual-explainer-cards/
-├── SKILL.md                                # Skill instructions (Core Workflow)
-├── README.md
-├── assets/template.html                    # Editorial HTML seed (Indigo Porcelain)
-├── scripts/
-│   ├── generate-labeled-illustration.py    # GPT Image 2 labeled illustrations (Step 10)
-│   ├── generate-illustration.py            # No-text fallback illustrations (Step 11)
-│   ├── generate.mjs                        # Direct OpenAI-compatible image gen
-│   ├── render.mjs                          # HTML → PNG via Playwright
-│   └── validate.mjs                        # R1-R7 + identity validator
-├── references/
-│   ├── background-systems.md               # Dot / cross / ring matrix patterns
-│   ├── beginner-explanation.md             # Teaching protocol
-│   ├── components.md                       # Type scale, frames, emphasis patterns
-│   ├── design-system.md                    # Canvas, typography, two-layer color logic
-│   ├── illustration-prompts.md             # Illustration modes & palette lock
-│   ├── layouts.md                          # S00-S04 layout recipes
-│   ├── metaphor-library.md                 # Abstract → concrete mappings
-│   ├── platform-specs.md                   # Xiaohongshu 1080×1440 spec
-│   ├── prompt-strategy-audit.md            # Prompt design rationale
-│   ├── qa-checklist.md                     # Pre-delivery QA
-│   ├── style-system.md                     # Editorial identity rules & anti-patterns
-│   ├── theme-presets.md                    # Indigo Porcelain + 3 alt accents
-│   └── visual-routing.md                   # Information shape → visual type routing
-├── agents/openai.yaml                      # Agent config
-└── requirements.txt                        # Python dependencies
+Generate one illustration for a landscape slot:
+
+```bash
+python3 scripts/generate-illustration.py \
+  --prompt-file prompts/page-02.md \
+  --output assets/page-02.png \
+  --orientation landscape \
+  --size 1536x1024 \
+  --quality medium
 ```
 
-## Validator
+Render and validate a task directory:
 
-`scripts/validate.mjs` enforces 7 rules using real Playwright rendering, not static scan:
+```bash
+node scripts/render.mjs <task-dir>
+node scripts/validate.mjs <task-dir>
+```
 
-- **R1** Overflow — any poster whose content exceeds 1080×1440
-- **R2** Type caps — `.h-display` > 132px or `.h-xl` > 100px, or > 2 lines on 1080×1440
-- **R3** Footer collision — `.foot` overlapped by preceding content
-- **R4** 4-band density — fewer than 3 of 4 horizontal bands carry content
-- **R5** Frame overflow — children escaping `.illust-frame` / `.frame-img`
-- **R6** Mode identity — Editorial mode requires serif loaded; Swiss mode (`data-mode="swiss"`) rejects serif + requires weight ≤300 at ≥72px
-- **R7** Figure margin — browser-default `<figure>` margins not reset
+Run the repository verification:
 
-Per `SKILL.md` Step 15, the validator runs by default after rendering and before final delivery. Skip it only when the user explicitly asks to see an unvalidated visual draft first.
+```bash
+npm run verify
+```
+
+## Complete example
+
+[`examples/llmops/`](examples/llmops/) contains a complete source, current storyboard, image prompt, HTML, visual assets, and five rendered 3:4 cards. It contains no placeholder artwork.
 
 ## License
 
-This project is licensed under the **GNU Affero General Public License v3.0**.
-See [`LICENSE`](LICENSE) for the full license text and [`NOTICE.md`](NOTICE.md)
-for attribution notes.
-
-What this means in plain language:
-
-- You may use, modify, and redistribute this skill.
-- If you distribute a modified version, keep it under AGPL-3.0-compatible terms and provide the complete corresponding source code.
-- If you run a modified version as a network service for others, provide users access to the corresponding source code as required by AGPL-3.0.
-- Keep copyright notices, license text, and attribution notices intact.
+This project is licensed under **GNU AGPL-3.0-only**. See [`LICENSE`](LICENSE) and [`NOTICE.md`](NOTICE.md).

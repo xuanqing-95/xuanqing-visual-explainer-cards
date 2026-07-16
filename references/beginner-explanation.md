@@ -2,6 +2,14 @@
 
 The card set must teach, not merely summarize. Assume the reader recognizes the topic name but does not know the underlying mechanism.
 
+## Contents
+
+- Explanation completeness and writing rules
+- Card-set teaching arc
+- Illustration and visual-chain contracts
+- Illustration-led page rules
+- Beginner and visual explanation QA
+
 ## Explanation Completeness
 
 Before storyboarding, answer these six questions in plain language:

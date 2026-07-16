@@ -4,6 +4,15 @@ Create the central visual evidence for an educational card.
 
 Default mode is **GPT Image 2 labeled illustration**: the generated image may contain a small number of exact Chinese labels, while the outer card remains HTML-led.
 
+## Contents
+
+- When and how large to illustrate
+- Slot-first generation and slot fit
+- Composition, pixel margins, and native placement
+- Palette lock and illustration modes
+- Prompt template, text budget, and image roles
+- Generation command, review, and fallbacks
+
 ## When to Generate an Illustration (hard rule)
 
 **Most content pages should pair text + small illustration.** Text leads, illustration explains. The point of this skill is the *combination* — pure-text card sets and one-giant-illustration card sets both fail the brief.
@@ -46,7 +55,7 @@ Generate the image for its final slot, not for a generic square canvas.
 
 Do not start from the image. Start from the card layout.
 
-For every illustration-led page, define the final `image_slot` in `storyboard.yaml` **before** writing the prompt or running generation. The prompt, `--ar`, pixel margin contract, and HTML wrapper must all be derived from that slot.
+For every illustration-led page, define the final `image_slot` in `storyboard.yaml` **before** writing the prompt or running generation. The prompt, requested orientation, explicit model output size, pixel margin contract, and HTML wrapper must all be derived from that slot.
 
 Required shape:
 
@@ -55,22 +64,22 @@ image_slot:
   html_wrapper: evidence-figure landscape
   slot_px: 904x603
   slot_ratio: 3:2
-  generator_ar: 4:3
-  generator_canvas: 1536x1024
+  requested_orientation: landscape
+  model_output_size: 1536x1024
   subject_bbox: x=120-1416,y=128-896
   fit: contain
 ```
 
 Slot registry for the 1080×1440 card seed:
 
-| Slot | HTML wrapper | Typical frame on card | Slot ratio | Generator `--ar` | Expected canvas | Subject bbox |
+| Slot | HTML wrapper | Typical frame on card | Slot ratio | Requested orientation | Model output size | Subject bbox |
 |---|---|---:|---:|---|---:|---|
-| `landscape` | `.evidence-figure.landscape` | `904x603` | `3:2` | `4:3` or `16:10` | `1536x1024` | `x=120-1416,y=128-896` |
-| `hero` | `.evidence-figure.hero` | `904x500-600` | about `3:2` | `4:3` or `16:10` | `1536x1024` | `x=120-1416,y=128-896` |
-| `wide-strip` | `.evidence-figure.wide` | `904x340-460` | about `2:1` | `16:10` only when truly horizontal | `1536x1024` | `x=72-1464,y=200-824` |
-| `square` | `.evidence-figure.square` | `560x560` | `1:1` | `1:1` | `1024x1024` | `x=112-912,y=112-912` |
-| `portrait` | `.evidence-figure.portrait` | `440x660` | `2:3` | `3:4` | `1024x1536` | `x=112-912,y=180-1356` |
-| `compact` | `.evidence-figure.compact` or row thumb | `220-300px` tall | variable | `1:1` or `4:3` | `1024x1024` or `1536x1024` | use matching compact bbox |
+| `landscape` | `.evidence-figure.landscape` | `904x603` | `3:2` | `landscape` | `1536x1024` | `x=120-1416,y=128-896` |
+| `hero` | `.evidence-figure.hero` | `904x500-600` | about `3:2` | `landscape` | `1536x1024` | `x=120-1416,y=128-896` |
+| `wide-strip` | `.evidence-figure.wide` | `904x340-460` | about `2:1` | `landscape` | `1536x1024` or a supported custom size | match the actual output |
+| `square` | `.evidence-figure.square` | `560x560` | `1:1` | `square` | `1024x1024` | `x=112-912,y=112-912` |
+| `portrait` | `.evidence-figure.portrait` | `440x660` | `2:3` | `portrait` | `1024x1536` | `x=112-912,y=180-1356` |
+| `compact` | `.evidence-figure.compact` or row thumb | `220-300px` tall | variable | `square` or `landscape` | `1024x1024` or `1536x1024` | use matching compact bbox |
 
 Decision rules:
 
@@ -80,14 +89,14 @@ Decision rules:
 - If the concept is a long left-to-right pipeline, use `wide-strip`, but keep the text above or below the image. Do not use a left/right split for long horizontal flows.
 - If no slot fits the explanation cleanly, change the page layout before generating. Do not generate first and patch the layout afterward.
 
-| Final slot | Use `--ar` | Prompt opening | Composition requirement |
+| Final slot | Orientation and size | Prompt opening | Composition requirement |
 |---|---|---|---|
-| Wide workflow / process strip | `16:10` or `4:3` | `Generate a wide 16:10 Chinese educational illustration panel.` | Main diagram spans 82-90% of canvas width; no large empty margins |
-| Large concept evidence well | `4:3` | `Generate a wide 4:3 Chinese educational illustration panel.` | Main subject fills 72-84% of canvas width and 60-78% height |
-| Tall standalone mechanism | `3:4` | `Generate a clean 3:4 vertical Chinese educational illustration panel.` | Use only when the image itself is the main vertical evidence |
-| Inline icon / row thumbnail | `1:1` or `4:3` | `Generate a compact icon-like illustration.` | One object, centered, no labels unless essential |
+| Wide workflow / process strip | landscape, explicit size | `Generate a wide Chinese educational illustration panel.` | Main diagram spans 82-90% of canvas width; no large empty margins |
+| Large concept evidence well | landscape, `1536x1024` | `Generate a landscape Chinese educational illustration panel.` | Main subject fills 72-84% of canvas width and 60-78% height |
+| Tall standalone mechanism | portrait, `1024x1536` | `Generate a clean vertical Chinese educational illustration panel.` | Use only when the image itself is the main vertical evidence |
+| Inline icon / row thumbnail | square or landscape | `Generate a compact icon-like illustration.` | One object, centered, no labels unless essential |
 
-For content-page illustrations, avoid square-looking compositions unless the final HTML slot is square. A square drawing inside a wide slot will render too small. The local generator maps `4:3` to a landscape canvas; if your output log says `1024x1024` for a `4:3` request, stop and fix the generator before accepting the image.
+For content-page illustrations, avoid square-looking compositions unless the final HTML slot is square. A square drawing inside a wide slot will render too small. Pass the explicit `model_output_size` to the generator and reject any returned image whose dimensions differ.
 
 ## Slot Fit Contract (hard rule)
 
@@ -97,9 +106,9 @@ The local GPT Image wrapper currently maps image requests to these physical canv
 
 | Requested role | Generator output | Natural aspect | Use this HTML slot |
 |---|---:|---:|---|
-| `4:3`, `16:10`, or any landscape request | `1536x1024` | `3:2` | `.evidence-figure.landscape` or `.evidence-figure.hero` |
-| `1:1` compact mark | `1024x1024` | `1:1` | `.evidence-figure.square`, side-by-side modules, or row thumbnails |
-| `3:4` vertical mechanism | `1024x1536` | `2:3` | `.evidence-figure.portrait`, a tall evidence well, or a left/right text-image composition |
+| landscape | `1536x1024` | `3:2` | `.evidence-figure.landscape` or `.evidence-figure.hero` |
+| square | `1024x1024` | `1:1` | `.evidence-figure.square`, side-by-side modules, or row thumbnails |
+| portrait | `1024x1536` | `2:3` | `.evidence-figure.portrait`, a tall evidence well, or a left/right text-image composition |
 
 Do **not** put a `1536x1024` generated illustration into a shallow full-width strip whose frame is much wider than `3:2`. It will be height-constrained and shrink horizontally. Use `.evidence-figure.landscape` for the normal generated-image case; reserve `.evidence-figure.wide` for HTML-native wide diagrams or genuinely horizontal generated diagrams where labels stay readable after enlargement.
 
@@ -177,8 +186,8 @@ Before writing the prompt, define:
 slot:
   html_wrapper: evidence-figure landscape | evidence-figure hero | evidence-figure wide | evidence-figure square | evidence-figure portrait | evidence-figure compact
   slot_px: 904x603
-  generator_ar: 4:3
-  generator_canvas: 1536x1024
+  requested_orientation: landscape
+  model_output_size: 1536x1024
   subject_bbox: x=120-1416,y=128-896
   final_frame_height: 220-680px
   final_frame_shape: wide | tall | square
@@ -266,7 +275,7 @@ Never duplicate the outer card title inside the generated illustration. If the H
 Use this structure for GPT Image 2 via ZenMux:
 
 ```markdown
-Generate a clean {{wide 16:10 | wide 4:3 | 3:4 vertical}} Chinese educational illustration panel.
+Generate a clean {{landscape | square | portrait}} Chinese educational illustration panel for a {{model_output_size}} canvas.
 
 PURPOSE
 The reader should understand: {{one mechanism or relationship}}.
@@ -358,24 +367,25 @@ For beginner concept pages, prefer `mechanism-flow`, `capacity-scene`, or `compa
 ## GPT Image 2 Command
 
 ```bash
-python3 <skill-dir>/scripts/generate-labeled-illustration.py \
+python3 <skill-dir>/scripts/generate-illustration.py \
   --prompt-file prompts/page-01.md \
   --output assets/page-01.png \
-  --ar <image_slot.generator_ar> \
-  --quality 2k
+  --orientation <image_slot.requested_orientation> \
+  --size <image_slot.model_output_size> \
+  --quality medium
 ```
 
-The wrapper uses ZenMux as the OpenAI-compatible base URL and maps `ZENMUX_API_KEY` to `OPENAI_API_KEY` when needed.
+The wrapper uses `OPENAI_API_KEY` and `OPENAI_BASE_URL`. If only `ZENMUX_API_KEY` is present, it selects the ZenMux-compatible endpoint automatically.
 The wrapper normalizes the edge-connected image background to the exact paper color by default, then runs conservative `auto-frame` to remove excessive blank paper margins. Disable only with `--no-auto-frame`.
 
-Use the `--ar` value from `image_slot.generator_ar`. Use `3:4` only when the chosen slot is `portrait`. Use `4:3` or `16:10` for `landscape` / `hero`. Use `1:1` for `square` or compact row thumbnails.
+Pass both `requested_orientation` and `model_output_size`. The size is the accepted image canvas and must be verified after generation.
 
 ## Good Token Prompt Shape
 
 Good:
 
 ```markdown
-Generate a clean 3:4 vertical Chinese educational illustration panel.
+Generate a clean vertical Chinese educational illustration panel for a 1024x1536 canvas.
 
 PURPOSE
 The reader should understand: one sentence is split into Token blocks before the model processes it.

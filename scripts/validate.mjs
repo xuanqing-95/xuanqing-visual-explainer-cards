@@ -18,6 +18,20 @@ async function loadChromium() {
   }
 }
 
+function readPngSize(filePath) {
+  const buffer = fs.readFileSync(filePath);
+  if (
+    buffer.length < 24 ||
+    buffer.subarray(0, 8).toString("hex") !== "89504e470d0a1a0a"
+  ) {
+    throw new Error("not a valid PNG");
+  }
+  return {
+    width: buffer.readUInt32BE(16),
+    height: buffer.readUInt32BE(20),
+  };
+}
+
 const taskDir = path.resolve(process.argv[2] || ".");
 const indexPath = path.join(taskDir, "index.html");
 if (!fs.existsSync(indexPath)) {
@@ -26,28 +40,69 @@ if (!fs.existsSync(indexPath)) {
 }
 
 const chromium = await loadChromium();
-const browser = await chromium.launch({ headless: true });
+let browser;
+try {
+  browser = await chromium.launch({ headless: true });
+} catch (error) {
+  if (/Executable doesn't exist/i.test(error.message)) {
+    console.error(
+      "[ERROR] Playwright Chromium is missing. Run npx playwright install chromium inside the skill directory."
+    );
+    process.exit(2);
+  }
+  throw error;
+}
 const page = await browser.newPage({ viewport: { width: 1200, height: 1600 } });
 await page.goto(pathToFileURL(indexPath).href, { waitUntil: "networkidle" });
 await page.evaluate(() => document.fonts.ready);
+await page.waitForTimeout(300);
 
-// Document-level checks (mode-aware font loading, accent count)
+const cardCount = await page.locator(".poster").count();
+if (cardCount === 0) {
+  console.log("[FAIL] document: no .poster cards found");
+  await browser.close();
+  process.exit(1);
+}
+
+// Document-level checks (actual font faces, accent count)
 const docChecks = await page.evaluate(() => {
-  const linkFamilies = Array.from(document.querySelectorAll("link[rel='stylesheet']"))
-    .map((l) => l.href)
-    .join(" ");
-  const serifLoaded = /Noto\+Serif|Playfair|Songti|Source\+Serif/i.test(linkFamilies);
+  const fontFaces = Array.from(document.fonts).map((face) => ({
+    family: face.family.replace(/^["']|["']$/g, ""),
+    status: face.status,
+    weight: face.weight,
+    style: face.style,
+  }));
+  const loaded = (family) =>
+    fontFaces.some(
+      (face) => face.status === "loaded" && face.family.toLowerCase() === family.toLowerCase()
+    );
   const mode = document.documentElement.getAttribute("data-mode") || "editorial";
   const accents = new Set();
   document.querySelectorAll("[data-accent]").forEach((el) => accents.add(el.getAttribute("data-accent")));
-  return { serifLoaded, accents: [...accents], mode };
+  return {
+    fonts: {
+      notoSerif: loaded("Noto Serif SC"),
+      playfair: loaded("Playfair Display"),
+      mono: loaded("IBM Plex Mono"),
+    },
+    fontFaces,
+    accents: [...accents],
+    mode,
+  };
 });
 
-const results = await page.locator(".poster").evaluateAll((cards, mode) => {
+const results = await page.locator(".poster").evaluateAll((cards) => {
   return cards.map((card, idx) => {
     const failures = [];
     const warnings = [];
-    const id = card.id || `card-${idx + 1}`;
+    const id = card.id || `card-${String(idx + 1).padStart(2, "0")}`;
+
+    // R0 — final board contract
+    if (card.clientWidth !== 1080 || card.clientHeight !== 1440) {
+      failures.push(
+        `R0 board is ${card.clientWidth}×${card.clientHeight}; expected 1080×1440`
+      );
+    }
 
     // R1 — overflow
     if (card.scrollHeight > card.clientHeight + 1 || card.scrollWidth > card.clientWidth + 1) {
@@ -104,7 +159,7 @@ const results = await page.locator(".poster").evaluateAll((cards, mode) => {
     // R4 — 4-band density (≥3 of 4 bands must have meaningful content)
     const meaningful = [
       ...card.querySelectorAll(
-        "h1,h2,h3,p,img,.illust-frame,.frame-img,.matrix-cell,.ledger,.ledger .row,.bar-row,.tower-col,.hero-img-wrap,.hr-accent,.foot,.ba-card,.opt,.plate"
+        "h1,h2,h3,p,img,[data-visual-evidence],.illust-frame,.frame-img,.matrix-cell,.ledger,.ledger .row,.bar-row,.tower-col,.hero-img-wrap,.hr-accent,.foot,.ba-card,.opt,.plate"
       ),
     ]
       .map((node) => node.getBoundingClientRect())
@@ -132,37 +187,21 @@ const results = await page.locator(".poster").evaluateAll((cards, mode) => {
       }
     });
 
-    // R6 — Mode identity
-    // Swiss mode: every display title ≥72px must have weight ≤300
-    // Editorial mode: every display title ≥64px must have weight ≤500
-    //                 ("the larger, the lighter" — never 700+ on serif display)
+    // R6 — Editorial identity: every display title ≥64px must have weight ≤500
+    // ("the larger, the lighter" — never 700+ on serif display)
     const displayCandidates = [...card.querySelectorAll("h1,h2,h3,.h-hero,.h-statement,.h-display,.h-xl,.h-md,.num-mega,.num-xl,.term-en,.series-zh,.pullquote")];
-    if (mode === "swiss") {
-      for (const el of displayCandidates) {
-        const style = getComputedStyle(el);
-        const size = parseFloat(style.fontSize);
-        const weight = parseInt(style.fontWeight, 10);
-        if (size >= 72 && weight > 300) {
-          failures.push(
-            `R6 Swiss identity: <${el.tagName.toLowerCase()}.${el.className}> at ${Math.round(size)}px uses weight ${weight} (must be ≤300)`
-          );
-        }
-      }
-    } else {
-      // Editorial: "the larger, the lighter". Display ≥64px must be ≤500.
-      // Exempt .term-en (cover-only 240px Playfair 900) — that single weight
-      // is part of the cover identity, not a content-page rule.
-      for (const el of displayCandidates) {
-        if (el.classList.contains("term-en")) continue;
-        if (el.querySelector(".ai-accent") || el.classList.contains("ai-accent")) continue;
-        const style = getComputedStyle(el);
-        const size = parseFloat(style.fontSize);
-        const weight = parseInt(style.fontWeight, 10);
-        if (size >= 64 && weight > 500) {
-          warnings.push(
-            `R6 Editorial identity: <${el.tagName.toLowerCase()}.${el.className}> at ${Math.round(size)}px uses weight ${weight} (should be ≤500 — "the larger, the lighter")`
-          );
-        }
+    // Exempt .term-en (cover-only 240px Playfair 900) — that single weight
+    // is part of the cover identity, not a content-page rule.
+    for (const el of displayCandidates) {
+      if (el.classList.contains("term-en")) continue;
+      if (el.querySelector(".ai-accent") || el.classList.contains("ai-accent")) continue;
+      const style = getComputedStyle(el);
+      const size = parseFloat(style.fontSize);
+      const weight = parseInt(style.fontWeight, 10);
+      if (size >= 64 && weight > 500) {
+        warnings.push(
+          `R6 Editorial identity: <${el.tagName.toLowerCase()}.${el.className}> at ${Math.round(size)}px uses weight ${weight} (should be ≤500 — "the larger, the lighter")`
+        );
       }
     }
 
@@ -184,7 +223,57 @@ const results = await page.locator(".poster").evaluateAll((cards, mode) => {
 
     return { id, failures, warnings };
   });
-}, docChecks.mode);
+});
+
+const identityStats = await page.locator(".poster").evaluateAll((cards) => {
+  const ids = cards.map(
+    (card, index) => card.id || `card-${String(index + 1).padStart(2, "0")}`
+  );
+  return {
+    ids,
+    duplicateIds: ids.filter((id, index) => ids.indexOf(id) !== index),
+    unsafeIds: ids.filter((id) => !/^[A-Za-z0-9._-]+$/.test(id)),
+  };
+});
+
+const mediaStats = await page.locator(".poster").evaluateAll((cards) => {
+  const images = cards.flatMap((card) =>
+    Array.from(card.querySelectorAll("img")).map((img) => ({
+      card: card.id || "(unnamed)",
+      src: img.getAttribute("src") || "",
+      alt: img.getAttribute("alt") || "",
+      complete: img.complete,
+      naturalWidth: img.naturalWidth,
+      naturalHeight: img.naturalHeight,
+    }))
+  );
+  const text = cards.map((card) => card.innerText || "").join("\n");
+  return {
+    images,
+    broken: images.filter(
+      (image) => !image.complete || image.naturalWidth === 0 || image.naturalHeight === 0
+    ),
+    placeholders: images.filter((image) =>
+      /placeholder|pending[\s_-]*(gpt[\s_-]*)?image/i.test(`${image.src} ${image.alt}`)
+    ),
+    placeholderText: /pending\s+(gpt\s*)?image|placeholder artwork/i.test(text),
+  };
+});
+
+const coverStats = await page.locator(".cover-series").evaluateAll((covers) =>
+  covers.map((cover) => {
+    const value = (selector) => cover.querySelector(selector)?.textContent?.trim() || "";
+    const termZh = value(".term-zh");
+    return {
+      id: cover.id || "(unnamed cover)",
+      missing: [".series-zh", ".term-en", ".term-zh", ".term-question"].filter(
+        (selector) => !value(selector)
+      ),
+      termZh,
+      termZhHasChinese: /[\u3400-\u9fff]/.test(termZh),
+    };
+  })
+);
 
 const underlineStats = await page.locator(".poster").evaluateAll((cards) => {
   const contentCards = cards.filter((card) => !card.classList.contains("cover-series"));
@@ -212,12 +301,22 @@ const hashtagStats = await page.locator(".poster").evaluateAll((cards) => {
 
 // Document-level FAILs
 let failed = false;
-if (docChecks.mode === "swiss" && docChecks.serifLoaded) {
-  console.log(`[FAIL] document: R6 Swiss identity — serif family loaded in <head> (Swiss mode forbids serif)`);
+if (docChecks.mode !== "editorial") {
+  console.log(`[FAIL] document: unsupported data-mode "${docChecks.mode}"; use editorial`);
   failed = true;
 }
-if (docChecks.mode === "editorial" && !docChecks.serifLoaded) {
-  console.log(`[FAIL] document: R6 Editorial identity — no serif family loaded in <head> (Editorial requires Playfair Display + Noto Serif SC)`);
+if (
+  docChecks.mode === "editorial" &&
+  (!docChecks.fonts.notoSerif || !docChecks.fonts.playfair || !docChecks.fonts.mono)
+) {
+  const missing = [
+    !docChecks.fonts.notoSerif && "Noto Serif SC",
+    !docChecks.fonts.playfair && "Playfair Display",
+    !docChecks.fonts.mono && "IBM Plex Mono",
+  ].filter(Boolean);
+  console.log(
+    `[FAIL] document: R6 required font face(s) did not actually load: ${missing.join(", ")}`
+  );
   failed = true;
 }
 if (docChecks.accents.length > 1) {
@@ -225,6 +324,48 @@ if (docChecks.accents.length > 1) {
   failed = true;
 }
 console.log(`[INFO] mode=${docChecks.mode} accent=${docChecks.accents[0] || "(default)"}`);
+if (identityStats.duplicateIds.length) {
+  console.log(
+    `[FAIL] document: duplicate card id(s): ${[...new Set(identityStats.duplicateIds)].join(", ")}`
+  );
+  failed = true;
+}
+if (identityStats.unsafeIds.length) {
+  console.log(
+    `[FAIL] document: card id(s) are not safe output filenames: ${identityStats.unsafeIds.join(", ")}`
+  );
+  failed = true;
+}
+for (const image of mediaStats.broken) {
+  console.log(
+    `[FAIL] ${image.card}: image did not load: ${image.src || "(empty src)"}`
+  );
+  failed = true;
+}
+for (const image of mediaStats.placeholders) {
+  console.log(
+    `[FAIL] ${image.card}: placeholder image is not a deliverable: ${image.src || image.alt}`
+  );
+  failed = true;
+}
+if (mediaStats.placeholderText) {
+  console.log("[FAIL] document: visible placeholder or pending-image text found");
+  failed = true;
+}
+for (const cover of coverStats) {
+  if (cover.missing.length) {
+    console.log(
+      `[FAIL] ${cover.id}: cover is missing required content: ${cover.missing.join(", ")}`
+    );
+    failed = true;
+  }
+  if (cover.termZh && !cover.termZhHasChinese) {
+    console.log(
+      `[FAIL] ${cover.id}: .term-zh must be a Chinese explanation, got "${cover.termZh}"`
+    );
+    failed = true;
+  }
+}
 if (
   underlineStats.contentCount > 0 &&
   (underlineStats.underlinedCount > 2 || underlineStats.underlinedCount === underlineStats.contentCount)
@@ -248,6 +389,47 @@ for (const result of results) {
     console.log(`[PASS] ${result.id}`);
   }
   for (const warning of result.warnings) console.log(`  [WARN] ${warning}`);
+}
+
+const outputDir = path.join(taskDir, "output");
+const expectedPngs = identityStats.ids.map((id) => `${id}.png`).sort();
+let actualPngs = [];
+if (!fs.existsSync(outputDir)) {
+  console.log("[FAIL] artifacts: output directory is missing; render before validating");
+  failed = true;
+} else {
+  actualPngs = fs
+    .readdirSync(outputDir)
+    .filter((name) => name.toLowerCase().endsWith(".png"))
+    .sort();
+  const missing = expectedPngs.filter((name) => !actualPngs.includes(name));
+  const extra = actualPngs.filter((name) => !expectedPngs.includes(name));
+  if (missing.length) {
+    console.log(`[FAIL] artifacts: missing rendered PNG(s): ${missing.join(", ")}`);
+    failed = true;
+  }
+  if (extra.length) {
+    console.log(`[FAIL] artifacts: stale or unexpected PNG(s): ${extra.join(", ")}`);
+    failed = true;
+  }
+  for (const name of actualPngs) {
+    const filePath = path.join(outputDir, name);
+    try {
+      const size = readPngSize(filePath);
+      if (size.width !== 1080 || size.height !== 1440) {
+        console.log(
+          `[FAIL] artifacts: ${name} is ${size.width}×${size.height}; expected 1080×1440`
+        );
+        failed = true;
+      }
+    } catch (error) {
+      console.log(`[FAIL] artifacts: ${name} ${error.message}`);
+      failed = true;
+    }
+  }
+}
+if (!failed) {
+  console.log(`[PASS] artifacts: ${actualPngs.length} PNG(s), all 1080×1440`);
 }
 
 await browser.close();

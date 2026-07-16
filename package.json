@@ -1,8 +1,20 @@
 {
+  "name": "xuanqing-visual-explainer-cards",
+  "version": "1.0.0",
   "private": true,
+  "description": "Create validated 3:4 editorial knowledge-card series with slot-matched explanatory images.",
   "license": "AGPL-3.0-only",
   "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "render:example": "node scripts/render.mjs examples/llmops",
+    "validate:example": "node scripts/validate.mjs examples/llmops",
+    "test": "node scripts/test.mjs",
+    "verify": "node --check scripts/generate.mjs && node --check scripts/render.mjs && node --check scripts/validate.mjs && node --check scripts/test.mjs && python3 -m py_compile scripts/generate-illustration.py && npm test"
+  },
   "dependencies": {
-    "playwright": "^1.60.0"
+    "playwright": "1.61.1"
   }
 }

@@ -2,7 +2,15 @@
 
 Read this when designing any page in a card set.
 
-This skill ships **exactly one fixed layout**: the S00 Series Cover. Every other page in a set is composed fresh based on the content shape. Do not invent named layout "S01 / S02 / S03 / S04" and force pages into them — that produces the same five pages no matter what the content is, which is exactly what we don't want.
+This skill ships **exactly one fixed layout**: the S00 Series Cover. Compose every other page fresh from the content shape and shared primitives.
+
+## Contents
+
+- S00 Series Cover
+- Content-page composition workflow
+- Slot-first image placement
+- Shared template primitives
+- Content-page hard rules
 
 ## The One Fixed Layout: S00 Series Cover
 
@@ -93,7 +101,7 @@ Placement rules:
 
 ### Step 3.5 — Define the slot before generating
 
-Before writing an image prompt, define the final `image_slot`. The slot decides the HTML wrapper, the approximate rendered size, the generator `--ar`, the expected physical canvas, and the pixel-safe subject box. Do not generate an image first and then pick a slot afterward.
+Before writing an image prompt, define the final `image_slot`. The slot decides the HTML wrapper, rendered size, requested orientation, explicit model output canvas, and pixel-safe subject box. Do not generate an image first and then pick a slot afterward.
 
 Minimum `image_slot` shape:
 
@@ -102,19 +110,19 @@ image_slot:
   html_wrapper: evidence-figure landscape
   slot_px: 904x603
   slot_ratio: 3:2
-  generator_ar: 4:3
-  generator_canvas: 1536x1024
+  requested_orientation: landscape
+  model_output_size: 1536x1024
   subject_bbox: x=120-1416,y=128-896
   fit: contain
 ```
 
 Slot choice:
 
-- Normal generated concept/metaphor/mechanism image: generate `4:3` or `16:10`, then place in `.evidence-figure.landscape`. The local generator returns a `1536x1024` landscape image; the slot must stay close to 3:2 or the image will shrink.
+- Normal generated concept/metaphor/mechanism image: request `landscape` at `1536x1024`, then place it in `.evidence-figure.landscape`. The slot must stay close to 3:2 or the image will shrink.
 - Wide process/metaphor/comparison wells: use `.evidence-figure.wide` only for genuinely long horizontal diagrams or HTML-native diagrams. If the generated bitmap is `1536x1024`, prefer `.evidence-figure.landscape` unless you intentionally crop/enlarge after inspecting labels.
-- Tall standalone evidence: generate `3:4`, then place in `.evidence-figure.portrait` or another deliberate vertical evidence well.
-- Square objects: generate `1:1`, then use `.evidence-figure.square`, a side-by-side text/image module, or row thumbnails.
-- Row thumbnails or small mechanism marks: generate `1:1` or `4:3`, then place in 100-260px wells.
+- Tall standalone evidence: request `portrait` at `1024x1536`, then place it in `.evidence-figure.portrait` or another deliberate vertical evidence well.
+- Square objects: request `square` at `1024x1024`, then use `.evidence-figure.square`, a side-by-side text/image module, or row thumbnails.
+- Row thumbnails or small mechanism marks: use square or landscape output, then place them in 100-260px wells.
 
 Do not put a square generated image into a wide workflow slot unless you intentionally add `.zoom-125` or `.zoom-140` and verify no label is cropped. If the image looks correct but too small because of safe margins, use these classes on the frame:
 
@@ -151,14 +159,3 @@ Add task-scoped CSS (inside `<style>` in `index.html`) for anything else the spe
 3. **Content density ≥ 75%.** No pure-whitespace band wider than 216px without a stated reason.
 4. **Each page has a section label** (`.section-label`) explaining what kind of page this is in 2-5 mono English/Chinese words.
 5. **No 1-of-N letter highlight.** Don't pick a "key option" and wrap it in yellow. If a step is more important, write it that way in the copy.
-
-## What Was Removed and Why
-
-Earlier versions of this file listed S01-S04 as fixed templates (concept+image, tall ledger, before/after, closing). They were removed because:
-
-- They produced visually identical card sets across different topics.
-- They taught the agent to fit content to a template instead of designing for content.
-- They concentrated mustard yellow on multiple content-page elements (ledger numbers, key options, kickers), which over-saturated the emphasis color.
-- They led to "one illustration per set" because only the concept template had an `.illust-frame` slot.
-
-If you want a recipe-driven mode in the future, build it as an alternate seed under `assets/`, not by re-pinning S01-S04 here.

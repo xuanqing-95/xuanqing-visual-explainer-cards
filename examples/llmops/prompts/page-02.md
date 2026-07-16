@@ -1,21 +1,44 @@
-# Page 2 — LLMOps Kitchen, Editorial Illustrated (IKB palette)
+# Page 2 — LLMOps Kitchen
 
-Mode: `labeled-gpt-image` (GPT Image 2)
-Aspect ratio: 1:1
-Style anchor: editorial textbook illustration, isometric overhead view, warm off-white paper background (#fafaf8). Strict limited palette: IKB Klein Blue (#002FA7) as the only accent, ink black (#0a0a0a) for outlines and text, warm grey (#737373) for secondary detail. NO yellow, NO mustard, NO red. Hand-drawn ink line work, no shadows, no gradients, no photorealism. Feels like a 1960s European magazine science illustration.
+Mode: `labeled-gpt-image`
+
+## Purpose
+
+The reader should understand that a good model is only one part of a production AI system. Data, quality evaluation, user feedback, and iteration all feed the model.
+
+## Canvas contract
+
+- Output canvas: exactly 1536x1024 landscape.
+- Keep all important subjects and labels inside x=120-1416 and y=128-896.
+- The full diagram, including labels and arrows, should occupy 76-86% of canvas width and 68-80% of canvas height.
+- Keep balanced paper margins on all four sides.
+- Do not create a small square diagram in the center of the landscape canvas.
+
+## Style
+
+Editorial textbook illustration on flat off-white paper `#fafaf8`. Precise ink line work with a restrained 1960s European science-magazine feel. Use only:
+
+- IKB Klein Blue `#002FA7`;
+- ink black `#0a0a0a`;
+- warm grey `#737373`;
+- off-white paper `#fafaf8`.
+
+No yellow, red, shadows, gradients, photorealism, rounded UI cards, or page chrome.
 
 ## Scene
 
-An isometric overhead diagram of a small restaurant kitchen, drawn flat with clear ink contours. A central round island ("MODEL · 模型") with a small chef figure (silhouette) standing behind it, presenting one finished dish. The dish is highlighted with a solid IKB BLUE (#002FA7) circle behind it.
+Draw a landscape isometric restaurant kitchen diagram. Put a central round island labeled `MODEL · 模型` in the middle with a chef presenting one finished dish.
 
-Four workstations are arranged around the central island, each labeled with a connector ribbon pointing to the MODEL island:
+Arrange four clearly separated workstations around it in a balanced two-left / two-right composition. Each workstation connects to the central model island with an IKB blue arrow:
 
-- **Top-left station**: an ingredient prep counter — crates of vegetables, a sack of flour. A thin IKB blue arrow points from this station toward the central island. Label ribbon: `① DATA · 数据采购`
-- **Top-right station**: an inspection table — a magnifier and a clipboard with checkmarks. IKB blue arrow points to the central island. Label ribbon: `② QUALITY · 质量评估`
-- **Bottom-left station**: a service window — a customer silhouette handing back a small slip of paper. IKB blue arrow points to the central island. Label ribbon: `③ FEEDBACK · 用户反馈`
-- **Bottom-right station**: a small chalkboard with a stepped chart drawn on it. IKB blue arrow points to the central island. Label ribbon: `④ ITERATION · 菜单迭代`
+- upper left: ingredient crates and flour, labeled `① DATA · 数据采购`;
+- upper right: magnifier and quality checklist, labeled `② QUALITY · 质量评估`;
+- lower left: service window receiving a feedback slip, labeled `③ FEEDBACK · 用户反馈`;
+- lower right: iteration board with a stepped chart, labeled `④ ITERATION · 菜单迭代`.
 
-## Exact In-Image Labels (render exactly as written, Chinese must be readable)
+## Exact in-image text
+
+Render only these labels, exactly:
 
 - MODEL · 模型
 - ① DATA · 数据采购
@@ -23,14 +46,4 @@ Four workstations are arranged around the central island, each labeled with a co
 - ③ FEEDBACK · 用户反馈
 - ④ ITERATION · 菜单迭代
 
-## Rules
-
-- Do NOT add a card title (no "LLMOps", no "LLMOps 是什么", no English headline).
-- Do NOT add page number, frame border, or fake UI chrome.
-- Background fills entire canvas to the edge with #fafaf8 — no white margin, NO cream/beige tint.
-- The four workstations should be visually balanced around the central island, roughly equal in size.
-- Use IKB Klein Blue (#002FA7) as the ONLY color. Fill the highlighted dish behind the chef and the four ribbon backgrounds in IKB BLUE with WHITE text. All other elements stay in ink black or warm grey line work.
-- Ribbons are flat rectangles, not curved scrolls. Text on ribbons is sans-serif WHITE on IKB BLUE.
-- The MODEL island has a thin ink black outline filled with off-white (#fafaf8).
-- Composition fills the canvas — no large empty quadrant.
-
+All Chinese must be horizontal, crisp, and readable. Do not add `LLMOps`, a title, page number, caption, border, or any other text.

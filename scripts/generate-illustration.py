@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import argparse
 from collections import deque
-import os
 import subprocess
 import sys
 from pathlib import Path
@@ -9,38 +8,35 @@ from pathlib import Path
 try:
     from PIL import Image
 except ImportError:
-    print("ERROR: Pillow is required. Install with: pip install Pillow", file=sys.stderr)
+    print("ERROR: Pillow is required. Install with: python3 -m pip install -r requirements.txt", file=sys.stderr)
     sys.exit(1)
 
 
-def remove_background(image_path, tolerance=34, feather=28):
-    image = Image.open(image_path).convert("RGBA")
-    pixels = image.load()
-    width, height = image.size
-    samples = [
-        pixels[0, 0][:3],
-        pixels[width - 1, 0][:3],
-        pixels[0, height - 1][:3],
-        pixels[width - 1, height - 1][:3],
-    ]
-    background = tuple(sum(sample[channel] for sample in samples) // 4 for channel in range(3))
-
-    for y in range(height):
-        for x in range(width):
-            red, green, blue, _ = pixels[x, y]
-            distance = max(abs(red - background[0]), abs(green - background[1]), abs(blue - background[2]))
-            if distance <= tolerance:
-                alpha = 0
-            elif distance < tolerance + feather:
-                alpha = round(255 * (distance - tolerance) / feather)
-            else:
-                alpha = 255
-            pixels[x, y] = (red, green, blue, alpha)
-    image.save(image_path)
+STANDARD_SIZES = {
+    "landscape": (1536, 1024),
+    "square": (1024, 1024),
+    "portrait": (1024, 1536),
+}
 
 
-def normalize_background(image_path, target=(247, 244, 236), tolerance=42, feather=26):
-    image = Image.open(image_path).convert("RGBA")
+def parse_size(value):
+    try:
+        width, height = (int(part) for part in value.lower().split("x", 1))
+    except (TypeError, ValueError):
+        raise argparse.ArgumentTypeError("size must use WIDTHxHEIGHT, for example 1536x1024")
+    if width <= 0 or height <= 0:
+        raise argparse.ArgumentTypeError("size edges must be positive")
+    return width, height
+
+
+def orientation_for_size(size):
+    width, height = size
+    if width == height:
+        return "square"
+    return "landscape" if width > height else "portrait"
+
+
+def edge_region(image, tolerance, feather):
     pixels = image.load()
     width, height = image.size
     corners = [
@@ -73,18 +69,7 @@ def normalize_background(image_path, target=(247, 244, 236), tolerance=42, feath
 
     while queue:
         x, y = queue.popleft()
-        red, green, blue, alpha = pixels[x, y]
-        delta = distance((red, green, blue))
-        if delta <= tolerance:
-            mix = 1.0
-        else:
-            mix = 1.0 - (delta - tolerance) / feather
-        pixels[x, y] = (
-            round(red * (1 - mix) + target[0] * mix),
-            round(green * (1 - mix) + target[1] * mix),
-            round(blue * (1 - mix) + target[2] * mix),
-            alpha,
-        )
+        yield x, y, distance(pixels[x, y][:3])
         if x > 0:
             enqueue(x - 1, y)
         if x + 1 < width:
@@ -93,6 +78,33 @@ def normalize_background(image_path, target=(247, 244, 236), tolerance=42, feath
             enqueue(x, y - 1)
         if y + 1 < height:
             enqueue(x, y + 1)
+
+
+def normalize_background(image_path, target=(250, 250, 248), tolerance=42, feather=26):
+    image = Image.open(image_path).convert("RGBA")
+    pixels = image.load()
+    for x, y, delta in edge_region(image, tolerance, feather):
+        red, green, blue, alpha = pixels[x, y]
+        mix = 1.0 if delta <= tolerance else 1.0 - (delta - tolerance) / feather
+        pixels[x, y] = (
+            round(red * (1 - mix) + target[0] * mix),
+            round(green * (1 - mix) + target[1] * mix),
+            round(blue * (1 - mix) + target[2] * mix),
+            alpha,
+        )
+    image.save(image_path)
+
+
+def remove_background(image_path, tolerance=34, feather=28):
+    image = Image.open(image_path).convert("RGBA")
+    pixels = image.load()
+    for x, y, delta in edge_region(image, tolerance, feather):
+        red, green, blue, alpha = pixels[x, y]
+        if delta <= tolerance:
+            new_alpha = 0
+        else:
+            new_alpha = round(alpha * (delta - tolerance) / feather)
+        pixels[x, y] = (red, green, blue, new_alpha)
     image.save(image_path)
 
 
@@ -103,15 +115,13 @@ def auto_frame(image_path, target=(250, 250, 248), threshold=24, padding_ratio=0
     min_x, min_y = width, height
     max_x, max_y = -1, -1
 
-    def is_content(x, y):
-        red, green, blue, alpha = pixels[x, y]
-        if alpha < 16:
-            return False
-        return max(abs(red - target[0]), abs(green - target[1]), abs(blue - target[2])) > threshold
-
     for y in range(height):
         for x in range(width):
-            if is_content(x, y):
+            red, green, blue, alpha = pixels[x, y]
+            is_content = alpha >= 16 and max(
+                abs(red - target[0]), abs(green - target[1]), abs(blue - target[2])
+            ) > threshold
+            if is_content:
                 min_x = min(min_x, x)
                 min_y = min(min_y, y)
                 max_x = max(max_x, x)
@@ -121,46 +131,56 @@ def auto_frame(image_path, target=(250, 250, 248), threshold=24, padding_ratio=0
         print("Auto-frame skipped: no content bounds detected.")
         return
 
-    box_w = max_x - min_x + 1
-    box_h = max_y - min_y + 1
-    if (box_w * box_h) / (width * height) < min_area_ratio:
-        print("Auto-frame skipped: detected content area too small to trust.")
+    box_width = max_x - min_x + 1
+    box_height = max_y - min_y + 1
+    if (box_width * box_height) / (width * height) < min_area_ratio:
+        print("Auto-frame skipped: detected content area is too small to trust.")
         return
 
-    pad = max(24, round(max(box_w, box_h) * padding_ratio))
-    min_x = max(0, min_x - pad)
-    min_y = max(0, min_y - pad)
-    max_x = min(width - 1, max_x + pad)
-    max_y = min(height - 1, max_y + pad)
+    padding = max(24, round(max(box_width, box_height) * padding_ratio))
+    min_x = max(0, min_x - padding)
+    min_y = max(0, min_y - padding)
+    max_x = min(width - 1, max_x + padding)
+    max_y = min(height - 1, max_y + padding)
     crop = image.crop((min_x, min_y, max_x + 1, max_y + 1))
 
     canvas_ratio = width / height
     crop_ratio = crop.width / crop.height
     if crop_ratio > canvas_ratio:
-        new_w = width
-        new_h = max(1, round(width / crop_ratio))
+        new_width = width
+        new_height = max(1, round(width / crop_ratio))
     else:
-        new_h = height
-        new_w = max(1, round(height * crop_ratio))
+        new_height = height
+        new_width = max(1, round(height * crop_ratio))
 
-    resized = crop.resize((new_w, new_h), Image.Resampling.LANCZOS)
+    resized = crop.resize((new_width, new_height), Image.Resampling.LANCZOS)
     canvas = Image.new("RGBA", (width, height), (*target, 255))
-    offset = ((width - new_w) // 2, (height - new_h) // 2)
-    canvas.alpha_composite(resized, offset)
+    canvas.alpha_composite(resized, ((width - new_width) // 2, (height - new_height) // 2))
     canvas.save(image_path)
+    print(
+        "Auto-framed illustration: "
+        f"content_bbox={box_width / width:.0%}x{box_height / height:.0%}, "
+        f"output={width}x{height}"
+    )
 
-    content_w = (max_x - min_x + 1) / width
-    content_h = (max_y - min_y + 1) / height
-    print(f"Auto-framed illustration: content_bbox={content_w:.0%}x{content_h:.0%}, output={width}x{height}")
+
+def parse_color(value):
+    color = value.lstrip("#")
+    if len(color) != 6:
+        raise ValueError("paper color must use #RRGGBB")
+    return tuple(int(color[index:index + 2], 16) for index in (0, 2, 4))
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Generate a no-text illustration through the local OpenAI-compatible generator.")
+    parser = argparse.ArgumentParser(
+        description="Generate and normalize one slot-matched illustration through an OpenAI-compatible Image API."
+    )
     parser.add_argument("--prompt-file", required=True)
     parser.add_argument("--output", required=True)
-    parser.add_argument("--ar", default="3:4")
-    parser.add_argument("--quality", default="medium")
-    parser.add_argument("--model", default="gpt-image-2")
+    parser.add_argument("--orientation", choices=sorted(STANDARD_SIZES))
+    parser.add_argument("--size", type=parse_size)
+    parser.add_argument("--quality", choices=("low", "medium", "high"), default="medium")
+    parser.add_argument("--model")
     parser.add_argument("--generator", default=str(Path(__file__).with_name("generate.mjs")))
     parser.add_argument("--remove-background", action="store_true")
     parser.add_argument("--background-tolerance", type=int, default=34)
@@ -172,51 +192,80 @@ def main():
     parser.add_argument("--auto-frame-padding", type=float, default=0.08)
     args = parser.parse_args()
 
+    if not args.size and not args.orientation:
+        parser.error("--size or --orientation is required; define image_slot before generation")
+    expected_size = args.size or STANDARD_SIZES[args.orientation]
+    if args.orientation and orientation_for_size(expected_size) != args.orientation:
+        parser.error(
+            f"--size {expected_size[0]}x{expected_size[1]} conflicts with --orientation {args.orientation}"
+        )
+
+    prompt_path = Path(args.prompt_file)
+    if not prompt_path.is_file() or not prompt_path.read_text(encoding="utf-8").strip():
+        parser.error(f"prompt file is missing or empty: {prompt_path}")
+
     output = Path(args.output)
+    if output.suffix.lower() != ".png":
+        parser.error("--output must use a .png extension")
     output.parent.mkdir(parents=True, exist_ok=True)
 
     generator_path = Path(args.generator)
-    if not generator_path.exists():
-        print(f"ERROR: generator not found at {generator_path}.", file=sys.stderr)
-        sys.exit(1)
-
-    env = os.environ.copy()
-    if "OPENAI_API_KEY" not in env and "ZENMUX_API_KEY" in env:
-        env["OPENAI_API_KEY"] = env["ZENMUX_API_KEY"]
-        env.setdefault("OPENAI_BASE_URL", "https://zenmux.ai/api/v1")
+    if not generator_path.is_file():
+        parser.error(f"generator not found: {generator_path}")
 
     command = [
         "node",
         str(generator_path),
-        "--promptfile",
-        args.prompt_file,
+        "--prompt-file",
+        str(prompt_path),
         "--output",
         str(output),
-        "--ar",
-        args.ar,
+        "--size",
+        f"{expected_size[0]}x{expected_size[1]}",
         "--quality",
         args.quality,
-        "--model",
-        args.model,
     ]
-    result = subprocess.call(command, env=env)
-    if result == 0:
-        if args.remove_background:
-            remove_background(output, args.background_tolerance)
-            print(f"Transparent background applied: {output}")
-        elif not args.skip_background_normalize:
-            paper = args.paper_color.lstrip("#")
-            target = tuple(int(paper[index:index + 2], 16) for index in (0, 2, 4))
-            normalize_background(output, target=target)
-            print(f"Background normalized to {args.paper_color}: {output}")
-            if args.auto_frame:
-                auto_frame(
-                    output,
-                    target=target,
-                    threshold=args.auto_frame_threshold,
-                    padding_ratio=args.auto_frame_padding,
-                )
-    raise SystemExit(result)
+    if args.orientation:
+        command.extend(["--orientation", args.orientation])
+    if args.model:
+        command.extend(["--model", args.model])
+
+    result = subprocess.run(command, check=False)
+    if result.returncode:
+        raise SystemExit(result.returncode)
+    if not output.is_file():
+        print(f"ERROR: generator returned success but did not create {output}", file=sys.stderr)
+        raise SystemExit(1)
+
+    with Image.open(output) as image:
+        actual_size = image.size
+    if actual_size != expected_size:
+        print(
+            f"ERROR: expected {expected_size[0]}x{expected_size[1]}, got {actual_size[0]}x{actual_size[1]}",
+            file=sys.stderr,
+        )
+        raise SystemExit(1)
+
+    target = parse_color(args.paper_color)
+    if args.remove_background:
+        remove_background(output, args.background_tolerance)
+        print(f"Applied edge-connected transparency: {output}")
+    elif not args.skip_background_normalize:
+        normalize_background(output, target=target)
+        print(f"Normalized edge-connected paper background to {args.paper_color}: {output}")
+        if args.auto_frame:
+            auto_frame(
+                output,
+                target=target,
+                threshold=args.auto_frame_threshold,
+                padding_ratio=args.auto_frame_padding,
+            )
+
+    with Image.open(output) as image:
+        if image.size != expected_size:
+            print("ERROR: post-processing changed the output dimensions", file=sys.stderr)
+            raise SystemExit(1)
+    print(f"Verified illustration: {output} ({expected_size[0]}x{expected_size[1]})")
 
 
 if __name__ == "__main__":
