@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-07-16T15:25:21.154Z",
+  "provider": "zenmux",
+  "model": "gpt-image-2",
+  "quality": "medium",
+  "size": "1024x1024",
+  "orientation": "square",
+  "output_file": "action.png",
+  "prompt_file": "../prompts/action.md",
+  "prompt_sha256": "21a6a9348cef208d43cd584ec6f43286a7b1a541b5ac21ca01d7da2016a6d258",
+  "raw_sha256": "7ad3dd4d8d4cf06d8b78de6b1b42e7c6102d91067910ab8ac5224595f9a34f14",
+  "request_id": null,
+  "final_sha256": "270fa749c9ccdfc8323ad4ad34d8a3ef2d57470fff98c8cc6de1ec59f71ff622",
+  "final_width": 1024,
+  "final_height": 1024,
+  "postprocessing": {
+    "background_normalized": true,
+    "background_removed": false,
+    "auto_frame_requested": true,
+    "paper_color": "#fafaf8"
+  }
+}

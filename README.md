@@ -2,7 +2,7 @@
 
 Create illustrated Xiaohongshu/Rednote knowledge-card series with an editorial HTML layout and explanatory image evidence.
 
-The final card is always rendered from HTML at **1080×1440 (3:4)**. Every non-cover card contains at least one model-generated illustration. Those illustrations live inside the card and use the canvas that matches their HTML slot, such as landscape, square, or portrait.
+The final card is always rendered from HTML at **1080×1440 (3:4)**. Every non-cover card contains one or more model-generated illustrations. Each illustration uses the canvas that matches its own HTML slot, so landscape, square, portrait, and supported custom sizes can coexist across a set or on one page.
 
 ## Install
 
@@ -60,8 +60,8 @@ The workflow:
 1. Turn the source into a beginner-friendly explanation.
 2. Copy `assets/storyboard.template.yaml`, plan page rhythm, and vary content-page layouts and silhouettes.
 3. Validate `storyboard.yaml` before image prompting or HTML design.
-4. Define at least one final illustration slot for every non-cover page before prompting.
-5. Generate slot-matched illustrations for every non-cover page.
+4. Define every final illustration slot for each non-cover page before prompting.
+5. Generate each slot-matched illustration with its own prompt and output size.
 6. Compose the cards in HTML and bind each page to its storyboard layout and silhouette.
 7. Render 1080×1440 PNGs.
 8. Validate storyboard binding, HTML, media, fonts, and final PNG artifacts.
@@ -71,7 +71,8 @@ The workflow:
 - Final cards: `1080x1440`, 3:4.
 - Storyboard: required pre-design source of truth for page order, rhythm, layout, silhouette, image slots, and asset paths.
 - Cover: fixed S00 editorial cover with HTML typography.
-- Content pages: composed from content shape, not fixed numbered templates; each must contain a model-generated illustration.
+- Content pages: composed from content shape, not fixed numbered templates; each contains one or more model-generated illustrations as the content requires.
+- Multi-image mapping: every planned illustration has an independent storyboard id, prompt, asset path, slot, and model output size; HTML binds it with `data-illustration-id`.
 - HTML/CSS diagrams, exact code, numbers, labels, and screenshots may supplement but never replace the generated illustration.
 - Illustration slot: declared before generation.
 - Model output: explicit `model_output_size`; it does not have to be 3:4.

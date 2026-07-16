@@ -53,7 +53,7 @@ if (!storyboardResult.ok) {
   process.exit(1);
 }
 console.log(
-  `[PASS] storyboard: ${storyboardResult.summary.pageCount} page(s), ${storyboardResult.summary.contentCount} content page(s), ${storyboardResult.summary.layoutCount} layout(s), ${storyboardResult.summary.silhouetteCount} silhouette(s)`
+  `[PASS] storyboard: ${storyboardResult.summary.pageCount} page(s), ${storyboardResult.summary.contentCount} content page(s), ${storyboardResult.summary.illustrationCount} illustration(s), ${storyboardResult.summary.layoutCount} layout(s), ${storyboardResult.summary.silhouetteCount} silhouette(s)`
 );
 
 const chromium = await loadChromium();
@@ -263,8 +263,13 @@ const storyboardBindingStats = await page.locator(".poster").evaluateAll((cards)
     generated: Array.from(
       card.querySelectorAll('.illust-frame img[data-generated-illustration="true"]')
     ).map((img) => ({
+      illustrationId: img.getAttribute("data-illustration-id") || "",
       src: img.getAttribute("src") || "",
-      wrapperClasses: img.closest(".evidence-figure")?.className || "",
+      wrapperClasses: [img.closest(".evidence-figure"), img.closest(".illust-frame")]
+        .filter(Boolean)
+        .flatMap((wrapper) => Array.from(wrapper.classList))
+        .filter((className, index, classes) => classes.indexOf(className) === index)
+        .join(" "),
     })),
   }))
 );
@@ -293,6 +298,7 @@ const mediaStats = await page.locator(".poster").evaluateAll((cards) => {
             '.illust-frame img[data-generated-illustration="true"]'
           )
         ).map((img) => ({
+          illustrationId: img.getAttribute("data-illustration-id") || "",
           src: img.getAttribute("src") || "",
           alt: img.getAttribute("alt") || "",
         })),
@@ -353,6 +359,7 @@ const normalizeTaskPath = (value) =>
   decodeURIComponent(String(value || "").split(/[?#]/, 1)[0])
     .replaceAll("\\", "/")
     .replace(/^\.\//, "");
+const isLegacySingleIllustrationSchema = storyboardResult.data.schema_version === 1;
 
 if (storyboardBindingStats.length !== storyboardResult.pages.length) {
   console.log(
@@ -405,29 +412,76 @@ for (
   }
 
   if (!expectedCover) {
-    const expectedImage = normalizeTaskPath(expectedPage.illustration.output_file);
-    const matchingImage = actual.generated.find(
-      (image) => normalizeTaskPath(image.src) === expectedImage
+    const expectedIllustrations = expectedPage.illustrations;
+    const actualGenerated = actual.generated.map((image) => ({
+      ...image,
+      illustrationId:
+        image.illustrationId ||
+        (isLegacySingleIllustrationSchema && actual.generated.length === 1 ? "main" : ""),
+    }));
+    const actualIds = actualGenerated.map((image) => image.illustrationId);
+    const duplicateIds = actualIds.filter(
+      (illustrationId, imageIndex) => illustrationId && actualIds.indexOf(illustrationId) !== imageIndex
     );
-    if (!matchingImage) {
+    if (actual.generated.length !== expectedIllustrations.length) {
       console.log(
-        `[FAIL] ${actual.id}: generated image does not match storyboard illustration.output_file "${expectedImage}"`
+        `[FAIL] ${actual.id}: HTML has ${actual.generated.length} generated illustration(s), storyboard plans ${expectedIllustrations.length}`
       );
       failed = true;
       storyboardBindingFailed = true;
-    } else {
-      const requiredWrapperClasses = expectedPage.image_slot.html_wrapper.split(/\s+/).filter(Boolean);
+    }
+    if (duplicateIds.length) {
+      console.log(
+        `[FAIL] ${actual.id}: duplicate data-illustration-id value(s): ${[...new Set(duplicateIds)].join(", ")}`
+      );
+      failed = true;
+      storyboardBindingFailed = true;
+    }
+
+    for (const expectedIllustration of expectedIllustrations) {
+      const expectedIllustrationId = String(expectedIllustration.id);
+      const matchingImages = actualGenerated.filter(
+        (image) => image.illustrationId === expectedIllustrationId
+      );
+      if (matchingImages.length !== 1) {
+        console.log(
+          `[FAIL] ${actual.id}: storyboard illustration "${expectedIllustrationId}" must map to exactly one image via data-illustration-id`
+        );
+        failed = true;
+        storyboardBindingFailed = true;
+        continue;
+      }
+      const matchingImage = matchingImages[0];
+      const expectedImage = normalizeTaskPath(expectedIllustration.output_file);
+      if (normalizeTaskPath(matchingImage.src) !== expectedImage) {
+        console.log(
+          `[FAIL] ${actual.id}: illustration "${expectedIllustrationId}" src does not match storyboard output_file "${expectedImage}"`
+        );
+        failed = true;
+        storyboardBindingFailed = true;
+      }
+      const requiredWrapperClasses = expectedIllustration.image_slot.html_wrapper.split(/\s+/).filter(Boolean);
       const actualWrapperClasses = new Set(matchingImage.wrapperClasses.split(/\s+/).filter(Boolean));
       const missingWrapperClasses = requiredWrapperClasses.filter(
         (className) => !actualWrapperClasses.has(className)
       );
       if (missingWrapperClasses.length) {
         console.log(
-          `[FAIL] ${actual.id}: illustration wrapper is missing storyboard class(es): ${missingWrapperClasses.join(", ")}`
+          `[FAIL] ${actual.id}: illustration "${expectedIllustrationId}" wrapper is missing storyboard class(es): ${missingWrapperClasses.join(", ")}`
         );
         failed = true;
         storyboardBindingFailed = true;
       }
+    }
+
+    const expectedIds = new Set(expectedIllustrations.map((illustration) => String(illustration.id)));
+    const extraIds = actualIds.filter((illustrationId) => !expectedIds.has(illustrationId));
+    if (extraIds.length) {
+      console.log(
+        `[FAIL] ${actual.id}: unplanned or missing data-illustration-id value(s): ${extraIds.map((value) => value || "(missing)").join(", ")}`
+      );
+      failed = true;
+      storyboardBindingFailed = true;
     }
   }
 }
@@ -561,18 +615,29 @@ for (const card of mediaStats.generatedByCard) {
         throw new Error(`generation prompt is missing: ${metadata.prompt_file}`);
       }
       if (expectedStoryboardPage) {
+      const expectedIllustration = expectedStoryboardPage.illustrations.find(
+          (illustration) =>
+            String(illustration.id) ===
+            (image.illustrationId ||
+              (isLegacySingleIllustrationSchema && card.images.length === 1 ? "main" : ""))
+        );
+        if (!expectedIllustration) {
+          throw new Error(
+            `generated image has no matching storyboard illustration id: ${image.illustrationId || "(missing)"}`
+          );
+        }
         const expectedPromptPath = resolveTaskFile(
-          expectedStoryboardPage.illustration.prompt_file,
-          "storyboard illustration.prompt_file"
+          expectedIllustration.prompt_file,
+          "storyboard illustrations[].prompt_file"
         );
         if (promptPath !== expectedPromptPath) {
           throw new Error(
             `generation provenance prompt_file does not match storyboard: ${metadata.prompt_file}`
           );
         }
-        if (metadata.size !== expectedStoryboardPage.image_slot.model_output_size) {
+        if (metadata.size !== expectedIllustration.image_slot.model_output_size) {
           throw new Error(
-            `generated image size ${metadata.size} does not match storyboard model_output_size ${expectedStoryboardPage.image_slot.model_output_size}`
+            `generated image size ${metadata.size} does not match storyboard model_output_size ${expectedIllustration.image_slot.model_output_size}`
           );
         }
       }

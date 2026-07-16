@@ -155,6 +155,9 @@ Use `.section-label` for the per-page IKB marker. Use `.img-cap` for image capti
 | `.evidence-figure.portrait` | centered tall mechanism or scene |
 | `.evidence-figure.compact` | 220–300px supporting mark |
 | `.illust-frame` | generated illustration with `object-fit:contain` |
+| `.illust-frame.row-thumb` | 200×200 list-item illustration |
+| `.illust-frame.compare-thumb` | 240px-tall comparison-state illustration |
+| `.illust-frame.step-icon` | 130×130 process-step illustration |
 | `.frame-img` | photograph with intentional `object-fit:cover` crop |
 
 Major generated illustrations use both layers:
@@ -162,7 +165,7 @@ Major generated illustrations use both layers:
 ```html
 <figure class="evidence-figure landscape">
   <div class="illust-frame">
-    <img src="assets/page-03.png" alt="具体描述图中机制">
+    <img data-generated-illustration="true" data-illustration-id="main" src="assets/page-03.png" alt="具体描述图中机制">
   </div>
   <figcaption class="img-cap">Fig. 03 · 一句说明</figcaption>
 </figure>
@@ -200,7 +203,7 @@ Use at most one quiet matrix layer on a sparse cover or statement page:
 - `.cross-mat`: cross-hatch matrix;
 - `.ring-mat`: ring matrix.
 
-Place it before `.content` so the pattern stays at z-index 1 and content at z-index 2. Omit patterns on dense pages and never stack them.
+Apply the class directly to `.poster`; the seed supplies the pseudo-element and keeps `.content` above it. Omit patterns on dense pages and never stack them.
 
 ## Release checks
 

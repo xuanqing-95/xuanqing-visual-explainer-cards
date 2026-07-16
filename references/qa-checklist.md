@@ -7,7 +7,8 @@
 - Do adjacent content pages change both layout and silhouette?
 - For three or more content pages, are at least three layouts and three silhouettes used?
 - Do every card's `data-page-id`, `data-layout`, and `data-silhouette` match the storyboard?
-- Do each non-cover card's generated asset and wrapper classes match `illustration.output_file` and `image_slot.html_wrapper`?
+- Does every planned `illustrations[].id` map to exactly one HTML image through `data-illustration-id`?
+- Do every generated asset, wrapper class, prompt, and output size match that illustration's storyboard entry, with no missing or unplanned images?
 
 ## Meaning
 
@@ -40,8 +41,8 @@
 
 - Does every non-cover card contain at least one model-generated illustration, even when HTML carries the exact code, numbers, comparison, or checklist?
 - Is the illustration clearly visible and not merely decorative?
-- Was `image_slot` defined before writing the prompt or generating the image?
-- Do `requested_orientation`, `model_output_size`, and `subject_bbox` match the chosen `image_slot`?
+- Was every `illustrations[].image_slot` defined before writing its prompt or generating its image?
+- For each illustration, do `requested_orientation`, `model_output_size`, and `subject_bbox` match its chosen slot?
 - Does every major generated illustration use an `.evidence-figure` wrapper instead of a naked `.illust-frame`?
 - Does the illustration feel native to the card: optically centered, balanced top/bottom margin, not pasted in, not stuck to the top?
 - Does each generated illustration visually fill its intended slot, rather than appearing as a small centered diagram with excessive paper margin?
@@ -67,7 +68,7 @@
 - Run `render.mjs`.
 - Run `validate.mjs`.
 - Fix every FAIL.
-- Confirm every non-cover card has `<img data-generated-illustration="true">` inside `.illust-frame`.
+- Confirm every non-cover card has at least one `<img data-generated-illustration="true" data-illustration-id="...">` inside `.illust-frame` and that the ids exactly match the storyboard.
 - Confirm every generated PNG has the generator-written `.generation.json` sidecar and that validation verifies its model, provider, prompt hash, dimensions, and final image hash.
 - Confirm the number of final PNGs equals the number of `.poster` elements and every PNG is 1080×1440.
 - Confirm all fonts and images loaded and no placeholder or pending-image text remains.

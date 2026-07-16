@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-07-16T15:23:31.915Z",
+  "provider": "zenmux",
+  "model": "gpt-image-2",
+  "quality": "medium",
+  "size": "1024x1024",
+  "orientation": "square",
+  "output_file": "symptom-cost.png",
+  "prompt_file": "../prompts/symptom-cost.md",
+  "prompt_sha256": "35e75d95c278d8b58abaa83f706491385240afe5df2e86dc25ade987f539855d",
+  "raw_sha256": "cdf68f90b9603217ce746c19ea2bd23d8ac5866df925d15e8551a7ebbe38d8cd",
+  "request_id": null,
+  "final_sha256": "50cb2dc03323c2a03549f49c5ea2d03ea14a93c910986177da7f203e41c58692",
+  "final_width": 1024,
+  "final_height": 1024,
+  "postprocessing": {
+    "background_normalized": true,
+    "background_removed": false,
+    "auto_frame_requested": true,
+    "paper_color": "#fafaf8"
+  }
+}

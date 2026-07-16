@@ -45,9 +45,9 @@ Read the page's storyboard message and ask: what shape is this? The seed templat
 | Content shape | Snippet to copy | What it gives you |
 |---|---|---|
 | One metaphor / mental model / "X is like Y" | **P-METAPHOR** | Large 540px illustration + IKB caption + 2-3 line body |
-| Numbered list of 3-4 typical items (symptoms / steps / signals) | **P-LIST** | One generated evidence strip + stacked exact HTML rows |
-| Two states compared (before / after, wrong / right, demo / 生产) | **P-COMPARE** | One generated transition strip + two exact HTML columns |
-| A sequence / pipeline / process | **P-MECHANISM** | One generated process strip + 3-4 numbered HTML steps |
+| Numbered list of 3-4 visible items (symptoms / tools / signals) | **P-LIST** | One 200px generated thumbnail per row + exact HTML copy |
+| Two visibly different states (before / after, wrong / right, demo / 生产) | **P-COMPARE** | Two 240px generated state images + exact HTML columns |
+| A sequence / pipeline / process with distinct visible steps | **P-MECHANISM** | One 130px generated icon per step + numbered HTML copy |
 | One pull-quote or definition that is the whole page | **P-QUOTE** | Pullquote left + 420px illustration right (the rare type-led page) |
 | Closing self-check / call to action | **P-ACTION** | Small 200px illustration + 2-3 lettered options + IKB accent line |
 
@@ -56,6 +56,8 @@ These snippets are starting points, not constraints. You may invent variants, co
 ### Step 2 — Decide the illustration role and size
 
 Every non-cover content page pairs **text + at least one model-generated illustration**. Text leads, illustration explains. HTML diagrams and screenshots may be added for precision, but they do not replace the generated illustration.
+
+Count independently visible referents. Use one image when one scene genuinely explains the whole page. Use multiple images when separate list items, comparison states, or process steps need separate visual evidence. A single generated strip remains an optional composition, not the default replacement for several referents.
 
 Default to including an illustration when:
 - The page introduces a metaphor or concrete scene
@@ -75,8 +77,9 @@ The S00 cover is the only default page without an illustration. Let the source c
 This is the rule that prevents illustrations from taking over the page:
 
 - Concept page where image IS the explanation: `.illust-frame` 480-560px tall
-- Page where image supports a list/comparison/process: one 260-360px evidence strip
-- Page where image is one small mark of a mechanism: inline 100-160px
+- Page with visible list items: one 160-260px thumbnail per item
+- Page comparing visible states: one 200-280px image per state
+- Page with visible process steps: one inline 100-160px image per step
 
 The text content should still occupy at least 60% of the page's visual weight. If the illustration is louder than the title, shrink it.
 
@@ -103,7 +106,7 @@ Placement rules:
 
 ### Step 3.5 — Define the slot before generating
 
-Before writing an image prompt, define the final `image_slot`. The slot decides the HTML wrapper, rendered size, requested orientation, explicit model output canvas, and pixel-safe subject box. Do not generate an image first and then pick a slot afterward.
+Before writing an image prompt, define every final `illustrations[].image_slot`. Each slot decides that illustration's HTML wrapper, rendered size, requested orientation, explicit model output canvas, and pixel-safe subject box. Do not generate images first and then pick slots afterward.
 
 Minimum `image_slot` shape:
 
@@ -156,10 +159,10 @@ Add task-scoped CSS (inside `<style>` in `index.html`) for anything else the spe
 
 ## Hard Rules That Apply to Every Content Page
 
-1. **A model-generated illustration is required.** Include at least one `<img data-generated-illustration="true">` inside `.illust-frame`, with its generator-written `.generation.json` sidecar.
+1. **Model-generated illustration evidence is required.** Include every storyboard-planned `<img data-generated-illustration="true" data-illustration-id="...">` inside `.illust-frame`, with its generator-written `.generation.json` sidecar.
 2. **IKB blue must be visible.** At minimum on: top chrome hairline + category label, bottom foot hairline + page number. Plus at least one of: section label, divider, body `<strong>`, illustration caption.
 3. **Mustard yellow does not appear.** Not on titles, not on backgrounds, not on numbers, not on key options. Yellow lives only on the cover.
 4. **Content density ≥ 75%.** No pure-whitespace band wider than 216px without a stated reason.
 5. **Each page has a section label** (`.section-label`) explaining what kind of page this is in 2-5 mono English/Chinese words.
 6. **No 1-of-N letter highlight.** Don't pick a "key option" and wrap it in yellow. If a step is more important, write it that way in the copy.
-7. **Bind HTML to the storyboard.** Set `data-page-id`, `data-layout`, and `data-silhouette` on every `.poster`; keep the generated asset path and `.evidence-figure` classes equal to the declared page contract.
+7. **Bind HTML to the storyboard.** Set `data-page-id`, `data-layout`, and `data-silhouette` on every `.poster`; keep each `data-illustration-id`, asset path, and wrapper class equal to its declared `illustrations[]` contract.

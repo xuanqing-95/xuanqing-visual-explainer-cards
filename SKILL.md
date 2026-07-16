@@ -10,8 +10,8 @@ Create social cards that readers can understand visually before reading closely.
 ## Output contract
 
 - Render every final card from HTML at `1080x1440` (3:4).
-- Treat `storyboard.yaml` as the source of truth for page count, message order, rhythm, layout, silhouette, illustration slot, and asset mapping.
-- Include at least one model-generated illustration on every non-cover card. HTML diagrams, code, numbers, screenshots, and labels may supplement the illustration but never replace it.
+- Treat `storyboard.yaml` as the source of truth for page count, message order, rhythm, layout, silhouette, every illustration slot, and asset mapping.
+- Include one or more model-generated illustrations on every non-cover card. Let the content determine the count: one main scene, several row thumbnails, two comparison states, or multiple step images are all valid.
 - Treat generated images as evidence inside the card. Their canvas may be landscape, square, portrait, or a supported custom size.
 - Define the final `image_slot` before writing an image prompt or generating an image.
 - Keep outer titles, body copy, caveats, page chrome, and long explanations in HTML.
@@ -45,14 +45,14 @@ Resolve `<skill-dir>` to the directory containing this `SKILL.md`.
    - one rhythm beat per page with `purpose`, `silhouette`, `visual_weight`, and `transition`;
    - one content-driven `layout` per page;
    - a different layout and silhouette on adjacent content pages;
-   - at least one `image_slot` plus planned prompt and output paths for every non-cover page.
+   - a non-empty `illustrations` list for every non-cover page; each item has its own id, visual type, prompt path, output path, and `image_slot`.
 6. Validate the storyboard before image prompting or HTML design. Do not create or edit `index.html` until this passes:
 
 ```bash
 node <skill-dir>/scripts/validate-storyboard.mjs <task-dir>
 ```
 
-7. For every non-cover page, confirm that `image_slot` defines:
+7. For every planned illustration, confirm that `illustrations[].image_slot` defines:
    - `html_wrapper`
    - `slot_px`
    - `slot_ratio`
@@ -61,7 +61,7 @@ node <skill-dir>/scripts/validate-storyboard.mjs <task-dir>
    - `subject_bbox`
    - `fit`
 8. Read [`references/illustration-prompts.md`](references/illustration-prompts.md). Choose `labeled-gpt-image`, `html-label-overlay`, or `no-text`.
-9. Generate every non-cover page's illustration with the explicit `model_output_size`. Use `low` for drafts and `medium` or `high` for accepted assets:
+9. Generate every planned illustration with its own explicit `model_output_size`. Images on the same page may use different prompts and canvases. Use `low` for drafts and `medium` or `high` for accepted assets:
 
 ```bash
 python3 <skill-dir>/scripts/generate-illustration.py \
@@ -80,7 +80,7 @@ The script calls the local OpenAI-compatible wrapper, verifies the returned dime
     - IKB blue remains visible on every page;
     - mustard yellow appears only on the cover bar in the default theme;
     - use no rounded cards, shadows, or gradients.
-11. On every `.poster`, set `data-page-id`, `data-layout`, and `data-silhouette` from the storyboard. Place every generated illustration inside `.illust-frame`; use `.evidence-figure` for major images. Mark the exact generated `<img>` with `data-generated-illustration="true"`, match the wrapper and asset path to the declared slot, and keep `object-fit: contain`.
+11. On every `.poster`, set `data-page-id`, `data-layout`, and `data-silhouette` from the storyboard. Place every generated illustration inside `.illust-frame`; use `.evidence-figure` for major images. Mark each generated `<img>` with `data-generated-illustration="true"` and the matching `data-illustration-id`, then match its wrapper and asset path to that illustration's declared slot. Keep `object-fit: contain`.
 12. Render, validate, and inspect:
 
 ```bash
@@ -94,7 +94,7 @@ Fix every FAIL. Inspect every final PNG for factual accuracy, Chinese label accu
 
 [`assets/storyboard.template.yaml`](assets/storyboard.template.yaml) is the canonical contract. Copy it; do not reconstruct it from memory.
 
-The storyboard must contain `schema_version`, `topic`, `audience`, the complete seven-field `beginner_brief`, `page_rhythm.strategy`, one `page_rhythm.beats` entry per page, and one `pages` entry per final card. Every non-cover page must also declare `visual_type`, `image_slot`, `illustration.prompt_file`, and `illustration.output_file`.
+The canonical schema is version 2. It contains `topic`, `audience`, the complete seven-field `beginner_brief`, `page_rhythm.strategy`, one `page_rhythm.beats` entry per page, and one `pages` entry per final card. Every non-cover page declares a non-empty `illustrations` list. Every illustration independently declares `id`, `visual_type`, `prompt_file`, `output_file`, and `image_slot`. Version 1 single-illustration storyboards remain accepted for backward compatibility.
 
 The rhythm plan and page definitions serve different purposes:
 
@@ -113,6 +113,7 @@ The rhythm plan and page definitions serve different purposes:
 - Use HTML for exact comparison text, code, numbers, labels, and ledgers, while keeping at least one model-generated supporting illustration on the same card.
 - Never deliver a non-cover card made only from HTML/CSS, a screenshot, or typography.
 - Keep each HTML card's page id, layout, silhouette, generated asset path, and illustration wrapper synchronized with the storyboard.
+- Do not collapse several independently explained objects, states, or steps into one strip merely to satisfy the schema. Plan and generate separate illustrations when the reader needs to see them separately.
 - Keep the generator-written `.generation.json` beside every accepted generated image; validation must fail when provenance or hashes do not match.
 - Never duplicate the outer HTML title inside a generated illustration.
 - Keep prices, dates, model names, long explanations, and unstable facts out of generated images.

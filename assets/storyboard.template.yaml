@@ -1,4 +1,4 @@
-schema_version: 1
+schema_version: 2
 topic: 替换为主题
 audience: 替换为目标读者
 
@@ -13,8 +13,9 @@ beginner_brief:
 
 source_tags: []
 
+# 页面数量由内容决定。先写完节奏，再为每个可独立看见的对象、状态或步骤定义插图槽。
 page_rhythm:
-  strategy: 从问题进入，放大核心机制，再用对比落到行动；相邻内容页更换布局和视觉重心
+  strategy: 从问题进入，放大核心机制，再展开具体信号，最后落到行动；相邻内容页更换布局和视觉重心
   beats:
     - page: 1
       purpose: 用熟悉问题建立阅读动机
@@ -27,13 +28,13 @@ page_rhythm:
       visual_weight: image-led
       transition: zoom-into-mechanism
     - page: 3
-      purpose: 展开具体例子或组成部分
-      silhouette: split-evidence
+      purpose: 展开三个可独立观察的信号
+      silhouette: thumbnail-ledger
       visual_weight: balanced
-      transition: move-from-concept-to-example
+      transition: move-from-concept-to-signals
     - page: 4
       purpose: 给出可执行的判断或行动
-      silhouette: compact-action-ledger
+      silhouette: portrait-action-split
       visual_weight: text-led
       transition: close-with-action
 
@@ -52,49 +53,76 @@ pages:
     message: 用一句完整的话写定义、机制或后果
     role: concept
     layout: metaphor-evidence
-    visual_type: labeled-gpt-image
-    image_slot:
-      html_wrapper: evidence-figure landscape
-      slot_px: 904x603
-      slot_ratio: "3:2"
-      requested_orientation: landscape
-      model_output_size: 1536x1024
-      subject_bbox: x=120-1416,y=128-896
-      fit: contain
-    illustration:
-      prompt_file: prompts/page-02.md
-      output_file: assets/page-02.png
+    illustrations:
+      - id: main
+        visual_type: labeled-gpt-image
+        prompt_file: prompts/page-02.md
+        output_file: assets/page-02.png
+        image_slot:
+          html_wrapper: evidence-figure landscape
+          slot_px: 904x603
+          slot_ratio: "3:2"
+          requested_orientation: landscape
+          model_output_size: 1536x1024
+          subject_bbox: x=120-1416,y=128-896
+          fit: contain
 
   - id: 3
-    message: 用一句完整的话写具体例子、组成部分或因果链
-    role: mechanism
-    layout: evidence-split
-    visual_type: no-text
-    image_slot:
-      html_wrapper: evidence-figure portrait
-      slot_px: 360x540
-      slot_ratio: "2:3"
-      requested_orientation: portrait
-      model_output_size: 1024x1536
-      subject_bbox: x=112-912,y=180-1356
-      fit: contain
-    illustration:
-      prompt_file: prompts/page-03.md
-      output_file: assets/page-03.png
+    message: 用一句完整的话写三个需要分别看见的例子、信号或组成部分
+    role: consequence
+    layout: signal-list
+    illustrations:
+      - id: item-01
+        visual_type: no-text
+        prompt_file: prompts/item-01.md
+        output_file: assets/item-01.png
+        image_slot:
+          html_wrapper: illust-frame row-thumb
+          slot_px: 200x200
+          slot_ratio: "1:1"
+          requested_orientation: square
+          model_output_size: 1024x1024
+          subject_bbox: x=112-912,y=112-912
+          fit: contain
+      - id: item-02
+        visual_type: no-text
+        prompt_file: prompts/item-02.md
+        output_file: assets/item-02.png
+        image_slot:
+          html_wrapper: illust-frame row-thumb
+          slot_px: 200x200
+          slot_ratio: "1:1"
+          requested_orientation: square
+          model_output_size: 1024x1024
+          subject_bbox: x=112-912,y=112-912
+          fit: contain
+      - id: item-03
+        visual_type: no-text
+        prompt_file: prompts/item-03.md
+        output_file: assets/item-03.png
+        image_slot:
+          html_wrapper: illust-frame row-thumb
+          slot_px: 200x200
+          slot_ratio: "1:1"
+          requested_orientation: square
+          model_output_size: 1024x1024
+          subject_bbox: x=112-912,y=112-912
+          fit: contain
 
   - id: 4
     message: 用一句完整的话写读者接下来应采取的行动
     role: action
-    layout: closing-checklist
-    visual_type: no-text
-    image_slot:
-      html_wrapper: evidence-figure compact
-      slot_px: 300x300
-      slot_ratio: "1:1"
-      requested_orientation: square
-      model_output_size: 1024x1024
-      subject_bbox: x=112-912,y=112-912
-      fit: contain
-    illustration:
-      prompt_file: prompts/page-04.md
-      output_file: assets/page-04.png
+    layout: action-split
+    illustrations:
+      - id: action
+        visual_type: no-text
+        prompt_file: prompts/action.md
+        output_file: assets/action.png
+        image_slot:
+          html_wrapper: evidence-figure portrait
+          slot_px: 360x540
+          slot_ratio: "2:3"
+          requested_orientation: portrait
+          model_output_size: 1024x1536
+          subject_bbox: x=112-912,y=180-1356
+          fit: contain
