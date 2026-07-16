@@ -45,9 +45,9 @@ function fixture(body) {
 <head>
   <meta charset="utf-8">
   <style>
-    @font-face{font-family:"Noto Serif SC";src:local("Arial");font-weight:400 500}
-    @font-face{font-family:"Playfair Display";src:local("Georgia");font-weight:900}
-    @font-face{font-family:"IBM Plex Mono";src:local("Arial");font-weight:500}
+    @font-face{font-family:"Noto Serif SC";src:local("Arial"),local("DejaVu Sans"),local("Liberation Sans");font-weight:400 500}
+    @font-face{font-family:"Playfair Display";src:local("Georgia"),local("DejaVu Serif"),local("Liberation Serif");font-weight:900}
+    @font-face{font-family:"IBM Plex Mono";src:local("Menlo"),local("Arial"),local("DejaVu Sans Mono"),local("Liberation Mono");font-weight:500}
     *{box-sizing:border-box}
     body{margin:0;padding:20px;background:#222}
     .poster{width:1080px;height:1440px;overflow:hidden;background:#fafaf8}
