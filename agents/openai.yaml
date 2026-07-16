@@ -1,4 +1,4 @@
 interface:
   display_name: "Visual Explainer Cards"
-  short_description: "Create clear illustrated social knowledge cards"
-  default_prompt: "Use $xuanqing-visual-explainer-cards to turn this topic into an illustrated Xiaohongshu knowledge-card series."
+  short_description: "Create social cards with model imagery on every content page"
+  default_prompt: "Use $xuanqing-visual-explainer-cards to turn this topic into a Xiaohongshu knowledge-card series with a model-generated illustration on every non-cover card."

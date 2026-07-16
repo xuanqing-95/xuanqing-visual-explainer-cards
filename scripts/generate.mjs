@@ -12,6 +12,7 @@
  *   --model <model>               default: OPENAI_IMAGE_MODEL or gpt-image-2
  */
 import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
 import path from "node:path";
 
 const args = process.argv.slice(2);
@@ -92,6 +93,15 @@ const baseURL = (
   (zenmuxKey ? "https://zenmux.ai/api/v1" : "https://api.openai.com/v1")
 ).replace(/\/+$/, "");
 const model = options.model || process.env.OPENAI_IMAGE_MODEL || "gpt-image-2";
+const provider = baseURL.includes("zenmux.ai")
+  ? "zenmux"
+  : baseURL.includes("api.openai.com")
+    ? "openai"
+    : "openai-compatible";
+
+function sha256(value) {
+  return createHash("sha256").update(value).digest("hex");
+}
 
 function standardSizeFor(modelName, orientation) {
   if (modelName.includes("dall-e-2")) return "1024x1024";
@@ -237,7 +247,30 @@ async function generate() {
 
   await mkdir(path.dirname(path.resolve(options.output)), { recursive: true });
   await writeFile(options.output, bytes);
+  const outputPath = path.resolve(options.output);
+  const promptPath = options.promptFile ? path.resolve(options.promptFile) : null;
+  const provenanceDir = path.dirname(outputPath);
+  const provenance = {
+    schema_version: 1,
+    generated_at: new Date().toISOString(),
+    provider,
+    model,
+    quality: options.quality,
+    size,
+    orientation: orientationForSize(parsedSize),
+    output_file: path.relative(provenanceDir, outputPath),
+    prompt_file: promptPath ? path.relative(provenanceDir, promptPath) : null,
+    prompt_sha256: sha256(options.prompt),
+    raw_sha256: sha256(bytes),
+    request_id: requestId === "(not provided)" ? null : requestId,
+  };
+  await writeFile(
+    `${outputPath}.generation.json`,
+    `${JSON.stringify(provenance, null, 2)}\n`,
+    "utf8"
+  );
   console.log(`Saved ${options.output} (${bytes.length} bytes, request_id=${requestId})`);
+  console.log(`Saved generation provenance: ${options.output}.generation.json`);
 }
 
 generate().catch((error) => {

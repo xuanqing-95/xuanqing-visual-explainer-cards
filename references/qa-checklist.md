@@ -29,6 +29,7 @@
 
 ## Composition
 
+- Does every non-cover card contain at least one model-generated illustration, even when HTML carries the exact code, numbers, comparison, or checklist?
 - Is the illustration clearly visible and not merely decorative?
 - Was `image_slot` defined before writing the prompt or generating the image?
 - Do `requested_orientation`, `model_output_size`, and `subject_bbox` match the chosen `image_slot`?
@@ -56,6 +57,8 @@
 - Run `render.mjs`.
 - Run `validate.mjs`.
 - Fix every FAIL.
+- Confirm every non-cover card has `<img data-generated-illustration="true">` inside `.illust-frame`.
+- Confirm every generated PNG has the generator-written `.generation.json` sidecar and that validation verifies its model, provider, prompt hash, dimensions, and final image hash.
 - Confirm the number of final PNGs equals the number of `.poster` elements and every PNG is 1080×1440.
 - Confirm all fonts and images loaded and no placeholder or pending-image text remains.
 - Inspect every output PNG at full size and phone thumbnail size.

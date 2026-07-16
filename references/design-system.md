@@ -188,7 +188,7 @@ For a typical 4–7 page set:
 5. boundary, tradeoff, or misconception;
 6. closing action.
 
-This is a rhythm reference, not a fixed page count. Most content pages need meaningful visual evidence, which may be generated imagery, an HTML diagram, a comparison, a process, or a ledger.
+This is a rhythm reference, not a fixed page count. Every non-cover content page needs a model-generated illustration. HTML diagrams, comparisons, processes, and ledgers may supplement that illustration when they communicate exact information more clearly.
 
 ## Background patterns
 

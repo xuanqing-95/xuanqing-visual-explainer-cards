@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 import argparse
 from collections import deque
+import hashlib
+import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -171,6 +174,55 @@ def parse_color(value):
     return tuple(int(color[index:index + 2], 16) for index in (0, 2, 4))
 
 
+def sha256_file(file_path):
+    digest = hashlib.sha256()
+    with open(file_path, "rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def finalize_provenance(output, expected_size, args):
+    metadata_path = Path(f"{output}.generation.json")
+    if not metadata_path.is_file():
+        print(
+            f"ERROR: generator did not create provenance sidecar: {metadata_path}",
+            file=sys.stderr,
+        )
+        raise SystemExit(1)
+    try:
+        metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        print(f"ERROR: invalid provenance sidecar: {error}", file=sys.stderr)
+        raise SystemExit(1)
+
+    metadata.update(
+        {
+            "output_file": output.name,
+            "prompt_file": os.path.relpath(
+                Path(args.prompt_file).resolve(), output.parent.resolve()
+            ),
+            "final_sha256": sha256_file(output),
+            "final_width": expected_size[0],
+            "final_height": expected_size[1],
+            "postprocessing": {
+                "background_normalized": not args.remove_background
+                and not args.skip_background_normalize,
+                "background_removed": args.remove_background,
+                "auto_frame_requested": args.auto_frame
+                and not args.remove_background
+                and not args.skip_background_normalize,
+                "paper_color": args.paper_color,
+            },
+        }
+    )
+    metadata_path.write_text(
+        json.dumps(metadata, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    print(f"Verified generation provenance: {metadata_path}")
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Generate and normalize one slot-matched illustration through an OpenAI-compatible Image API."
@@ -265,6 +317,7 @@ def main():
         if image.size != expected_size:
             print("ERROR: post-processing changed the output dimensions", file=sys.stderr)
             raise SystemExit(1)
+    finalize_provenance(output, expected_size, args)
     print(f"Verified illustration: {output} ({expected_size[0]}x{expected_size[1]})")
 
 

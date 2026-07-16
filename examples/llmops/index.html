@@ -100,6 +100,9 @@
     .illust-frame img{width:100%;height:100%;object-fit:contain;display:block;}
     .evidence-figure{width:100%;display:flex;flex-direction:column;justify-content:center;margin:0;}
     .evidence-figure.landscape .illust-frame{height:540px;}
+    .evidence-figure.signal-strip .illust-frame,
+    .evidence-figure.case-strip .illust-frame{height:323px;}
+    .evidence-figure.action-strip .illust-frame{height:323px;}
     .frame-img{position:relative;overflow:hidden;background:var(--paper-2);}
     .frame-img img{width:100%;height:100%;object-fit:cover;display:block;}
     .img-cap{font-family:var(--mono);font-weight:500;font-size:18px;letter-spacing:.20em;text-transform:uppercase;color:var(--accent);margin-top:14px;}
@@ -179,7 +182,7 @@
         <h2 class="h-xl">LLMOps 像 <em>餐厅后厨</em></h2>
         <figure class="evidence-figure landscape">
           <div class="illust-frame">
-            <img src="assets/page-02.png" alt="餐厅后厨示意:中央 MODEL 模型,四周分别是 DATA 数据、QUALITY 质量、FEEDBACK 反馈、ITERATION 迭代">
+            <img data-generated-illustration="true" src="assets/page-02.png" alt="餐厅后厨示意:中央 MODEL 模型,四周分别是 DATA 数据、QUALITY 质量、FEEDBACK 反馈、ITERATION 迭代">
           </div>
           <figcaption class="img-cap">Fig. 01 · 后厨的四个工位</figcaption>
         </figure>
@@ -202,25 +205,28 @@
         </div>
         <p class="section-label">典型症状</p>
         <h2 class="h-xl title-underline">Demo 漂亮<br><em>上生产翻车</em></h2>
-        <div class="list-rows" style="display:flex;flex-direction:column;gap:24px;flex:1;">
-          <div class="list-row" style="display:grid;grid-template-columns:200px 1fr;gap:32px;align-items:center;padding-bottom:24px;border-bottom:1px solid var(--line);">
-            <figure class="mini-plot variance" data-visual-evidence aria-label="四次输出质量高低波动"><span></span><span></span><span></span><span></span></figure>
+        <figure class="evidence-figure signal-strip">
+          <div class="illust-frame">
+            <img data-generated-illustration="true" src="assets/page-03.png" alt="输出波动、成本上升和安全防线破裂的三联模型插图">
+          </div>
+          <figcaption class="img-cap">Fig. 02 · 质量、成本、安全同时失控</figcaption>
+        </figure>
+        <div class="list-rows" style="display:flex;flex-direction:column;gap:10px;flex:1;">
+          <div class="list-row" style="display:grid;grid-template-columns:64px 1fr;gap:24px;align-items:start;padding:12px 0;border-bottom:1px solid var(--line);">
+            <p class="meta" style="color:var(--accent);margin:4px 0 0;">01</p>
             <div>
-              <p class="meta" style="color:var(--accent);margin:0 0 8px;">01</p>
               <p class="body" style="margin:0;"><strong>输出忽高忽低</strong> · 同样的 prompt,昨天给出漂亮回复,今天却出错。</p>
             </div>
           </div>
-          <div class="list-row" style="display:grid;grid-template-columns:200px 1fr;gap:32px;align-items:center;padding-bottom:24px;border-bottom:1px solid var(--line);">
-            <figure class="mini-plot cost" data-visual-evidence aria-label="成本从左到右持续上升"><span></span><span></span><span></span><span></span></figure>
+          <div class="list-row" style="display:grid;grid-template-columns:64px 1fr;gap:24px;align-items:start;padding:12px 0;border-bottom:1px solid var(--line);">
+            <p class="meta" style="color:var(--accent);margin:4px 0 0;">02</p>
             <div>
-              <p class="meta" style="color:var(--accent);margin:0 0 8px;">02</p>
               <p class="body" style="margin:0;"><strong>成本悄悄飙涨</strong> · 没人盯 token 消耗,月底账单出来才发现超预算两倍。</p>
             </div>
           </div>
-          <div class="list-row" style="display:grid;grid-template-columns:200px 1fr;gap:32px;align-items:center;">
-            <figure class="mini-plot guard" data-visual-evidence aria-label="安全防线被绕过"><div class="guard-core"></div></figure>
+          <div class="list-row" style="display:grid;grid-template-columns:64px 1fr;gap:24px;align-items:start;padding:12px 0;">
+            <p class="meta" style="color:var(--accent);margin:4px 0 0;">03</p>
             <div>
-              <p class="meta" style="color:var(--accent);margin:0 0 8px;">03</p>
               <p class="body" style="margin:0;"><strong>安全问题频发</strong> · 用户绕过 prompt,模型说出不该说的话,事后才知道没过滤层。</p>
             </div>
           </div>
@@ -243,14 +249,15 @@
         </div>
         <p class="section-label">某电商 AI 客服</p>
         <h2 class="h-xl">从写死<br>到 <em>可管控</em></h2>
+        <figure class="evidence-figure case-strip">
+          <div class="illust-frame">
+            <img data-generated-illustration="true" src="assets/page-04.png" alt="Prompt 从代码锁定状态迁移到可评估、可转人工的运维流程">
+          </div>
+          <figcaption class="img-cap">Fig. 03 · 从锁在代码里，到可观察、可转人工</figcaption>
+        </figure>
         <div class="compare" style="display:grid;grid-template-columns:1fr 1fr;gap:32px;flex:1;">
           <div class="compare-col" style="display:flex;flex-direction:column;gap:16px;">
             <p class="meta">Before · 上线初期</p>
-            <figure class="system-visual" data-visual-evidence aria-label="Prompt 写死在代码中并随发布上线">
-              <div class="code-lines"><span></span><span></span><span></span></div>
-              <div class="system-arrow"></div>
-              <p class="meta" style="margin:0;color:var(--ink);">CODE → RELEASE</p>
-            </figure>
             <p class="body" style="margin:0;"><strong>硬编码 prompt</strong></p>
             <ul class="body" style="margin:0;padding-left:1.1em;line-height:1.55;">
               <li>回复质量忽高忽低</li>
@@ -260,14 +267,6 @@
           </div>
           <div class="compare-col" style="display:flex;flex-direction:column;gap:16px;">
             <p class="meta" style="color:var(--accent);">After · 引入 LLMOps</p>
-            <figure class="system-visual" data-visual-evidence aria-label="Prompt 经过质量评分后低分转人工">
-              <div class="ops-flow">
-                <div class="ops-node">PROMPT</div><div class="ops-link"></div>
-                <div class="ops-node">SCORE</div><div class="ops-link"></div>
-                <div class="ops-node">HUMAN</div>
-              </div>
-              <p class="meta" style="margin:0;color:var(--accent);">CONFIG → EVAL → REVIEW</p>
-            </figure>
             <p class="body" style="margin:0;"><strong>可配置 + 可监控</strong></p>
             <ul class="body" style="margin:0;padding-left:1.1em;line-height:1.55;">
               <li>prompt 可视化管理</li>
@@ -294,12 +293,11 @@
         </div>
         <p class="section-label">今天检查一件事</p>
         <h2 class="h-xl">你的 prompt<br><em>写在哪?</em></h2>
-        <figure class="path-visual" data-visual-evidence aria-label="Prompt 管理从代码到配置再到可观测平台">
-          <div class="path-step"><span>A</span><strong>代码</strong></div>
-          <div class="path-link"></div>
-          <div class="path-step"><span>B</span><strong>配置</strong></div>
-          <div class="path-link"></div>
-          <div class="path-step recommended"><span>C</span><strong>平台</strong></div>
+        <figure class="evidence-figure action-strip">
+          <div class="illust-frame">
+            <img data-generated-illustration="true" src="assets/page-05.png" alt="Prompt 从锁在代码到配置文件再到可观测平台的三阶段模型插图">
+          </div>
+          <figcaption class="img-cap">Fig. 04 · 代码 → 配置 → 平台</figcaption>
         </figure>
         <div class="options" style="display:flex;flex-direction:column;gap:12px;">
           <div class="opt" style="display:grid;grid-template-columns:64px 1fr;gap:24px;align-items:baseline;padding:12px 0;border-bottom:1px solid var(--line);">

@@ -1,8 +1,8 @@
 {
   "name": "xuanqing-visual-explainer-cards",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
-  "description": "Create validated 3:4 editorial knowledge-card series with slot-matched explanatory images.",
+  "description": "Create validated 3:4 editorial cards with model-generated imagery on every content page.",
   "license": "AGPL-3.0-only",
   "type": "module",
   "engines": {

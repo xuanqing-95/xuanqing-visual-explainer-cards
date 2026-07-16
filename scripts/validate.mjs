@@ -1,4 +1,5 @@
 import fs from "node:fs";
+import { createHash } from "node:crypto";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 
@@ -30,6 +31,10 @@ function readPngSize(filePath) {
     width: buffer.readUInt32BE(16),
     height: buffer.readUInt32BE(20),
   };
+}
+
+function sha256File(filePath) {
+  return createHash("sha256").update(fs.readFileSync(filePath)).digest("hex");
 }
 
 const taskDir = path.resolve(process.argv[2] || ".");
@@ -250,6 +255,19 @@ const mediaStats = await page.locator(".poster").evaluateAll((cards) => {
   const text = cards.map((card) => card.innerText || "").join("\n");
   return {
     images,
+    generatedByCard: cards
+      .filter((card) => !card.classList.contains("cover-series"))
+      .map((card) => ({
+        card: card.id || "(unnamed)",
+        images: Array.from(
+          card.querySelectorAll(
+            '.illust-frame img[data-generated-illustration="true"]'
+          )
+        ).map((img) => ({
+          src: img.getAttribute("src") || "",
+          alt: img.getAttribute("alt") || "",
+        })),
+      })),
     broken: images.filter(
       (image) => !image.complete || image.naturalWidth === 0 || image.naturalHeight === 0
     ),
@@ -351,6 +369,103 @@ for (const image of mediaStats.placeholders) {
 if (mediaStats.placeholderText) {
   console.log("[FAIL] document: visible placeholder or pending-image text found");
   failed = true;
+}
+
+let verifiedGeneratedImages = 0;
+let generatedProvenanceFailed = false;
+const taskPrefix = `${taskDir}${path.sep}`;
+const resolveTaskFile = (relativePath, label, baseDir = taskDir) => {
+  if (!relativePath || /^[a-z][a-z0-9+.-]*:/i.test(relativePath)) {
+    throw new Error(`${label} must be a local task-relative path`);
+  }
+  const cleanPath = decodeURIComponent(relativePath.split(/[?#]/, 1)[0]);
+  const resolved = path.resolve(baseDir, cleanPath);
+  if (resolved !== taskDir && !resolved.startsWith(taskPrefix)) {
+    throw new Error(`${label} escapes the task directory`);
+  }
+  return resolved;
+};
+
+for (const card of mediaStats.generatedByCard) {
+  if (card.images.length === 0) {
+    console.log(
+      `[FAIL] ${card.card}: every non-cover card requires at least one model-generated illustration inside .illust-frame with data-generated-illustration="true"`
+    );
+    failed = true;
+    generatedProvenanceFailed = true;
+    continue;
+  }
+  for (const image of card.images) {
+    try {
+      const imagePath = resolveTaskFile(image.src, "generated image src");
+      const metadataPath = `${imagePath}.generation.json`;
+      if (!fs.existsSync(imagePath)) throw new Error(`generated image is missing: ${image.src}`);
+      if (!fs.existsSync(metadataPath)) {
+        throw new Error(`generation provenance is missing: ${path.relative(taskDir, metadataPath)}`);
+      }
+      const metadata = JSON.parse(fs.readFileSync(metadataPath, "utf8"));
+      const required = [
+        "generated_at",
+        "provider",
+        "model",
+        "quality",
+        "size",
+        "output_file",
+        "prompt_file",
+        "prompt_sha256",
+        "final_sha256",
+        "final_width",
+        "final_height",
+      ];
+      const missing = required.filter(
+        (field) => metadata[field] === undefined || metadata[field] === null || metadata[field] === ""
+      );
+      if (metadata.schema_version !== 1) missing.push("schema_version=1");
+      if (missing.length) {
+        throw new Error(`generation provenance is incomplete: ${missing.join(", ")}`);
+      }
+
+      const provenanceDir = path.dirname(metadataPath);
+      const declaredOutput = resolveTaskFile(
+        metadata.output_file,
+        "output_file",
+        provenanceDir
+      );
+      if (declaredOutput !== imagePath) {
+        throw new Error("generation provenance output_file does not match the HTML image");
+      }
+      const promptPath = resolveTaskFile(metadata.prompt_file, "prompt_file", provenanceDir);
+      if (!fs.existsSync(promptPath)) {
+        throw new Error(`generation prompt is missing: ${metadata.prompt_file}`);
+      }
+      if (sha256File(promptPath) !== metadata.prompt_sha256) {
+        throw new Error(`generation prompt hash does not match: ${metadata.prompt_file}`);
+      }
+      if (sha256File(imagePath) !== metadata.final_sha256) {
+        throw new Error(`generated image hash does not match provenance: ${image.src}`);
+      }
+      const size = readPngSize(imagePath);
+      if (
+        size.width !== metadata.final_width ||
+        size.height !== metadata.final_height ||
+        `${size.width}x${size.height}` !== metadata.size
+      ) {
+        throw new Error(
+          `generated image dimensions do not match provenance: ${size.width}x${size.height}`
+        );
+      }
+      verifiedGeneratedImages += 1;
+    } catch (error) {
+      console.log(`[FAIL] ${card.card}: ${error.message}`);
+      failed = true;
+      generatedProvenanceFailed = true;
+    }
+  }
+}
+if (!generatedProvenanceFailed && mediaStats.generatedByCard.length > 0) {
+  console.log(
+    `[PASS] generated illustrations: ${mediaStats.generatedByCard.length} content card(s), ${verifiedGeneratedImages} provenance record(s) verified`
+  );
 }
 for (const cover of coverStats) {
   if (cover.missing.length) {

@@ -358,7 +358,7 @@
               - Kicker / meta tracking is +.20em or more.
 
          5. Illustration rule (HARD):
-              - Most content pages should pair text + small illustration.
+              - Every non-cover page must pair text with at least one model-generated illustration.
               - .illust-frame heights: 480-560 (concept-led), 160-260 (list
                 thumb), 100-160 (inline step). Never one giant centerpiece.
      ===================================================== -->
@@ -426,7 +426,7 @@
         <h2 class="h-xl">主题像 <em>类比对象</em></h2>
         <figure class="evidence-figure landscape">
           <div class="illust-frame">
-            <img src="assets/page-02.png" alt="一句话描述插图要展示的核心结构">
+            <img data-generated-illustration="true" src="assets/page-02.png" alt="一句话描述插图要展示的核心结构">
           </div>
           <figcaption class="img-cap">Fig. 01 · 一句插图说明</figcaption>
         </figure>
@@ -458,7 +458,7 @@
         <div class="list-rows" style="display:flex;flex-direction:column;gap:24px;flex:1;">
           <div class="list-row" style="display:grid;grid-template-columns:200px 1fr;gap:32px;align-items:center;padding-bottom:24px;border-bottom:1px solid var(--line);">
             <figure class="illust-frame" style="height:200px;">
-              <img src="assets/symptom-01.png" alt="症状 1 的小插图">
+              <img data-generated-illustration="true" src="assets/symptom-01.png" alt="症状 1 的小插图">
             </figure>
             <div>
               <p class="meta" style="color:var(--accent);margin:0 0 8px;">01</p>
@@ -467,7 +467,7 @@
           </div>
           <div class="list-row" style="display:grid;grid-template-columns:200px 1fr;gap:32px;align-items:center;padding-bottom:24px;border-bottom:1px solid var(--line);">
             <figure class="illust-frame" style="height:200px;">
-              <img src="assets/symptom-02.png" alt="症状 2 的小插图">
+              <img data-generated-illustration="true" src="assets/symptom-02.png" alt="症状 2 的小插图">
             </figure>
             <div>
               <p class="meta" style="color:var(--accent);margin:0 0 8px;">02</p>
@@ -476,7 +476,7 @@
           </div>
           <div class="list-row" style="display:grid;grid-template-columns:200px 1fr;gap:32px;align-items:center;">
             <figure class="illust-frame" style="height:200px;">
-              <img src="assets/symptom-03.png" alt="症状 3 的小插图">
+              <img data-generated-illustration="true" src="assets/symptom-03.png" alt="症状 3 的小插图">
             </figure>
             <div>
               <p class="meta" style="color:var(--accent);margin:0 0 8px;">03</p>
@@ -512,7 +512,7 @@
           <div class="compare-col" style="display:flex;flex-direction:column;gap:18px;">
             <p class="meta">Before · 上线初期</p>
             <figure class="illust-frame" style="height:240px;">
-              <img src="assets/before.png" alt="before 状态的示意插图">
+              <img data-generated-illustration="true" src="assets/before.png" alt="before 状态的示意插图">
             </figure>
             <p class="body" style="margin:0;"><strong>硬编码 prompt</strong></p>
             <ul class="body" style="margin:0;padding-left:1.1em;line-height:1.55;">
@@ -524,7 +524,7 @@
           <div class="compare-col" style="display:flex;flex-direction:column;gap:18px;">
             <p class="meta" style="color:var(--accent);">After · 引入方案</p>
             <figure class="illust-frame" style="height:240px;">
-              <img src="assets/after.png" alt="after 状态的示意插图">
+              <img data-generated-illustration="true" src="assets/after.png" alt="after 状态的示意插图">
             </figure>
             <p class="body" style="margin:0;"><strong>可配置 + 可监控</strong></p>
             <ul class="body" style="margin:0;padding-left:1.1em;line-height:1.55;">
@@ -561,28 +561,28 @@
         <div class="pipeline" style="display:flex;flex-direction:column;gap:20px;flex:1;">
           <div class="step" style="display:grid;grid-template-columns:130px 60px 1fr;gap:24px;align-items:center;padding:18px 0;border-bottom:1px solid var(--line);">
             <figure class="illust-frame" style="height:130px;">
-              <img src="assets/step-01.png" alt="步骤 1 的图标">
+              <img data-generated-illustration="true" src="assets/step-01.png" alt="步骤 1 的图标">
             </figure>
             <p class="kicker" style="color:var(--accent);margin:0;">01</p>
             <p class="body" style="margin:0;"><strong>步骤一</strong> · 一行说明这一步做什么。</p>
           </div>
           <div class="step" style="display:grid;grid-template-columns:130px 60px 1fr;gap:24px;align-items:center;padding:18px 0;border-bottom:1px solid var(--line);">
             <figure class="illust-frame" style="height:130px;">
-              <img src="assets/step-02.png" alt="步骤 2 的图标">
+              <img data-generated-illustration="true" src="assets/step-02.png" alt="步骤 2 的图标">
             </figure>
             <p class="kicker" style="color:var(--accent);margin:0;">02</p>
             <p class="body" style="margin:0;"><strong>步骤二</strong> · 一行说明。</p>
           </div>
           <div class="step" style="display:grid;grid-template-columns:130px 60px 1fr;gap:24px;align-items:center;padding:18px 0;border-bottom:1px solid var(--line);">
             <figure class="illust-frame" style="height:130px;">
-              <img src="assets/step-03.png" alt="步骤 3 的图标">
+              <img data-generated-illustration="true" src="assets/step-03.png" alt="步骤 3 的图标">
             </figure>
             <p class="kicker" style="color:var(--accent);margin:0;">03</p>
             <p class="body" style="margin:0;"><strong>步骤三</strong> · 一行说明。</p>
           </div>
           <div class="step" style="display:grid;grid-template-columns:130px 60px 1fr;gap:24px;align-items:center;padding:18px 0;">
             <figure class="illust-frame" style="height:130px;">
-              <img src="assets/step-04.png" alt="步骤 4 的图标">
+              <img data-generated-illustration="true" src="assets/step-04.png" alt="步骤 4 的图标">
             </figure>
             <p class="kicker" style="color:var(--accent);margin:0;">04</p>
             <p class="body" style="margin:0;"><strong>步骤四</strong> · 一行说明。</p>
@@ -619,7 +619,7 @@
           </div>
           <figure class="evidence-figure compact" style="min-height:420px;">
             <div class="illust-frame" style="min-height:420px;max-height:420px;">
-              <img src="assets/quote-illust.png" alt="支持这句引用的视觉意象">
+              <img data-generated-illustration="true" src="assets/quote-illust.png" alt="支持这句引用的视觉意象">
             </div>
           </figure>
         </div>
@@ -648,7 +648,7 @@
         <p class="section-label">今天检查一件事</p>
         <h2 class="h-xl">你的 X<br><em>在哪一档?</em></h2>
         <figure class="illust-frame" style="height:200px;">
-          <img src="assets/action-illust.png" alt="行动主题的小插图">
+          <img data-generated-illustration="true" src="assets/action-illust.png" alt="行动主题的小插图">
         </figure>
         <div class="options" style="display:flex;flex-direction:column;gap:16px;">
           <div class="opt" style="display:grid;grid-template-columns:64px 1fr;gap:24px;align-items:baseline;padding:14px 0;border-bottom:1px solid var(--line);">

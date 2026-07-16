@@ -12,9 +12,9 @@ beginner_brief:
 page_rhythm:
   - cover: 固定 S00 系列封面
   - metaphor: 横向解释插图
-  - signals: 三行 HTML 数据图
-  - comparison: 双列 HTML Before / After
-  - action: 三段式行动路径
+  - signals: 横向模型插图 + 三行信号说明
+  - comparison: 横向模型插图 + 双列 Before / After
+  - action: 横向模型插图 + 三段式行动选择
 
 pages:
   - id: 1
@@ -49,20 +49,49 @@ pages:
     message: 缺少 LLMOps 时,质量、成本和安全会同时失控
     role: consequence
     layout: signal-list
-    visual_type: html-native-diagram
-    evidence:
-      - 输出质量波动图
-      - 成本上升柱状图
-      - 安全防线缺口
+    visual_type: no-text
+    image_slot:
+      html_wrapper: evidence-figure signal-strip
+      slot_px: 904x323
+      slot_ratio: "2.8:1"
+      requested_orientation: landscape
+      model_output_size: 1792x640
+      subject_bbox: x=64-1728,y=72-568
+      fit: contain
+    illustration:
+      prompt_file: prompts/page-03.md
+      output_file: assets/page-03.png
 
   - id: 4
     message: 把 prompt 从硬编码迁到可配置、可评估、可转人工的流程,才能从能跑变成可控
     role: case
     layout: before-after-comparison
-    visual_type: html-native-diagram
+    visual_type: no-text
+    image_slot:
+      html_wrapper: evidence-figure case-strip
+      slot_px: 904x323
+      slot_ratio: "2.8:1"
+      requested_orientation: landscape
+      model_output_size: 1792x640
+      subject_bbox: x=64-1728,y=72-568
+      fit: contain
+    illustration:
+      prompt_file: prompts/page-04.md
+      output_file: assets/page-04.png
 
   - id: 5
     message: 第一步是确认 prompt 现在由代码、配置文件还是专门平台管理
     role: action
     layout: action-path
-    visual_type: html-native-diagram
+    visual_type: no-text
+    image_slot:
+      html_wrapper: evidence-figure action-strip
+      slot_px: 904x323
+      slot_ratio: "2.8:1"
+      requested_orientation: landscape
+      model_output_size: 1792x640
+      subject_bbox: x=64-1728,y=72-568
+      fit: contain
+    illustration:
+      prompt_file: prompts/page-05.md
+      output_file: assets/page-05.png

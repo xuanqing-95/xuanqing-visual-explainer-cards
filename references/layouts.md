@@ -51,9 +51,9 @@ Read the page's storyboard message and ask: what shape is this? The seed templat
 
 These snippets are starting points, not constraints. You may invent variants, combine two shapes, drop sections — but every content page must follow the **Hard Rules** below.
 
-### Step 2 — Decide whether to illustrate
+### Step 2 — Decide the illustration role and size
 
-Most content pages should pair **text + small illustration**. Text leads, illustration explains.
+Every non-cover content page pairs **text + at least one model-generated illustration**. Text leads, illustration explains. HTML diagrams and screenshots may be added for precision, but they do not replace the generated illustration.
 
 Default to including an illustration when:
 - The page introduces a metaphor or concrete scene
@@ -61,12 +61,12 @@ Default to including an illustration when:
 - The page lists items that have visible referents (kitchen stations, dashboard panels, food, tools, body parts, etc.)
 - The page compares two states that look different
 
-Skip illustration only when:
+Use a compact supporting illustration when:
 - The page is a pure pull-quote or definition
-- The page is a checklist of abstract verbs ("review", "decide", "ship") that has no clear visual
-- The page is the cover (already covered by S00)
+- The page is a checklist of abstract verbs ("review", "decide", "ship")
+- Exact code, numbers, prices, or table data must remain in HTML
 
-Let the source content decide the exact page count before choosing layouts. Typical sets are **4-7 pages including the cover**. As a rough rhythm, use **3-4 pages with illustrations, 1-2 type-led pages** when the set lands in that range. Avoid both extremes (one giant illustration on page 2 only / illustration on every single page).
+The S00 cover is the only default page without an illustration. Let the source content decide the exact page count before choosing layouts. Typical sets are **4-7 pages including the cover**. Vary the illustration scale so concept pages may be image-led while checklist or data pages use compact support.
 
 ### Step 3 — Size the illustration to support, not dominate
 
@@ -154,8 +154,9 @@ Add task-scoped CSS (inside `<style>` in `index.html`) for anything else the spe
 
 ## Hard Rules That Apply to Every Content Page
 
-1. **IKB blue must be visible.** At minimum on: top chrome hairline + category label, bottom foot hairline + page number. Plus at least one of: section label, divider, body `<strong>`, illustration caption.
-2. **Mustard yellow does not appear.** Not on titles, not on backgrounds, not on numbers, not on key options. Yellow lives only on the cover.
-3. **Content density ≥ 75%.** No pure-whitespace band wider than 216px without a stated reason.
-4. **Each page has a section label** (`.section-label`) explaining what kind of page this is in 2-5 mono English/Chinese words.
-5. **No 1-of-N letter highlight.** Don't pick a "key option" and wrap it in yellow. If a step is more important, write it that way in the copy.
+1. **A model-generated illustration is required.** Include at least one `<img data-generated-illustration="true">` inside `.illust-frame`, with its generator-written `.generation.json` sidecar.
+2. **IKB blue must be visible.** At minimum on: top chrome hairline + category label, bottom foot hairline + page number. Plus at least one of: section label, divider, body `<strong>`, illustration caption.
+3. **Mustard yellow does not appear.** Not on titles, not on backgrounds, not on numbers, not on key options. Yellow lives only on the cover.
+4. **Content density ≥ 75%.** No pure-whitespace band wider than 216px without a stated reason.
+5. **Each page has a section label** (`.section-label`) explaining what kind of page this is in 2-5 mono English/Chinese words.
+6. **No 1-of-N letter highlight.** Don't pick a "key option" and wrap it in yellow. If a step is more important, write it that way in the copy.

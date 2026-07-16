@@ -1,6 +1,6 @@
 ---
 name: xuanqing-visual-explainer-cards
-description: Create illustrated Xiaohongshu/Rednote knowledge-card series with editorial HTML typography, slot-matched explanatory images, content-driven layouts, and automated artifact validation. Use when turning abstract concepts, tutorials, AI knowledge, product mechanisms, comparisons, or educational content into clear 3:4 social cards, visual explainers, educational infographics, or illustrated knowledge posts.
+description: Create illustrated Xiaohongshu/Rednote knowledge-card series with editorial HTML typography, a slot-matched model-generated illustration on every non-cover card, content-driven layouts, and automated artifact validation. Use when turning abstract concepts, tutorials, AI knowledge, product mechanisms, comparisons, or educational content into clear 3:4 social cards, visual explainers, educational infographics, or illustrated knowledge posts.
 ---
 
 # Visual Explainer Cards
@@ -10,6 +10,7 @@ Create social cards that readers can understand visually before reading closely.
 ## Output contract
 
 - Render every final card from HTML at `1080x1440` (3:4).
+- Include at least one model-generated illustration on every non-cover card. HTML diagrams, code, numbers, screenshots, and labels may supplement the illustration but never replace it.
 - Treat generated images as evidence inside the card. Their canvas may be landscape, square, portrait, or a supported custom size.
 - Define the final `image_slot` before writing an image prompt or generating an image.
 - Keep outer titles, body copy, caveats, page chrome, and long explanations in HTML.
@@ -38,9 +39,9 @@ Resolve `<skill-dir>` to the directory containing this `SKILL.md`.
 2. Read [`references/beginner-explanation.md`](references/beginner-explanation.md) and create a beginner brief: what it is, what it is not, how it works, one concrete example, why it matters, and the next action.
 3. Extract the source's natural message units. Use one complete message per page and let the content determine the page count; 4–7 pages including the cover is common, not mandatory.
 4. Create `storyboard.yaml` before designing. Include a page-rhythm plan and vary content-page silhouettes.
-5. Read [`references/visual-routing.md`](references/visual-routing.md) to choose HTML-native evidence, generated illustration, comparison, process, ledger, or another visual form.
+5. Read [`references/visual-routing.md`](references/visual-routing.md) to choose the generated illustration's role and the best HTML structure around it. Do not route a non-cover page to HTML-only.
 6. Use the fixed S00 cover from [`references/layouts.md`](references/layouts.md). Compose later pages from the template primitives and content patterns in that reference.
-7. For every generated illustration, define `image_slot` before prompting:
+7. For every non-cover page, define at least one `image_slot` before prompting:
    - `html_wrapper`
    - `slot_px`
    - `slot_ratio`
@@ -49,7 +50,7 @@ Resolve `<skill-dir>` to the directory containing this `SKILL.md`.
    - `subject_bbox`
    - `fit`
 8. Read [`references/illustration-prompts.md`](references/illustration-prompts.md). Choose `labeled-gpt-image`, `html-label-overlay`, or `no-text`.
-9. Generate the image with the explicit `model_output_size`. Use `low` for drafts and `medium` or `high` for accepted assets:
+9. Generate every non-cover page's illustration with the explicit `model_output_size`. Use `low` for drafts and `medium` or `high` for accepted assets:
 
 ```bash
 python3 <skill-dir>/scripts/generate-illustration.py \
@@ -60,7 +61,7 @@ python3 <skill-dir>/scripts/generate-illustration.py \
   --quality medium
 ```
 
-The script calls the local OpenAI-compatible wrapper, verifies the returned dimensions, normalizes edge-connected paper background, and applies conservative auto-framing. Use `--remove-background` only for isolated cutouts, `--skip-background-normalize` for intentional scene backgrounds, and `--no-auto-frame` when blank space is deliberate.
+The script calls the local OpenAI-compatible wrapper, verifies the returned dimensions, normalizes edge-connected paper background, applies conservative auto-framing, and writes `<output>.generation.json` with the model, provider, prompt hash, and final image hash. Never hand-author this provenance file. Use `--remove-background` only for isolated cutouts, `--skip-background-normalize` for intentional scene backgrounds, and `--no-auto-frame` when blank space is deliberate.
 
 10. Copy `assets/template.html` to the task directory as `index.html`. Read [`references/design-system.md`](references/design-system.md) before editing:
     - body and lead are serif Chinese, not sans;
@@ -68,7 +69,7 @@ The script calls the local OpenAI-compatible wrapper, verifies the returned dime
     - IKB blue remains visible on every page;
     - mustard yellow appears only on the cover bar in the default theme;
     - use no rounded cards, shadows, or gradients.
-11. Place major generated illustrations inside `.evidence-figure` with an `.illust-frame`. Match the wrapper to the declared slot and keep `object-fit: contain`.
+11. Place every generated illustration inside `.illust-frame`; use `.evidence-figure` for major images. Mark the exact generated `<img>` with `data-generated-illustration="true"`, match the wrapper to the declared slot, and keep `object-fit: contain`.
 12. Render, validate, and inspect:
 
 ```bash
@@ -123,8 +124,9 @@ pages:
 - Introduce technical terms in plain language on first appearance.
 - Include a concrete example and a practical consequence for abstract definitions.
 - State important boundaries; do not teach an analogy as the literal mechanism.
-- Use HTML when comparison, process, ledger, or numbers explain better than generated imagery.
-- Use visual evidence on most content pages, but generate only when the image materially explains something.
+- Use HTML for exact comparison text, code, numbers, labels, and ledgers, while keeping at least one model-generated supporting illustration on the same card.
+- Never deliver a non-cover card made only from HTML/CSS, a screenshot, or typography.
+- Keep the generator-written `.generation.json` beside every accepted generated image; validation must fail when provenance or hashes do not match.
 - Never duplicate the outer HTML title inside a generated illustration.
 - Keep prices, dates, model names, long explanations, and unstable facts out of generated images.
 - Keep user-provided hashtags outside the cards unless the user explicitly requests a hashtag page.

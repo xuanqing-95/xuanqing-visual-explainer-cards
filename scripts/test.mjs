@@ -1,4 +1,5 @@
 import fs from "node:fs";
+import { createHash } from "node:crypto";
 import os from "node:os";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
@@ -145,6 +146,111 @@ try {
     result
   );
   console.log("[PASS] broken images fail validation");
+
+  const htmlOnlyDir = path.join(tempRoot, "html-only-content");
+  fs.mkdirSync(htmlOnlyDir);
+  fs.writeFileSync(
+    path.join(htmlOnlyDir, "index.html"),
+    fixture(`
+      <section class="poster" id="card-01">
+        <div class="content">
+          <div class="chrome">TEST</div>
+          <h2>HTML-only diagram</h2>
+          <div data-visual-evidence>CSS chart</div>
+          <div class="foot">01 / 01</div>
+        </div>
+      </section>`)
+  );
+  result = run(renderScript, htmlOnlyDir);
+  assert(result.status === 0, "HTML-only fixture should render before validation", result);
+  result = run(validateScript, htmlOnlyDir);
+  assert(
+    result.status !== 0 && /every non-cover card requires at least one model-generated illustration/i.test(result.stdout),
+    "validator must reject a non-cover card that replaces model imagery with HTML/CSS",
+    result
+  );
+  console.log("[PASS] HTML-only content cards fail validation");
+
+  const noProvenanceDir = path.join(tempRoot, "missing-provenance");
+  fs.mkdirSync(path.join(noProvenanceDir, "assets"), { recursive: true });
+  fs.writeFileSync(
+    path.join(noProvenanceDir, "assets", "generated.png"),
+    Buffer.from(
+      "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=",
+      "base64"
+    )
+  );
+  fs.writeFileSync(
+    path.join(noProvenanceDir, "index.html"),
+    fixture(`
+      <section class="poster" id="card-01">
+        <div class="content">
+          <div class="chrome">TEST</div>
+          <div class="illust-frame">
+            <img data-generated-illustration="true" src="assets/generated.png" alt="claimed generated evidence">
+          </div>
+          <div class="foot">01 / 01</div>
+        </div>
+      </section>`)
+  );
+  result = run(renderScript, noProvenanceDir);
+  assert(result.status === 0, "missing-provenance fixture should render", result);
+  result = run(validateScript, noProvenanceDir);
+  assert(
+    result.status !== 0 && /generation provenance is missing/i.test(result.stdout),
+    "validator must reject a claimed generated image without generator provenance",
+    result
+  );
+  console.log("[PASS] generated images without provenance fail validation");
+
+  const tamperedDir = path.join(tempRoot, "tampered-generated-image");
+  fs.mkdirSync(path.join(tamperedDir, "assets"), { recursive: true });
+  fs.mkdirSync(path.join(tamperedDir, "prompts"), { recursive: true });
+  const promptText = "test prompt\n";
+  fs.writeFileSync(path.join(tamperedDir, "prompts", "page.md"), promptText);
+  fs.copyFileSync(
+    path.join(noProvenanceDir, "assets", "generated.png"),
+    path.join(tamperedDir, "assets", "generated.png")
+  );
+  fs.writeFileSync(
+    path.join(tamperedDir, "assets", "generated.png.generation.json"),
+    JSON.stringify({
+      schema_version: 1,
+      generated_at: new Date(0).toISOString(),
+      provider: "test-provider",
+      model: "test-model",
+      quality: "medium",
+      size: "1x1",
+      output_file: "generated.png",
+      prompt_file: "../prompts/page.md",
+      prompt_sha256: createHash("sha256").update(promptText).digest("hex"),
+      final_sha256: "0".repeat(64),
+      final_width: 1,
+      final_height: 1,
+    })
+  );
+  fs.writeFileSync(
+    path.join(tamperedDir, "index.html"),
+    fixture(`
+      <section class="poster" id="card-01">
+        <div class="content">
+          <div class="chrome">TEST</div>
+          <div class="illust-frame">
+            <img data-generated-illustration="true" src="assets/generated.png" alt="tampered generated evidence">
+          </div>
+          <div class="foot">01 / 01</div>
+        </div>
+      </section>`)
+  );
+  result = run(renderScript, tamperedDir);
+  assert(result.status === 0, "tampered-image fixture should render", result);
+  result = run(validateScript, tamperedDir);
+  assert(
+    result.status !== 0 && /generated image hash does not match provenance/i.test(result.stdout),
+    "validator must reject a generated image whose bytes no longer match provenance",
+    result
+  );
+  console.log("[PASS] tampered generated images fail provenance validation");
 
   const exampleDir = path.join(repoDir, "examples", "llmops");
   result = run(renderScript, exampleDir);

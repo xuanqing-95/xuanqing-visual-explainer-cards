@@ -13,9 +13,9 @@ Default mode is **GPT Image 2 labeled illustration**: the generated image may co
 - Prompt template, text budget, and image roles
 - Generation command, review, and fallbacks
 
-## When to Generate an Illustration (hard rule)
+## Every Content Page Gets an Illustration (hard rule)
 
-**Most content pages should pair text + small illustration.** Text leads, illustration explains. The point of this skill is the *combination* — pure-text card sets and one-giant-illustration card sets both fail the brief.
+**Every non-cover content page must pair text with at least one model-generated illustration.** Text leads, illustration explains. Pure HTML/CSS content cards fail the brief even when their diagrams are accurate.
 
 Default to including an illustration when the page has any of:
 
@@ -24,16 +24,16 @@ Default to including an illustration when the page has any of:
 - Items with visible referents (stations, tools, products, body parts, food)
 - Two states being compared visually (before/after, wrong/right)
 
-Skip illustration only when:
+Use a smaller supporting illustration when:
 
-- The page is a pure pull-quote or one-line definition
-- The page is a checklist of abstract verbs ("review", "decide", "ship") with no clear visual
-- The page is the cover (the huge English term IS the visual)
+- The page is a pull-quote or one-line definition: add a compact metaphor or object.
+- The page is a checklist of abstract verbs: add a compact action scene.
+- The page contains exact code, numbers, prices, or tables: keep those facts in HTML and add a no-text supporting scene.
 
-Let the source content decide the exact page count. Typical sets are **4-7 pages including the cover**. As a rough rhythm, use **3-4 pages with illustrations + 1-2 type-led pages** when the set lands in that range. Avoid both:
+The only default exception is the S00 cover, whose large English term is the visual. Let the source content decide the exact page count. Typical sets are **4-7 pages including the cover**. Vary illustration size and role across the set. Avoid both:
 
 - One giant illustration on page 2, nothing else → boring
-- One full-page illustration on every page → overwhelming
+- One full-page illustration on every page → overwhelming; every page may have an illustration without making every illustration dominant
 
 ## How Big Should the Illustration Be (hard rule)
 
@@ -55,7 +55,7 @@ Generate the image for its final slot, not for a generic square canvas.
 
 Do not start from the image. Start from the card layout.
 
-For every illustration-led page, define the final `image_slot` in `storyboard.yaml` **before** writing the prompt or running generation. The prompt, requested orientation, explicit model output size, pixel margin contract, and HTML wrapper must all be derived from that slot.
+For every non-cover page, define at least one final `image_slot` in `storyboard.yaml` **before** writing the prompt or running generation. The prompt, requested orientation, explicit model output size, pixel margin contract, and HTML wrapper must all be derived from that slot.
 
 Required shape:
 
@@ -377,8 +377,17 @@ python3 <skill-dir>/scripts/generate-illustration.py \
 
 The wrapper uses `OPENAI_API_KEY` and `OPENAI_BASE_URL`. If only `ZENMUX_API_KEY` is present, it selects the ZenMux-compatible endpoint automatically.
 The wrapper normalizes the edge-connected image background to the exact paper color by default, then runs conservative `auto-frame` to remove excessive blank paper margins. Disable only with `--no-auto-frame`.
+It also writes `<output>.generation.json` with the provider, model, quality, size, prompt hash, and final image hash. Keep this sidecar beside the PNG and never create or edit it by hand.
 
 Pass both `requested_orientation` and `model_output_size`. The size is the accepted image canvas and must be verified after generation.
+
+In HTML, mark each accepted generated image so the validator can enforce the per-page contract:
+
+```html
+<div class="illust-frame">
+  <img data-generated-illustration="true" src="assets/page-02.png" alt="具体说明">
+</div>
+```
 
 ## Good Token Prompt Shape
 

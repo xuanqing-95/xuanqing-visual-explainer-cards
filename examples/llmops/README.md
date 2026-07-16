@@ -6,9 +6,9 @@ This five-card example demonstrates the current workflow without placeholder art
 
 - `source.md`: source and unstable-fact boundary.
 - `storyboard.yaml`: beginner brief, page rhythm, current content layouts, and slot-first image contract.
-- `prompts/page-02.md`: one GPT Image 2 prompt derived from the declared landscape slot.
-- `assets/page-02.png`: accepted 1536×1024 generated illustration.
-- `index.html`: one fixed cover, one generated-image page, and three HTML-native evidence pages.
+- `prompts/page-02.md` through `page-05.md`: one GPT Image 2 prompt for every non-cover card.
+- `assets/page-02.png` through `page-05.png`: accepted generated illustrations and their `.generation.json` provenance sidecars.
+- `index.html`: one fixed cover and four content cards that combine generated illustrations with precise HTML copy.
 - `output/`: five final 1080×1440 PNG cards.
 
 ## Reproduce
@@ -19,6 +19,27 @@ python3 scripts/generate-illustration.py \
   --output examples/llmops/assets/page-02.png \
   --orientation landscape \
   --size 1536x1024 \
+  --quality medium
+
+python3 scripts/generate-illustration.py \
+  --prompt-file examples/llmops/prompts/page-03.md \
+  --output examples/llmops/assets/page-03.png \
+  --orientation landscape \
+  --size 1792x640 \
+  --quality medium
+
+python3 scripts/generate-illustration.py \
+  --prompt-file examples/llmops/prompts/page-04.md \
+  --output examples/llmops/assets/page-04.png \
+  --orientation landscape \
+  --size 1792x640 \
+  --quality medium
+
+python3 scripts/generate-illustration.py \
+  --prompt-file examples/llmops/prompts/page-05.md \
+  --output examples/llmops/assets/page-05.png \
+  --orientation landscape \
+  --size 1792x640 \
   --quality medium
 
 node scripts/render.mjs examples/llmops

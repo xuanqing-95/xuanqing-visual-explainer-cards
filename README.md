@@ -2,7 +2,7 @@
 
 Create illustrated Xiaohongshu/Rednote knowledge-card series with an editorial HTML layout and explanatory image evidence.
 
-The final card is always rendered from HTML at **1080×1440 (3:4)**. Generated illustrations live inside the card and use the canvas that matches their HTML slot, such as landscape, square, or portrait.
+The final card is always rendered from HTML at **1080×1440 (3:4)**. Every non-cover card contains at least one model-generated illustration. Those illustrations live inside the card and use the canvas that matches their HTML slot, such as landscape, square, or portrait.
 
 ## Install
 
@@ -59,8 +59,8 @@ The workflow:
 
 1. Turn the source into a beginner-friendly explanation.
 2. Build a content-driven storyboard.
-3. Define each illustration's final HTML slot before prompting.
-4. Generate slot-matched illustrations.
+3. Define at least one final illustration slot for every non-cover page before prompting.
+4. Generate slot-matched illustrations for every non-cover page.
 5. Compose the cards in HTML.
 6. Render 1080×1440 PNGs.
 7. Validate the HTML, media, fonts, and final PNG artifacts.
@@ -69,10 +69,12 @@ The workflow:
 
 - Final cards: `1080x1440`, 3:4.
 - Cover: fixed S00 editorial cover with HTML typography.
-- Content pages: composed from content shape, not fixed numbered templates.
+- Content pages: composed from content shape, not fixed numbered templates; each must contain a model-generated illustration.
+- HTML/CSS diagrams, exact code, numbers, labels, and screenshots may supplement but never replace the generated illustration.
 - Illustration slot: declared before generation.
 - Model output: explicit `model_output_size`; it does not have to be 3:4.
 - Generated image fit: `object-fit: contain`; photographs may use `cover`.
+- Generation proof: each generated PNG has a generator-written `.generation.json` sidecar; validation checks the model, provider, prompt hash, dimensions, and final image hash.
 - Source hashtags remain publishing metadata and never enter cards or image prompts by default.
 
 ## Commands
@@ -103,7 +105,7 @@ npm run verify
 
 ## Complete example
 
-[`examples/llmops/`](examples/llmops/) contains a complete source, current storyboard, image prompt, HTML, visual assets, and five rendered 3:4 cards. It contains no placeholder artwork.
+[`examples/llmops/`](examples/llmops/) contains a complete source, current storyboard, per-content-page image prompts, HTML, generated visual assets with provenance, and five rendered 3:4 cards. It contains no placeholder artwork.
 
 ## License
 
