@@ -30,4 +30,4 @@ jobs:
       - name: Validate Agent Skills specification
         run: |
           python -m pip install "git+https://github.com/agentskills/agentskills.git#subdirectory=skills-ref"
-          skills-ref validate .
+          skills-ref validate "$GITHUB_WORKSPACE"
