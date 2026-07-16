@@ -1,0 +1,100 @@
+schema_version: 1
+topic: 替换为主题
+audience: 替换为目标读者
+
+beginner_brief:
+  prior_knowledge: 读者已经知道什么
+  plain_definition: 用一句白话解释它是什么
+  not_this: 它不是什么或最常见误解
+  how_it_works: 输入如何经过规则或机制产生结果
+  why_it_matters: 它会改变什么成本、行为、风险或决定
+  concrete_example: 一个有具体输入和可观察结果的例子
+  next_action: 读者接下来可以做的一次测试或行动
+
+source_tags: []
+
+page_rhythm:
+  strategy: 从问题进入，放大核心机制，再用对比落到行动；相邻内容页更换布局和视觉重心
+  beats:
+    - page: 1
+      purpose: 用熟悉问题建立阅读动机
+      silhouette: huge-type-cover
+      visual_weight: type-led
+      transition: open-with-question
+    - page: 2
+      purpose: 给出白话定义和核心机制
+      silhouette: image-led-hero
+      visual_weight: image-led
+      transition: zoom-into-mechanism
+    - page: 3
+      purpose: 展开具体例子或组成部分
+      silhouette: split-evidence
+      visual_weight: balanced
+      transition: move-from-concept-to-example
+    - page: 4
+      purpose: 给出可执行的判断或行动
+      silhouette: compact-action-ledger
+      visual_weight: text-led
+      transition: close-with-action
+
+pages:
+  - id: 1
+    message: 用一句完整的话写这一页唯一要讲清楚的结论
+    role: cover
+    layout: series-cover
+    cover:
+      series_line: 每天吃透一个知识点
+      english_term: TERM
+      chinese_explanation: 中文解释
+      user_question: 一个具体的用户问题？
+
+  - id: 2
+    message: 用一句完整的话写定义、机制或后果
+    role: concept
+    layout: metaphor-evidence
+    visual_type: labeled-gpt-image
+    image_slot:
+      html_wrapper: evidence-figure landscape
+      slot_px: 904x603
+      slot_ratio: "3:2"
+      requested_orientation: landscape
+      model_output_size: 1536x1024
+      subject_bbox: x=120-1416,y=128-896
+      fit: contain
+    illustration:
+      prompt_file: prompts/page-02.md
+      output_file: assets/page-02.png
+
+  - id: 3
+    message: 用一句完整的话写具体例子、组成部分或因果链
+    role: mechanism
+    layout: evidence-split
+    visual_type: no-text
+    image_slot:
+      html_wrapper: evidence-figure portrait
+      slot_px: 360x540
+      slot_ratio: "2:3"
+      requested_orientation: portrait
+      model_output_size: 1024x1536
+      subject_bbox: x=112-912,y=180-1356
+      fit: contain
+    illustration:
+      prompt_file: prompts/page-03.md
+      output_file: assets/page-03.png
+
+  - id: 4
+    message: 用一句完整的话写读者接下来应采取的行动
+    role: action
+    layout: closing-checklist
+    visual_type: no-text
+    image_slot:
+      html_wrapper: evidence-figure compact
+      slot_px: 300x300
+      slot_ratio: "1:1"
+      requested_orientation: square
+      model_output_size: 1024x1024
+      subject_bbox: x=112-912,y=112-912
+      fit: contain
+    illustration:
+      prompt_file: prompts/page-04.md
+      output_file: assets/page-04.png

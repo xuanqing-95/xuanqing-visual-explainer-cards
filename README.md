@@ -58,16 +58,18 @@ Use $xuanqing-visual-explainer-cards to turn "Token 是什么" into an illustrat
 The workflow:
 
 1. Turn the source into a beginner-friendly explanation.
-2. Build a content-driven storyboard.
-3. Define at least one final illustration slot for every non-cover page before prompting.
-4. Generate slot-matched illustrations for every non-cover page.
-5. Compose the cards in HTML.
-6. Render 1080×1440 PNGs.
-7. Validate the HTML, media, fonts, and final PNG artifacts.
+2. Copy `assets/storyboard.template.yaml`, plan page rhythm, and vary content-page layouts and silhouettes.
+3. Validate `storyboard.yaml` before image prompting or HTML design.
+4. Define at least one final illustration slot for every non-cover page before prompting.
+5. Generate slot-matched illustrations for every non-cover page.
+6. Compose the cards in HTML and bind each page to its storyboard layout and silhouette.
+7. Render 1080×1440 PNGs.
+8. Validate storyboard binding, HTML, media, fonts, and final PNG artifacts.
 
 ## Output contract
 
 - Final cards: `1080x1440`, 3:4.
+- Storyboard: required pre-design source of truth for page order, rhythm, layout, silhouette, image slots, and asset paths.
 - Cover: fixed S00 editorial cover with HTML typography.
 - Content pages: composed from content shape, not fixed numbered templates; each must contain a model-generated illustration.
 - HTML/CSS diagrams, exact code, numbers, labels, and screenshots may supplement but never replace the generated illustration.
@@ -93,6 +95,7 @@ python3 scripts/generate-illustration.py \
 Render and validate a task directory:
 
 ```bash
+node scripts/validate-storyboard.mjs <task-dir>
 node scripts/render.mjs <task-dir>
 node scripts/validate.mjs <task-dir>
 ```
@@ -105,7 +108,7 @@ npm run verify
 
 ## Complete example
 
-[`examples/llmops/`](examples/llmops/) contains a complete source, current storyboard, per-content-page image prompts, HTML, generated visual assets with provenance, and five rendered 3:4 cards. It contains no placeholder artwork.
+[`examples/llmops/`](examples/llmops/) contains a complete source, validated page-rhythm storyboard, per-content-page image prompts, storyboard-bound HTML, generated visual assets with provenance, and five rendered 3:4 cards. It contains no placeholder artwork.
 
 ## License
 

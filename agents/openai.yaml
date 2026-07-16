@@ -1,4 +1,4 @@
 interface:
   display_name: "Visual Explainer Cards"
-  short_description: "Create social cards with model imagery on every content page"
-  default_prompt: "Use $xuanqing-visual-explainer-cards to turn this topic into a Xiaohongshu knowledge-card series with a model-generated illustration on every non-cover card."
+  short_description: "Plan storyboards, then create illustrated social cards"
+  default_prompt: "Use $xuanqing-visual-explainer-cards to plan and validate storyboard.yaml first, then turn this topic into a Xiaohongshu card series with varied content-page layouts and a model-generated illustration on every non-cover card."

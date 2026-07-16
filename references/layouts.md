@@ -36,6 +36,8 @@ Hard rules for the cover:
 
 For pages 2 onwards, do not pick a pre-named recipe. Instead:
 
+The storyboard must already have passed `scripts/validate-storyboard.mjs`. Treat `pages[].layout` and `page_rhythm.beats[].silhouette` as design inputs, not descriptions added after the page is finished.
+
 ### Step 1 — Identify the content shape
 
 Read the page's storyboard message and ask: what shape is this? The seed template ships six **named content-page snippets** (commented HTML at the bottom of `assets/template.html`) that map to common shapes. Copy one as a starting point, then adjust.
@@ -43,9 +45,9 @@ Read the page's storyboard message and ask: what shape is this? The seed templat
 | Content shape | Snippet to copy | What it gives you |
 |---|---|---|
 | One metaphor / mental model / "X is like Y" | **P-METAPHOR** | Large 540px illustration + IKB caption + 2-3 line body |
-| Numbered list of 3-4 typical items (symptoms / steps / signals) | **P-LIST** | Stacked rows, each with 200px thumb + IKB number + body line |
-| Two states compared (before / after, wrong / right, demo / 生产) | **P-COMPARE** | Two side-by-side columns, each with 240px illustration + label + 3 bullets |
-| A sequence / pipeline / process | **P-MECHANISM** | 3-4 vertical step rows, each with 130px inline icon + IKB step no. + body |
+| Numbered list of 3-4 typical items (symptoms / steps / signals) | **P-LIST** | One generated evidence strip + stacked exact HTML rows |
+| Two states compared (before / after, wrong / right, demo / 生产) | **P-COMPARE** | One generated transition strip + two exact HTML columns |
+| A sequence / pipeline / process | **P-MECHANISM** | One generated process strip + 3-4 numbered HTML steps |
 | One pull-quote or definition that is the whole page | **P-QUOTE** | Pullquote left + 420px illustration right (the rare type-led page) |
 | Closing self-check / call to action | **P-ACTION** | Small 200px illustration + 2-3 lettered options + IKB accent line |
 
@@ -73,7 +75,7 @@ The S00 cover is the only default page without an illustration. Let the source c
 This is the rule that prevents illustrations from taking over the page:
 
 - Concept page where image IS the explanation: `.illust-frame` 480-560px tall
-- Page where image supports a list/comparison: thumbnails 160-260px, multiple per page
+- Page where image supports a list/comparison/process: one 260-360px evidence strip
 - Page where image is one small mark of a mechanism: inline 100-160px
 
 The text content should still occupy at least 60% of the page's visual weight. If the illustration is louder than the title, shrink it.
@@ -160,3 +162,4 @@ Add task-scoped CSS (inside `<style>` in `index.html`) for anything else the spe
 4. **Content density ≥ 75%.** No pure-whitespace band wider than 216px without a stated reason.
 5. **Each page has a section label** (`.section-label`) explaining what kind of page this is in 2-5 mono English/Chinese words.
 6. **No 1-of-N letter highlight.** Don't pick a "key option" and wrap it in yellow. If a step is more important, write it that way in the copy.
+7. **Bind HTML to the storyboard.** Set `data-page-id`, `data-layout`, and `data-silhouette` on every `.poster`; keep the generated asset path and `.evidence-figure` classes equal to the declared page contract.

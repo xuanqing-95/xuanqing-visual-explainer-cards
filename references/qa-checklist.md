@@ -1,5 +1,14 @@
 # QA Checklist
 
+## Storyboard gate
+
+- Was `storyboard.yaml` created and validated before `index.html` was designed?
+- Does `page_rhythm` contain one deliberate beat per page with purpose, silhouette, visual weight, and transition?
+- Do adjacent content pages change both layout and silhouette?
+- For three or more content pages, are at least three layouts and three silhouettes used?
+- Do every card's `data-page-id`, `data-layout`, and `data-silhouette` match the storyboard?
+- Do each non-cover card's generated asset and wrapper classes match `illustration.output_file` and `image_slot.html_wrapper`?
+
 ## Meaning
 
 - Can a beginner understand the page without reading the post body?
@@ -54,6 +63,7 @@
 
 ## Technical
 
+- Run `validate-storyboard.mjs` before prompting or HTML design.
 - Run `render.mjs`.
 - Run `validate.mjs`.
 - Fix every FAIL.

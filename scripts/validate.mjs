@@ -2,6 +2,7 @@ import fs from "node:fs";
 import { createHash } from "node:crypto";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
+import { validateStoryboardTask } from "./validate-storyboard.mjs";
 
 async function loadChromium() {
   try {
@@ -43,6 +44,17 @@ if (!fs.existsSync(indexPath)) {
   console.error(`[ERROR] index.html not found in ${taskDir}`);
   process.exit(2);
 }
+
+const storyboardResult = validateStoryboardTask(taskDir);
+if (!storyboardResult.ok) {
+  for (const error of storyboardResult.errors) {
+    console.log(`[FAIL] storyboard: ${error}`);
+  }
+  process.exit(1);
+}
+console.log(
+  `[PASS] storyboard: ${storyboardResult.summary.pageCount} page(s), ${storyboardResult.summary.contentCount} content page(s), ${storyboardResult.summary.layoutCount} layout(s), ${storyboardResult.summary.silhouetteCount} silhouette(s)`
+);
 
 const chromium = await loadChromium();
 let browser;
@@ -241,6 +253,22 @@ const identityStats = await page.locator(".poster").evaluateAll((cards) => {
   };
 });
 
+const storyboardBindingStats = await page.locator(".poster").evaluateAll((cards) =>
+  cards.map((card) => ({
+    id: card.id || "(unnamed)",
+    pageId: card.getAttribute("data-page-id") || "",
+    layout: card.getAttribute("data-layout") || "",
+    silhouette: card.getAttribute("data-silhouette") || "",
+    isCover: card.classList.contains("cover-series"),
+    generated: Array.from(
+      card.querySelectorAll('.illust-frame img[data-generated-illustration="true"]')
+    ).map((img) => ({
+      src: img.getAttribute("src") || "",
+      wrapperClasses: img.closest(".evidence-figure")?.className || "",
+    })),
+  }))
+);
+
 const mediaStats = await page.locator(".poster").evaluateAll((cards) => {
   const images = cards.flatMap((card) =>
     Array.from(card.querySelectorAll("img")).map((img) => ({
@@ -259,6 +287,7 @@ const mediaStats = await page.locator(".poster").evaluateAll((cards) => {
       .filter((card) => !card.classList.contains("cover-series"))
       .map((card) => ({
         card: card.id || "(unnamed)",
+        pageId: card.getAttribute("data-page-id") || "",
         images: Array.from(
           card.querySelectorAll(
             '.illust-frame img[data-generated-illustration="true"]'
@@ -319,6 +348,96 @@ const hashtagStats = await page.locator(".poster").evaluateAll((cards) => {
 
 // Document-level FAILs
 let failed = false;
+let storyboardBindingFailed = false;
+const normalizeTaskPath = (value) =>
+  decodeURIComponent(String(value || "").split(/[?#]/, 1)[0])
+    .replaceAll("\\", "/")
+    .replace(/^\.\//, "");
+
+if (storyboardBindingStats.length !== storyboardResult.pages.length) {
+  console.log(
+    `[FAIL] storyboard binding: HTML has ${storyboardBindingStats.length} card(s), storyboard has ${storyboardResult.pages.length} page(s)`
+  );
+  failed = true;
+  storyboardBindingFailed = true;
+}
+
+for (
+  let index = 0;
+  index < Math.min(storyboardBindingStats.length, storyboardResult.pages.length);
+  index += 1
+) {
+  const actual = storyboardBindingStats[index];
+  const expectedPage = storyboardResult.pages[index];
+  const expectedBeat = storyboardResult.beats[index];
+  const expectedId = String(expectedPage.id);
+  const expectedLayout = expectedPage.layout;
+  const expectedSilhouette = expectedBeat.silhouette;
+  const expectedCover = expectedPage.role === "cover";
+
+  if (actual.pageId !== expectedId) {
+    console.log(
+      `[FAIL] ${actual.id}: data-page-id "${actual.pageId || "(missing)"}" does not match storyboard page ${expectedId}`
+    );
+    failed = true;
+    storyboardBindingFailed = true;
+  }
+  if (actual.layout !== expectedLayout) {
+    console.log(
+      `[FAIL] ${actual.id}: data-layout "${actual.layout || "(missing)"}" does not match storyboard layout "${expectedLayout}"`
+    );
+    failed = true;
+    storyboardBindingFailed = true;
+  }
+  if (actual.silhouette !== expectedSilhouette) {
+    console.log(
+      `[FAIL] ${actual.id}: data-silhouette "${actual.silhouette || "(missing)"}" does not match storyboard silhouette "${expectedSilhouette}"`
+    );
+    failed = true;
+    storyboardBindingFailed = true;
+  }
+  if (actual.isCover !== expectedCover) {
+    console.log(
+      `[FAIL] ${actual.id}: cover-series class does not match storyboard role "${expectedPage.role}"`
+    );
+    failed = true;
+    storyboardBindingFailed = true;
+  }
+
+  if (!expectedCover) {
+    const expectedImage = normalizeTaskPath(expectedPage.illustration.output_file);
+    const matchingImage = actual.generated.find(
+      (image) => normalizeTaskPath(image.src) === expectedImage
+    );
+    if (!matchingImage) {
+      console.log(
+        `[FAIL] ${actual.id}: generated image does not match storyboard illustration.output_file "${expectedImage}"`
+      );
+      failed = true;
+      storyboardBindingFailed = true;
+    } else {
+      const requiredWrapperClasses = expectedPage.image_slot.html_wrapper.split(/\s+/).filter(Boolean);
+      const actualWrapperClasses = new Set(matchingImage.wrapperClasses.split(/\s+/).filter(Boolean));
+      const missingWrapperClasses = requiredWrapperClasses.filter(
+        (className) => !actualWrapperClasses.has(className)
+      );
+      if (missingWrapperClasses.length) {
+        console.log(
+          `[FAIL] ${actual.id}: illustration wrapper is missing storyboard class(es): ${missingWrapperClasses.join(", ")}`
+        );
+        failed = true;
+        storyboardBindingFailed = true;
+      }
+    }
+  }
+}
+
+if (!storyboardBindingFailed) {
+  console.log(
+    `[PASS] storyboard binding: ${storyboardBindingStats.length} HTML card(s) match page ids, layouts, silhouettes, slots, and generated assets`
+  );
+}
+
 if (docChecks.mode !== "editorial") {
   console.log(`[FAIL] document: unsupported data-mode "${docChecks.mode}"; use editorial`);
   failed = true;
@@ -387,6 +506,9 @@ const resolveTaskFile = (relativePath, label, baseDir = taskDir) => {
 };
 
 for (const card of mediaStats.generatedByCard) {
+  const expectedStoryboardPage = storyboardResult.pages.find(
+    (page) => String(page.id) === card.pageId
+  );
   if (card.images.length === 0) {
     console.log(
       `[FAIL] ${card.card}: every non-cover card requires at least one model-generated illustration inside .illust-frame with data-generated-illustration="true"`
@@ -437,6 +559,22 @@ for (const card of mediaStats.generatedByCard) {
       const promptPath = resolveTaskFile(metadata.prompt_file, "prompt_file", provenanceDir);
       if (!fs.existsSync(promptPath)) {
         throw new Error(`generation prompt is missing: ${metadata.prompt_file}`);
+      }
+      if (expectedStoryboardPage) {
+        const expectedPromptPath = resolveTaskFile(
+          expectedStoryboardPage.illustration.prompt_file,
+          "storyboard illustration.prompt_file"
+        );
+        if (promptPath !== expectedPromptPath) {
+          throw new Error(
+            `generation provenance prompt_file does not match storyboard: ${metadata.prompt_file}`
+          );
+        }
+        if (metadata.size !== expectedStoryboardPage.image_slot.model_output_size) {
+          throw new Error(
+            `generated image size ${metadata.size} does not match storyboard model_output_size ${expectedStoryboardPage.image_slot.model_output_size}`
+          );
+        }
       }
       if (sha256File(promptPath) !== metadata.prompt_sha256) {
         throw new Error(`generation prompt hash does not match: ${metadata.prompt_file}`);

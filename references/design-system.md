@@ -190,6 +190,8 @@ For a typical 4–7 page set:
 
 This is a rhythm reference, not a fixed page count. Every non-cover content page needs a model-generated illustration. HTML diagrams, comparisons, processes, and ledgers may supplement that illustration when they communicate exact information more clearly.
 
+Record the chosen rhythm in `storyboard.yaml` before writing HTML. Every `.poster` must expose the planned `data-page-id`, `data-layout`, and `data-silhouette`; final validation compares them with the storyboard.
+
 ## Background patterns
 
 Use at most one quiet matrix layer on a sparse cover or statement page:
@@ -202,6 +204,8 @@ Place it before `.content` so the pattern stays at z-index 1 and content at z-in
 
 ## Release checks
 
+- storyboard preflight passes before HTML design;
+- HTML page ids, layouts, silhouettes, wrappers, and generated asset paths match the storyboard;
 - final board is 1080×1440;
 - content uses at least 75% of the vertical canvas;
 - one accent preset per set;

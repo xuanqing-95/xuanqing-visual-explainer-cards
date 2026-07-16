@@ -1,6 +1,6 @@
 ---
 name: xuanqing-visual-explainer-cards
-description: Create illustrated Xiaohongshu/Rednote knowledge-card series with editorial HTML typography, a slot-matched model-generated illustration on every non-cover card, content-driven layouts, and automated artifact validation. Use when turning abstract concepts, tutorials, AI knowledge, product mechanisms, comparisons, or educational content into clear 3:4 social cards, visual explainers, educational infographics, or illustrated knowledge posts.
+description: Create storyboard-first Xiaohongshu/Rednote knowledge-card series with deliberate page rhythm, varied content layouts, editorial HTML typography, a slot-matched model-generated illustration on every non-cover card, and automated artifact validation. Use when turning abstract concepts, tutorials, AI knowledge, product mechanisms, comparisons, or educational content into clear 3:4 social cards, visual explainers, educational infographics, or illustrated knowledge posts.
 ---
 
 # Visual Explainer Cards
@@ -10,6 +10,7 @@ Create social cards that readers can understand visually before reading closely.
 ## Output contract
 
 - Render every final card from HTML at `1080x1440` (3:4).
+- Treat `storyboard.yaml` as the source of truth for page count, message order, rhythm, layout, silhouette, illustration slot, and asset mapping.
 - Include at least one model-generated illustration on every non-cover card. HTML diagrams, code, numbers, screenshots, and labels may supplement the illustration but never replace it.
 - Treat generated images as evidence inside the card. Their canvas may be landscape, square, portrait, or a supported custom size.
 - Define the final `image_slot` before writing an image prompt or generating an image.
@@ -38,10 +39,20 @@ Resolve `<skill-dir>` to the directory containing this `SKILL.md`.
 1. Separate the source into `content_source` and `publish_metadata`. Keep lines under `标签:`, `Tags:`, `Hashtags:`, and standalone `#...` lines out of page copy, footers, captions, and image prompts.
 2. Read [`references/beginner-explanation.md`](references/beginner-explanation.md) and create a beginner brief: what it is, what it is not, how it works, one concrete example, why it matters, and the next action.
 3. Extract the source's natural message units. Use one complete message per page and let the content determine the page count; 4–7 pages including the cover is common, not mandatory.
-4. Create `storyboard.yaml` before designing. Include a page-rhythm plan and vary content-page silhouettes.
-5. Read [`references/visual-routing.md`](references/visual-routing.md) to choose the generated illustration's role and the best HTML structure around it. Do not route a non-cover page to HTML-only.
-6. Use the fixed S00 cover from [`references/layouts.md`](references/layouts.md). Compose later pages from the template primitives and content patterns in that reference.
-7. For every non-cover page, define at least one `image_slot` before prompting:
+4. Read [`references/visual-routing.md`](references/visual-routing.md) and [`references/layouts.md`](references/layouts.md) as planning references. Do not write HTML yet.
+5. Copy `assets/storyboard.template.yaml` to the task directory as `storyboard.yaml`. Replace the template with the real message units, then define:
+   - one overall `page_rhythm.strategy`;
+   - one rhythm beat per page with `purpose`, `silhouette`, `visual_weight`, and `transition`;
+   - one content-driven `layout` per page;
+   - a different layout and silhouette on adjacent content pages;
+   - at least one `image_slot` plus planned prompt and output paths for every non-cover page.
+6. Validate the storyboard before image prompting or HTML design. Do not create or edit `index.html` until this passes:
+
+```bash
+node <skill-dir>/scripts/validate-storyboard.mjs <task-dir>
+```
+
+7. For every non-cover page, confirm that `image_slot` defines:
    - `html_wrapper`
    - `slot_px`
    - `slot_ratio`
@@ -63,13 +74,13 @@ python3 <skill-dir>/scripts/generate-illustration.py \
 
 The script calls the local OpenAI-compatible wrapper, verifies the returned dimensions, normalizes edge-connected paper background, applies conservative auto-framing, and writes `<output>.generation.json` with the model, provider, prompt hash, and final image hash. Never hand-author this provenance file. Use `--remove-background` only for isolated cutouts, `--skip-background-normalize` for intentional scene backgrounds, and `--no-auto-frame` when blank space is deliberate.
 
-10. Copy `assets/template.html` to the task directory as `index.html`. Read [`references/design-system.md`](references/design-system.md) before editing:
+10. Only after the storyboard passes, copy `assets/template.html` to the task directory as `index.html`. Read [`references/design-system.md`](references/design-system.md) before editing:
     - body and lead are serif Chinese, not sans;
     - large display text stays light;
     - IKB blue remains visible on every page;
     - mustard yellow appears only on the cover bar in the default theme;
     - use no rounded cards, shadows, or gradients.
-11. Place every generated illustration inside `.illust-frame`; use `.evidence-figure` for major images. Mark the exact generated `<img>` with `data-generated-illustration="true"`, match the wrapper to the declared slot, and keep `object-fit: contain`.
+11. On every `.poster`, set `data-page-id`, `data-layout`, and `data-silhouette` from the storyboard. Place every generated illustration inside `.illust-frame`; use `.evidence-figure` for major images. Mark the exact generated `<img>` with `data-generated-illustration="true"`, match the wrapper and asset path to the declared slot, and keep `object-fit: contain`.
 12. Render, validate, and inspect:
 
 ```bash
@@ -81,51 +92,27 @@ Fix every FAIL. Inspect every final PNG for factual accuracy, Chinese label accu
 
 ## Storyboard contract
 
-```yaml
-topic: Token 是什么
-audience: AI 初学者
-beginner_brief:
-  prior_knowledge: 会使用聊天类 AI,但不了解模型原理
-  plain_definition: Token 是 AI 读取和生成文字时使用的小单位
-  not_this: 它不一定等于一个汉字或一个单词
-  why_it_matters: 它影响费用、可处理内容长度和上下文记忆
-  concrete_example: 今天天气真好会被拆成若干小块处理
-source_tags:
-  - AI入门
-  - ChatGPT
-pages:
-  - id: 1
-    message: Token 会影响 AI 怎么读文字、花多少钱、能记住多少上下文
-    role: cover
-    layout: series-cover
-    cover:
-      series_line: 每天吃透一个 AI 知识点
-      english_term: Token
-      chinese_explanation: 文字处理单位
-      user_question: 为什么 AI 聊久了会忘记前面说过什么?
-  - id: 2
-    message: Token 是 AI 处理文字的单位
-    role: concept
-    layout: metaphor-evidence
-    visual_type: labeled-gpt-image
-    image_slot:
-      html_wrapper: evidence-figure landscape
-      slot_px: 904x603
-      slot_ratio: 3:2
-      requested_orientation: landscape
-      model_output_size: 1536x1024
-      subject_bbox: x=120-1416,y=128-896
-      fit: contain
-```
+[`assets/storyboard.template.yaml`](assets/storyboard.template.yaml) is the canonical contract. Copy it; do not reconstruct it from memory.
+
+The storyboard must contain `schema_version`, `topic`, `audience`, the complete seven-field `beginner_brief`, `page_rhythm.strategy`, one `page_rhythm.beats` entry per page, and one `pages` entry per final card. Every non-cover page must also declare `visual_type`, `image_slot`, `illustration.prompt_file`, and `illustration.output_file`.
+
+The rhythm plan and page definitions serve different purposes:
+
+- `page_rhythm.beats[].silhouette` controls the visible page shape and visual weight across the sequence.
+- `pages[].layout` controls the concrete information arrangement on that page.
+- HTML must echo both values through `data-silhouette` and `data-layout`; final validation rejects drift.
 
 ## Hard rules
 
 - Keep one complete core message per page.
+- Create and pass `storyboard.yaml` before editing HTML; missing or invalid storyboards are blocking failures.
+- Vary adjacent content-page layouts and silhouettes. For three or more content pages, use at least three distinct layouts and three distinct silhouettes.
 - Introduce technical terms in plain language on first appearance.
 - Include a concrete example and a practical consequence for abstract definitions.
 - State important boundaries; do not teach an analogy as the literal mechanism.
 - Use HTML for exact comparison text, code, numbers, labels, and ledgers, while keeping at least one model-generated supporting illustration on the same card.
 - Never deliver a non-cover card made only from HTML/CSS, a screenshot, or typography.
+- Keep each HTML card's page id, layout, silhouette, generated asset path, and illustration wrapper synchronized with the storyboard.
 - Keep the generator-written `.generation.json` beside every accepted generated image; validation must fail when provenance or hashes do not match.
 - Never duplicate the outer HTML title inside a generated illustration.
 - Keep prices, dates, model names, long explanations, and unstable facts out of generated images.

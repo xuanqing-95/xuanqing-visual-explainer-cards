@@ -1,3 +1,4 @@
+schema_version: 1
 topic: LLMOps · Day 04
 audience: 在用或想用 AI 做项目的开发者、产品、运营
 accent: indigo-porcelain
@@ -6,15 +7,39 @@ beginner_brief:
   prior_knowledge: 用过聊天 AI,可能做过 demo,但不了解生产运维
   plain_definition: LLMOps 是把 prompt 管理、输出评估、成本控制和安全过滤工程化
   not_this: 它不是再训练一个模型,也不只是调 prompt
+  how_it_works: 把 prompt、评估、成本、安全和人工接管接进同一个持续观测与迭代流程
   why_it_matters: 同一个模型能否稳定上线,取决于有没有持续管理输入、输出、成本和风险
   concrete_example: 把写死在代码里的 prompt 迁到可配置平台,并让低分输出自动转人工
+  next_action: 先确认当前 prompt 写在代码、配置文件还是专门平台里
 
 page_rhythm:
-  - cover: 固定 S00 系列封面
-  - metaphor: 横向解释插图
-  - signals: 横向模型插图 + 三行信号说明
-  - comparison: 横向模型插图 + 双列 Before / After
-  - action: 横向模型插图 + 三段式行动选择
+  strategy: 从熟悉的问题进入，用大图建立后厨隐喻，再收紧为信号、对比和行动；每页更换布局与视觉重心
+  beats:
+    - page: 1
+      purpose: 用同模型不同效果的问题建立阅读动机
+      silhouette: huge-type-cover
+      visual_weight: type-led
+      transition: open-with-question
+    - page: 2
+      purpose: 用餐厅后厨解释模型之外的运维体系
+      silhouette: image-led-hero
+      visual_weight: image-led
+      transition: zoom-into-metaphor
+    - page: 3
+      purpose: 把抽象风险收紧为三个可观察信号
+      silhouette: horizontal-strip-ledger
+      visual_weight: balanced
+      transition: move-from-metaphor-to-symptoms
+    - page: 4
+      purpose: 用 Before / After 说明流程如何变得可控
+      silhouette: comparison-split
+      visual_weight: split-led
+      transition: prove-with-case
+    - page: 5
+      purpose: 让读者判断自己的 prompt 当前写在哪里
+      silhouette: compact-action-ledger
+      visual_weight: text-led
+      transition: close-with-action
 
 pages:
   - id: 1

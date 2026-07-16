@@ -1,6 +1,6 @@
 {
   "name": "xuanqing-visual-explainer-cards",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": true,
   "description": "Create validated 3:4 editorial cards with model-generated imagery on every content page.",
   "license": "AGPL-3.0-only",
@@ -12,9 +12,10 @@
     "render:example": "node scripts/render.mjs examples/llmops",
     "validate:example": "node scripts/validate.mjs examples/llmops",
     "test": "node scripts/test.mjs",
-    "verify": "node --check scripts/generate.mjs && node --check scripts/render.mjs && node --check scripts/validate.mjs && node --check scripts/test.mjs && python3 -m py_compile scripts/generate-illustration.py && npm test"
+    "verify": "node --check scripts/generate.mjs && node --check scripts/render.mjs && node --check scripts/validate-storyboard.mjs && node --check scripts/validate.mjs && node --check scripts/test.mjs && python3 -m py_compile scripts/generate-illustration.py && npm test"
   },
   "dependencies": {
-    "playwright": "1.61.1"
+    "playwright": "1.61.1",
+    "yaml": "2.9.0"
   }
 }

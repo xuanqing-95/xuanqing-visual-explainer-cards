@@ -5,7 +5,7 @@ This five-card example demonstrates the current workflow without placeholder art
 ## Included
 
 - `source.md`: source and unstable-fact boundary.
-- `storyboard.yaml`: beginner brief, page rhythm, current content layouts, and slot-first image contract.
+- `storyboard.yaml`: validated beginner brief, per-page rhythm beats, varied layouts and silhouettes, and slot-first image contract.
 - `prompts/page-02.md` through `page-05.md`: one GPT Image 2 prompt for every non-cover card.
 - `assets/page-02.png` through `page-05.png`: accepted generated illustrations and their `.generation.json` provenance sidecars.
 - `index.html`: one fixed cover and four content cards that combine generated illustrations with precise HTML copy.
@@ -14,6 +14,8 @@ This five-card example demonstrates the current workflow without placeholder art
 ## Reproduce
 
 ```bash
+node scripts/validate-storyboard.mjs examples/llmops
+
 python3 scripts/generate-illustration.py \
   --prompt-file examples/llmops/prompts/page-02.md \
   --output examples/llmops/assets/page-02.png \
@@ -46,4 +48,4 @@ node scripts/render.mjs examples/llmops
 node scripts/validate.mjs examples/llmops
 ```
 
-The validator must report five passing cards and five 1080×1440 PNG artifacts.
+The storyboard preflight must pass before generation. Final validation must report matching storyboard bindings, five passing cards, and five 1080×1440 PNG artifacts.

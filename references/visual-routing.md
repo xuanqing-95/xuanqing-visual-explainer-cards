@@ -38,6 +38,8 @@ HTML-native diagrams may add precision, but they never replace the required mode
 
 ## Page Rhythm
 
+Write the rhythm plan into `storyboard.yaml` before HTML design. `page_rhythm.strategy` states the sequence logic; each beat records `page`, `purpose`, `silhouette`, `visual_weight`, and `transition`.
+
 For a typical 4-7 page set, let the content decide the exact count:
 
 1. Cover or HTML-led hero
@@ -47,4 +49,4 @@ For a typical 4-7 page set, let the content decide the exact count:
 5. Boundary, misconception, or tradeoff with a generated supporting image when needed
 6. Closing action with a compact generated image
 
-Avoid using the same layout twice in a row.
+Do not repeat a layout or silhouette on adjacent content pages. For three or more content pages, use at least three distinct layouts and three distinct silhouettes. The standalone storyboard validator enforces this before design begins.

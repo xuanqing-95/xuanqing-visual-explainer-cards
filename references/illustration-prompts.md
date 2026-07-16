@@ -55,7 +55,7 @@ Generate the image for its final slot, not for a generic square canvas.
 
 Do not start from the image. Start from the card layout.
 
-For every non-cover page, define at least one final `image_slot` in `storyboard.yaml` **before** writing the prompt or running generation. The prompt, requested orientation, explicit model output size, pixel margin contract, and HTML wrapper must all be derived from that slot.
+For every non-cover page, define at least one final `image_slot` in `storyboard.yaml` **before** writing the prompt or running generation. Start from `assets/storyboard.template.yaml` and pass `scripts/validate-storyboard.mjs` first. The prompt, requested orientation, explicit model output size, pixel margin contract, and HTML wrapper must all be derived from that slot.
 
 Required shape:
 
