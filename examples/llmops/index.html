@@ -100,9 +100,10 @@
     .illust-frame img{width:100%;height:100%;object-fit:contain;display:block;}
     .evidence-figure{width:100%;display:flex;flex-direction:column;justify-content:center;margin:0;}
     .evidence-figure.landscape .illust-frame{height:540px;}
-    .evidence-figure.signal-strip .illust-frame,
-    .evidence-figure.case-strip .illust-frame{height:323px;}
-    .evidence-figure.action-strip .illust-frame{height:323px;}
+    .evidence-figure.compact{align-items:center;}
+    .evidence-figure.compact .illust-frame{width:300px;height:240px;}
+    .illust-frame.row-thumb{width:176px;height:176px;}
+    .illust-frame.compare-thumb{width:240px;height:240px;align-self:center;}
     .frame-img{position:relative;overflow:hidden;background:var(--paper-2);}
     .frame-img img{width:100%;height:100%;object-fit:cover;display:block;}
     .img-cap{font-family:var(--mono);font-weight:500;font-size:18px;letter-spacing:.20em;text-transform:uppercase;color:var(--accent);margin-top:14px;}
@@ -115,30 +116,6 @@
     .cover-series .term-zh{font-family:var(--serif-zh);font-style:normal;font-weight:500;font-size:42px;line-height:1.35;letter-spacing:.04em;color:var(--accent);margin:0;}
     .cover-series .term-question{font-family:var(--serif-zh);font-weight:500;font-size:56px;line-height:1.18;letter-spacing:.02em;color:var(--ink);margin:0;max-width:880px;}
 
-    /* HTML-native evidence used when a diagram explains better than generated art */
-    .mini-plot{width:200px;height:170px;border-left:2px solid var(--ink);border-bottom:2px solid var(--ink);display:flex;align-items:flex-end;justify-content:center;gap:14px;padding:18px 18px 0;}
-    .mini-plot span{display:block;width:28px;background:var(--accent);}
-    .mini-plot.variance span:nth-child(1){height:44px}.mini-plot.variance span:nth-child(2){height:116px}.mini-plot.variance span:nth-child(3){height:70px}.mini-plot.variance span:nth-child(4){height:128px}
-    .mini-plot.cost span:nth-child(1){height:34px}.mini-plot.cost span:nth-child(2){height:58px}.mini-plot.cost span:nth-child(3){height:92px}.mini-plot.cost span:nth-child(4){height:134px}
-    .mini-plot.guard{align-items:center;justify-content:center;position:relative;padding:0;border:2px solid var(--ink);}
-    .guard-core{width:72px;height:90px;border:8px solid var(--accent);border-top-width:18px;position:relative;}
-    .guard-core::after{content:"";position:absolute;width:52px;height:10px;background:var(--paper);left:34px;top:30px;transform:rotate(-35deg);}
-    .system-visual{height:240px;border:1px solid var(--line);display:flex;flex-direction:column;justify-content:center;gap:18px;padding:24px;background:var(--paper);}
-    .code-lines{display:flex;flex-direction:column;gap:10px;}
-    .code-lines span{height:8px;background:var(--ink);}
-    .code-lines span:nth-child(2){width:72%;background:var(--grey-3)}
-    .code-lines span:nth-child(3){width:86%}
-    .system-arrow{height:2px;background:var(--accent);position:relative;}
-    .system-arrow::after{content:"";position:absolute;right:0;top:-6px;border-left:12px solid var(--accent);border-top:7px solid transparent;border-bottom:7px solid transparent;}
-    .ops-flow{display:grid;grid-template-columns:1fr 22px 1fr 22px 1fr;align-items:center;gap:8px;}
-    .ops-node{border:2px solid var(--accent);padding:12px 6px;text-align:center;font-family:var(--mono);font-size:14px;letter-spacing:.08em;color:var(--accent);}
-    .ops-link{height:2px;background:var(--accent);}
-    .path-visual{height:190px;display:grid;grid-template-columns:1fr 44px 1fr 44px 1fr;align-items:center;}
-    .path-step{height:132px;border:2px solid var(--ink);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;font-family:var(--mono);font-size:18px;letter-spacing:.12em;}
-    .path-step strong{font-family:var(--serif-zh);font-size:28px;font-weight:500;letter-spacing:0;}
-    .path-step.recommended{border-color:var(--accent);color:var(--accent);}
-    .path-link{height:2px;background:var(--accent);position:relative;}
-    .path-link::after{content:"";position:absolute;right:0;top:-6px;border-left:12px solid var(--accent);border-top:7px solid transparent;border-bottom:7px solid transparent;}
   </style>
 </head>
 <body>
@@ -182,7 +159,7 @@
         <h2 class="h-xl">LLMOps 像 <em>餐厅后厨</em></h2>
         <figure class="evidence-figure landscape">
           <div class="illust-frame">
-            <img data-generated-illustration="true" src="assets/page-02.png" alt="餐厅后厨示意:中央 MODEL 模型,四周分别是 DATA 数据、QUALITY 质量、FEEDBACK 反馈、ITERATION 迭代">
+            <img data-generated-illustration="true" data-illustration-id="main" src="assets/page-02.png" alt="餐厅后厨示意:中央 MODEL 模型,四周分别是 DATA 数据、QUALITY 质量、FEEDBACK 反馈、ITERATION 迭代">
           </div>
           <figcaption class="img-cap">Fig. 01 · 后厨的四个工位</figcaption>
         </figure>
@@ -197,36 +174,39 @@
     <!-- ============================================================
          Page 3 — P-LIST (3 typical symptoms with small illustrations)
          ============================================================ -->
-    <section class="poster xhs" id="xhs-03-symptoms" data-page-id="3" data-layout="signal-list" data-silhouette="horizontal-strip-ledger">
-      <div class="content" style="gap:28px;">
+    <section class="poster xhs" id="xhs-03-symptoms" data-page-id="3" data-layout="signal-list" data-silhouette="thumbnail-ledger">
+      <div class="content" style="gap:22px;">
         <div class="chrome">
           <span class="c-cat">为什么重要 · WHY</span>
           <span class="c-num">03 / 05</span>
         </div>
         <p class="section-label">典型症状</p>
         <h2 class="h-xl title-underline">Demo 漂亮<br><em>上生产翻车</em></h2>
-        <figure class="evidence-figure signal-strip">
-          <div class="illust-frame">
-            <img data-generated-illustration="true" src="assets/page-03.png" alt="输出波动、成本上升和安全防线破裂的三联模型插图">
-          </div>
-          <figcaption class="img-cap">Fig. 02 · 质量、成本、安全同时失控</figcaption>
-        </figure>
-        <div class="list-rows" style="display:flex;flex-direction:column;gap:10px;flex:1;">
-          <div class="list-row" style="display:grid;grid-template-columns:64px 1fr;gap:24px;align-items:start;padding:12px 0;border-bottom:1px solid var(--line);">
-            <p class="meta" style="color:var(--accent);margin:4px 0 0;">01</p>
+        <div class="list-rows" style="display:flex;flex-direction:column;gap:14px;flex:1;">
+          <div class="list-row" style="display:grid;grid-template-columns:176px 1fr;gap:28px;align-items:center;padding-bottom:14px;border-bottom:1px solid var(--line);">
+            <figure class="illust-frame row-thumb">
+              <img data-generated-illustration="true" data-illustration-id="quality" src="assets/symptom-quality.png" alt="质量指针剧烈波动，表示相同输入的输出不稳定">
+            </figure>
             <div>
+              <p class="meta" style="color:var(--accent);margin:0 0 8px;">01 · QUALITY</p>
               <p class="body" style="margin:0;"><strong>输出忽高忽低</strong> · 同样的 prompt,昨天给出漂亮回复,今天却出错。</p>
             </div>
           </div>
-          <div class="list-row" style="display:grid;grid-template-columns:64px 1fr;gap:24px;align-items:start;padding:12px 0;border-bottom:1px solid var(--line);">
-            <p class="meta" style="color:var(--accent);margin:4px 0 0;">02</p>
+          <div class="list-row" style="display:grid;grid-template-columns:176px 1fr;gap:28px;align-items:center;padding-bottom:14px;border-bottom:1px solid var(--line);">
+            <figure class="illust-frame row-thumb">
+              <img data-generated-illustration="true" data-illustration-id="cost" src="assets/symptom-cost.png" alt="Token 计量不断上升并溢出预算托盘">
+            </figure>
             <div>
+              <p class="meta" style="color:var(--accent);margin:0 0 8px;">02 · COST</p>
               <p class="body" style="margin:0;"><strong>成本悄悄飙涨</strong> · 没人盯 token 消耗,月底账单出来才发现超预算两倍。</p>
             </div>
           </div>
-          <div class="list-row" style="display:grid;grid-template-columns:64px 1fr;gap:24px;align-items:start;padding:12px 0;">
-            <p class="meta" style="color:var(--accent);margin:4px 0 0;">03</p>
+          <div class="list-row" style="display:grid;grid-template-columns:176px 1fr;gap:28px;align-items:center;">
+            <figure class="illust-frame row-thumb">
+              <img data-generated-illustration="true" data-illustration-id="safety" src="assets/symptom-safety.png" alt="安全网出现缺口，危险片段从缺口穿出">
+            </figure>
             <div>
+              <p class="meta" style="color:var(--accent);margin:0 0 8px;">03 · SAFETY</p>
               <p class="body" style="margin:0;"><strong>安全问题频发</strong> · 用户绕过 prompt,模型说出不该说的话,事后才知道没过滤层。</p>
             </div>
           </div>
@@ -242,22 +222,19 @@
          Page 4 — P-COMPARE (Before / After with two illustrations)
          ============================================================ -->
     <section class="poster xhs" id="xhs-04-case" data-page-id="4" data-layout="before-after-comparison" data-silhouette="comparison-split">
-      <div class="content" style="gap:28px;">
+      <div class="content" style="gap:22px;">
         <div class="chrome">
           <span class="c-cat">真实案例 · CASE</span>
           <span class="c-num">04 / 05</span>
         </div>
         <p class="section-label">某电商 AI 客服</p>
         <h2 class="h-xl">从写死<br>到 <em>可管控</em></h2>
-        <figure class="evidence-figure case-strip">
-          <div class="illust-frame">
-            <img data-generated-illustration="true" src="assets/page-04.png" alt="Prompt 从代码锁定状态迁移到可评估、可转人工的运维流程">
-          </div>
-          <figcaption class="img-cap">Fig. 03 · 从锁在代码里，到可观察、可转人工</figcaption>
-        </figure>
         <div class="compare" style="display:grid;grid-template-columns:1fr 1fr;gap:32px;flex:1;">
           <div class="compare-col" style="display:flex;flex-direction:column;gap:16px;">
             <p class="meta">Before · 上线初期</p>
+            <figure class="illust-frame compare-thumb">
+              <img data-generated-illustration="true" data-illustration-id="before" src="assets/before.png" alt="Prompt 被锁在代码块中，任何修改都要重新发布">
+            </figure>
             <p class="body" style="margin:0;"><strong>硬编码 prompt</strong></p>
             <ul class="body" style="margin:0;padding-left:1.1em;line-height:1.55;">
               <li>回复质量忽高忽低</li>
@@ -267,6 +244,9 @@
           </div>
           <div class="compare-col" style="display:flex;flex-direction:column;gap:16px;">
             <p class="meta" style="color:var(--accent);">After · 引入 LLMOps</p>
+            <figure class="illust-frame compare-thumb">
+              <img data-generated-illustration="true" data-illustration-id="after" src="assets/after.png" alt="Prompt 进入可配置、可评估、可转人工的控制流程">
+            </figure>
             <p class="body" style="margin:0;"><strong>可配置 + 可监控</strong></p>
             <ul class="body" style="margin:0;padding-left:1.1em;line-height:1.55;">
               <li>prompt 可视化管理</li>
@@ -293,11 +273,11 @@
         </div>
         <p class="section-label">今天检查一件事</p>
         <h2 class="h-xl">你的 prompt<br><em>写在哪?</em></h2>
-        <figure class="evidence-figure action-strip">
+        <figure class="evidence-figure compact">
           <div class="illust-frame">
-            <img data-generated-illustration="true" src="assets/page-05.png" alt="Prompt 从锁在代码到配置文件再到可观测平台的三阶段模型插图">
+            <img data-generated-illustration="true" data-illustration-id="action" src="assets/action.png" alt="用放大镜查找 Prompt 当前位于代码、配置还是运维平台">
           </div>
-          <figcaption class="img-cap">Fig. 04 · 代码 → 配置 → 平台</figcaption>
+          <figcaption class="img-cap">Fig. 04 · 先定位 Prompt 在哪里</figcaption>
         </figure>
         <div class="options" style="display:flex;flex-direction:column;gap:12px;">
           <div class="opt" style="display:grid;grid-template-columns:64px 1fr;gap:24px;align-items:baseline;padding:12px 0;border-bottom:1px solid var(--line);">

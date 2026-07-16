@@ -8,9 +8,9 @@ Routing happens only after the beginner explanation brief is complete. A visuall
 |---|---|---|
 | Abstract concept needing intuition | mechanism or metaphor evidence | concept explanation |
 | Hook or central metaphor | hero metaphor | hero split |
-| Two things differ | visual before/after or one comparison scene | exact two-side comparison |
-| 3-5 sequential actions | process scene or step icons | vertical process |
-| 4-6 practical items | one object set or supporting scene | tall ledger |
+| Two things differ | separate before/after images, or one scene only when the transition itself is the subject | exact two-side comparison |
+| 3-5 sequential actions | separate step images when each action needs a referent; otherwise one process scene | vertical process |
+| 4-6 practical items | one image per visible item, or one object set when they form a single scene | tall ledger |
 | One important number | cause/consequence scene | exact data focus |
 | 4-6 related concepts | object map | labeled matrix |
 | Final experiment or action | compact action scene | closing checklist |
@@ -19,6 +19,8 @@ Routing happens only after the beginner explanation brief is complete. A visuall
 ## Illustration Requirement
 
 Every non-cover card must contain at least one model-generated illustration. Visual routing decides what the illustration explains and how large it should be; it does not decide whether the page gets an illustration.
+
+Choose the illustration count before prompting. Count the objects, states, or steps that must be independently visible for the page's claim to make sense. Give each one its own `illustrations[]` entry when combining them would hide distinctions. Use one image only when one coherent scene truly explains the whole page.
 
 Choose an illustration that answers at least one of these questions:
 

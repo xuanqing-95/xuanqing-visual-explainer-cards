@@ -1,4 +1,4 @@
-schema_version: 1
+schema_version: 2
 topic: LLMOps · Day 04
 audience: 在用或想用 AI 做项目的开发者、产品、运营
 accent: indigo-porcelain
@@ -13,7 +13,7 @@ beginner_brief:
   next_action: 先确认当前 prompt 写在代码、配置文件还是专门平台里
 
 page_rhythm:
-  strategy: 从熟悉的问题进入，用大图建立后厨隐喻，再收紧为信号、对比和行动；每页更换布局与视觉重心
+  strategy: 从熟悉的问题进入，用大图建立后厨隐喻，再用三张独立缩略图展示信号、两张图对比状态，最后落到行动
   beats:
     - page: 1
       purpose: 用同模型不同效果的问题建立阅读动机
@@ -26,12 +26,12 @@ page_rhythm:
       visual_weight: image-led
       transition: zoom-into-metaphor
     - page: 3
-      purpose: 把抽象风险收紧为三个可观察信号
-      silhouette: horizontal-strip-ledger
+      purpose: 把抽象风险拆成三个可独立观察的信号
+      silhouette: thumbnail-ledger
       visual_weight: balanced
       transition: move-from-metaphor-to-symptoms
     - page: 4
-      purpose: 用 Before / After 说明流程如何变得可控
+      purpose: 用两个独立状态说明流程如何变得可控
       silhouette: comparison-split
       visual_weight: split-led
       transition: prove-with-case
@@ -56,67 +56,107 @@ pages:
     message: LLMOps 像餐厅后厨,模型之外还需要数据、质量、反馈和迭代
     role: concept
     layout: metaphor-evidence
-    visual_type: labeled-gpt-image
     metaphor: 厨师和四个后厨工位共同完成稳定出餐
-    image_slot:
-      html_wrapper: evidence-figure landscape
-      slot_px: 904x540
-      slot_ratio: 1.67:1
-      requested_orientation: landscape
-      model_output_size: 1536x1024
-      subject_bbox: x=120-1416,y=128-896
-      fit: contain
-    illustration:
-      prompt_file: prompts/page-02.md
-      output_file: assets/page-02.png
+    illustrations:
+      - id: main
+        visual_type: labeled-gpt-image
+        prompt_file: prompts/page-02.md
+        output_file: assets/page-02.png
+        image_slot:
+          html_wrapper: evidence-figure landscape
+          slot_px: 904x540
+          slot_ratio: 1.67:1
+          requested_orientation: landscape
+          model_output_size: 1536x1024
+          subject_bbox: x=120-1416,y=128-896
+          fit: contain
 
   - id: 3
     message: 缺少 LLMOps 时,质量、成本和安全会同时失控
     role: consequence
     layout: signal-list
-    visual_type: no-text
-    image_slot:
-      html_wrapper: evidence-figure signal-strip
-      slot_px: 904x323
-      slot_ratio: "2.8:1"
-      requested_orientation: landscape
-      model_output_size: 1792x640
-      subject_bbox: x=64-1728,y=72-568
-      fit: contain
-    illustration:
-      prompt_file: prompts/page-03.md
-      output_file: assets/page-03.png
+    illustrations:
+      - id: quality
+        visual_type: no-text
+        prompt_file: prompts/symptom-quality.md
+        output_file: assets/symptom-quality.png
+        image_slot:
+          html_wrapper: illust-frame row-thumb
+          slot_px: 176x176
+          slot_ratio: "1:1"
+          requested_orientation: square
+          model_output_size: 1024x1024
+          subject_bbox: x=112-912,y=112-912
+          fit: contain
+      - id: cost
+        visual_type: no-text
+        prompt_file: prompts/symptom-cost.md
+        output_file: assets/symptom-cost.png
+        image_slot:
+          html_wrapper: illust-frame row-thumb
+          slot_px: 176x176
+          slot_ratio: "1:1"
+          requested_orientation: square
+          model_output_size: 1024x1024
+          subject_bbox: x=112-912,y=112-912
+          fit: contain
+      - id: safety
+        visual_type: no-text
+        prompt_file: prompts/symptom-safety.md
+        output_file: assets/symptom-safety.png
+        image_slot:
+          html_wrapper: illust-frame row-thumb
+          slot_px: 176x176
+          slot_ratio: "1:1"
+          requested_orientation: square
+          model_output_size: 1024x1024
+          subject_bbox: x=112-912,y=112-912
+          fit: contain
 
   - id: 4
     message: 把 prompt 从硬编码迁到可配置、可评估、可转人工的流程,才能从能跑变成可控
     role: case
     layout: before-after-comparison
-    visual_type: no-text
-    image_slot:
-      html_wrapper: evidence-figure case-strip
-      slot_px: 904x323
-      slot_ratio: "2.8:1"
-      requested_orientation: landscape
-      model_output_size: 1792x640
-      subject_bbox: x=64-1728,y=72-568
-      fit: contain
-    illustration:
-      prompt_file: prompts/page-04.md
-      output_file: assets/page-04.png
+    illustrations:
+      - id: before
+        visual_type: no-text
+        prompt_file: prompts/before.md
+        output_file: assets/before.png
+        image_slot:
+          html_wrapper: illust-frame compare-thumb
+          slot_px: 240x240
+          slot_ratio: "1:1"
+          requested_orientation: square
+          model_output_size: 1024x1024
+          subject_bbox: x=112-912,y=112-912
+          fit: contain
+      - id: after
+        visual_type: no-text
+        prompt_file: prompts/after.md
+        output_file: assets/after.png
+        image_slot:
+          html_wrapper: illust-frame compare-thumb
+          slot_px: 240x240
+          slot_ratio: "1:1"
+          requested_orientation: square
+          model_output_size: 1024x1024
+          subject_bbox: x=112-912,y=112-912
+          fit: contain
 
   - id: 5
     message: 第一步是确认 prompt 现在由代码、配置文件还是专门平台管理
     role: action
     layout: action-path
-    visual_type: no-text
-    image_slot:
-      html_wrapper: evidence-figure action-strip
-      slot_px: 904x323
-      slot_ratio: "2.8:1"
-      requested_orientation: landscape
-      model_output_size: 1792x640
-      subject_bbox: x=64-1728,y=72-568
-      fit: contain
-    illustration:
-      prompt_file: prompts/page-05.md
-      output_file: assets/page-05.png
+    illustrations:
+      - id: action
+        visual_type: no-text
+        prompt_file: prompts/action.md
+        output_file: assets/action.png
+        image_slot:
+          html_wrapper: evidence-figure compact
+          slot_px: 300x240
+          slot_ratio: "5:4"
+          requested_orientation: square
+          model_output_size: 1024x1024
+          subject_bbox: x=112-912,y=112-912
+          fit: contain

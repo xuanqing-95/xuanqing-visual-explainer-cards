@@ -44,18 +44,21 @@ function fixture(body) {
 <html lang="zh-CN" data-mode="editorial" data-accent="indigo-porcelain">
 <head>
   <meta charset="utf-8">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=Noto+Serif+SC:wght@400;500&family=Playfair+Display:ital,wght@0,900;1,400&display=swap">
   <style>
+    @font-face{font-family:"Noto Serif SC";src:local("Arial"),local("DejaVu Sans"),local("Liberation Sans");font-weight:400 500}
+    @font-face{font-family:"Playfair Display";src:local("Georgia"),local("DejaVu Serif"),local("Liberation Serif");font-weight:900}
+    @font-face{font-family:"IBM Plex Mono";src:local("Menlo"),local("Arial"),local("DejaVu Sans Mono"),local("Liberation Mono");font-weight:500}
     *{box-sizing:border-box}
     body{margin:0;padding:20px;background:#222}
     .poster{width:1080px;height:1440px;overflow:hidden;background:#fafaf8}
+    figure{margin:0}
     .content{height:100%;padding:80px;display:flex;flex-direction:column}
     .chrome,.foot{font-family:"IBM Plex Mono",monospace;font-weight:500}
     .term-en{font-family:"Playfair Display",serif;font-weight:900}
     .term-zh,.term-question,.series-zh,p{font-family:"Noto Serif SC",serif}
-    img{width:300px;height:200px;object-fit:contain}
+    .evidence-figure{margin:0;width:320px;height:240px}
+    .illust-frame{width:100%;height:100%;overflow:hidden}
+    img{width:100%;height:100%;object-fit:contain;display:block}
   </style>
 </head>
 <body><main>${body}</main></body>
@@ -68,7 +71,7 @@ function writeStoryboard(
 ) {
   fs.writeFileSync(
     path.join(taskDir, "storyboard.yaml"),
-    `schema_version: 1
+    `schema_version: 2
 topic: Validator fixture
 audience: Test reader
 beginner_brief:
@@ -92,18 +95,19 @@ pages:
     message: This fixture exercises one validation rule
     role: concept
     layout: test-layout
-    visual_type: no-text
-    image_slot:
-      html_wrapper: evidence-figure compact
-      slot_px: 300x300
-      slot_ratio: "1:1"
-      requested_orientation: square
-      model_output_size: 1024x1024
-      subject_bbox: x=112-912,y=112-912
-      fit: contain
-    illustration:
-      prompt_file: ${promptFile}
-      output_file: ${outputFile}
+    illustrations:
+      - id: main
+        visual_type: no-text
+        image_slot:
+          html_wrapper: evidence-figure compact
+          slot_px: 300x300
+          slot_ratio: "1:1"
+          requested_orientation: square
+          model_output_size: 1024x1024
+          subject_bbox: x=112-912,y=112-912
+          fit: contain
+        prompt_file: ${promptFile}
+        output_file: ${outputFile}
 `
   );
 }
@@ -195,6 +199,83 @@ pages:
     result
   );
   console.log("[PASS] repeated content-page rhythm fails storyboard validation");
+
+  const legacyStoryboardDir = path.join(tempRoot, "legacy-storyboard");
+  fs.mkdirSync(legacyStoryboardDir);
+  fs.writeFileSync(
+    path.join(legacyStoryboardDir, "storyboard.yaml"),
+    `schema_version: 1
+topic: Legacy single-image storyboard
+audience: Test reader
+beginner_brief:
+  prior_knowledge: Basic
+  plain_definition: Legacy schema remains readable
+  not_this: Not the canonical schema for new tasks
+  how_it_works: Page-level fields normalize to one illustration
+  why_it_matters: Existing tasks must not break
+  concrete_example: One legacy content page
+  next_action: Prefer schema version 2 for new work
+page_rhythm:
+  strategy: Isolate backward compatibility
+  beats:
+    - { page: 1, purpose: Check legacy schema, silhouette: legacy-single, visual_weight: balanced, transition: end }
+pages:
+  - id: 1
+    message: Existing schema version 1 tasks still validate
+    role: concept
+    layout: legacy-single
+    visual_type: labeled-gpt-image
+    image_slot: { html_wrapper: evidence-figure landscape, slot_px: 320x213, slot_ratio: "3:2", requested_orientation: landscape, model_output_size: 1536x1024, subject_bbox: "x=120-1416,y=128-896", fit: contain }
+    illustration: { prompt_file: prompts/page-02.md, output_file: assets/page-02.png }
+`
+  );
+  result = run(validateStoryboardScript, legacyStoryboardDir);
+  assert(
+    result.status === 0 && /1 illustration\(s\)/i.test(result.stdout),
+    "schema version 1 single-image storyboards must remain backward compatible",
+    result
+  );
+  console.log("[PASS] legacy single-image storyboards remain compatible");
+  fs.mkdirSync(path.join(legacyStoryboardDir, "assets"));
+  fs.mkdirSync(path.join(legacyStoryboardDir, "prompts"));
+  fs.copyFileSync(
+    path.join(repoDir, "examples", "llmops", "assets", "page-02.png"),
+    path.join(legacyStoryboardDir, "assets", "page-02.png")
+  );
+  fs.copyFileSync(
+    path.join(repoDir, "examples", "llmops", "assets", "page-02.png.generation.json"),
+    path.join(legacyStoryboardDir, "assets", "page-02.png.generation.json")
+  );
+  fs.copyFileSync(
+    path.join(repoDir, "examples", "llmops", "prompts", "page-02.md"),
+    path.join(legacyStoryboardDir, "prompts", "page-02.md")
+  );
+  fs.writeFileSync(
+    path.join(legacyStoryboardDir, "index.html"),
+    fixture(`
+      <section class="poster" id="card-01" data-page-id="1" data-layout="legacy-single" data-silhouette="legacy-single">
+        <div class="content" style="gap:48px;">
+          <div class="chrome">LEGACY</div>
+          <p class="term-en" style="font-size:18px;margin:0;">LEGACY</p>
+          <h2 style="font:500 64px/1.1 'Noto Serif SC',serif;margin:0;">旧任务继续可用</h2>
+          <figure class="evidence-figure landscape">
+            <div class="illust-frame">
+              <img data-generated-illustration="true" src="assets/page-02.png" alt="legacy generated evidence">
+            </div>
+          </figure>
+          <div class="foot" style="margin-top:auto;">01 / 01</div>
+        </div>
+      </section>`)
+  );
+  result = run(renderScript, legacyStoryboardDir);
+  assert(result.status === 0, "legacy full-task fixture should render", result);
+  result = run(validateScript, legacyStoryboardDir);
+  assert(
+    result.status === 0 && /1 provenance record\(s\) verified/i.test(result.stdout),
+    "schema version 1 HTML without data-illustration-id must remain compatible",
+    result
+  );
+  console.log("[PASS] legacy HTML without illustration ids remains compatible");
 
   const emptyDir = path.join(tempRoot, "empty");
   fs.mkdirSync(emptyDir);
@@ -305,7 +386,7 @@ pages:
           <div class="chrome">TEST</div>
           <figure class="evidence-figure compact">
             <div class="illust-frame">
-              <img data-generated-illustration="true" src="assets/generated.png" alt="claimed generated evidence">
+              <img data-generated-illustration="true" data-illustration-id="main" src="assets/generated.png" alt="claimed generated evidence">
             </div>
           </figure>
           <div class="foot">01 / 01</div>
@@ -357,7 +438,7 @@ pages:
           <div class="chrome">TEST</div>
           <figure class="evidence-figure compact">
             <div class="illust-frame">
-              <img data-generated-illustration="true" src="assets/generated.png" alt="tampered generated evidence">
+              <img data-generated-illustration="true" data-illustration-id="main" src="assets/generated.png" alt="tampered generated evidence">
             </div>
           </figure>
           <div class="foot">01 / 01</div>
@@ -373,6 +454,106 @@ pages:
     result
   );
   console.log("[PASS] tampered generated images fail provenance validation");
+
+  const multiImageDir = path.join(tempRoot, "multi-image-page");
+  fs.mkdirSync(path.join(multiImageDir, "assets"), { recursive: true });
+  fs.mkdirSync(path.join(multiImageDir, "prompts"), { recursive: true });
+  for (const name of ["page-02", "symptom-quality"]) {
+    fs.copyFileSync(
+      path.join(repoDir, "examples", "llmops", "assets", `${name}.png`),
+      path.join(multiImageDir, "assets", `${name}.png`)
+    );
+    fs.copyFileSync(
+      path.join(repoDir, "examples", "llmops", "assets", `${name}.png.generation.json`),
+      path.join(multiImageDir, "assets", `${name}.png.generation.json`)
+    );
+    fs.copyFileSync(
+      path.join(repoDir, "examples", "llmops", "prompts", `${name}.md`),
+      path.join(multiImageDir, "prompts", `${name}.md`)
+    );
+  }
+  fs.writeFileSync(
+    path.join(multiImageDir, "storyboard.yaml"),
+    `schema_version: 2
+topic: Multi-image validator fixture
+audience: Test reader
+beginner_brief:
+  prior_knowledge: Knows this is a test
+  plain_definition: One page can contain multiple generated illustrations
+  not_this: Not one prompt shared by every image
+  how_it_works: Each image binds by its own id
+  why_it_matters: Mixed prompts and sizes must remain valid
+  concrete_example: One landscape image and one square image share a page
+  next_action: Validate both provenance records
+page_rhythm:
+  strategy: Use one page to isolate the multi-image contract
+  beats:
+    - { page: 1, purpose: Prove mixed image contracts, silhouette: mixed-evidence, visual_weight: balanced, transition: end }
+pages:
+  - id: 1
+    message: One page can bind two independently generated illustrations
+    role: concept
+    layout: mixed-evidence
+    illustrations:
+      - id: landscape
+        visual_type: labeled-gpt-image
+        prompt_file: prompts/page-02.md
+        output_file: assets/page-02.png
+        image_slot: { html_wrapper: evidence-figure landscape, slot_px: 320x213, slot_ratio: "3:2", requested_orientation: landscape, model_output_size: 1536x1024, subject_bbox: "x=120-1416,y=128-896", fit: contain }
+      - id: square
+        visual_type: no-text
+        prompt_file: prompts/symptom-quality.md
+        output_file: assets/symptom-quality.png
+        image_slot: { html_wrapper: illust-frame row-thumb, slot_px: 200x200, slot_ratio: "1:1", requested_orientation: square, model_output_size: 1024x1024, subject_bbox: "x=112-912,y=112-912", fit: contain }
+`
+  );
+  const validMultiImageHtml = fixture(`
+    <section class="poster" id="card-01" data-page-id="1" data-layout="mixed-evidence" data-silhouette="mixed-evidence">
+      <div class="content" style="gap:48px;">
+        <div class="chrome">MULTI IMAGE</div>
+        <p class="term-en" style="font-size:18px;margin:0;">MIXED</p>
+        <h2 style="font:500 64px/1.1 'Noto Serif SC',serif;margin:0;">两个插图，两套契约</h2>
+        <figure class="evidence-figure landscape">
+          <div class="illust-frame">
+            <img data-generated-illustration="true" data-illustration-id="landscape" src="assets/page-02.png" alt="landscape evidence">
+          </div>
+        </figure>
+        <figure class="illust-frame row-thumb" style="width:200px;height:200px;">
+          <img data-generated-illustration="true" data-illustration-id="square" src="assets/symptom-quality.png" alt="square evidence">
+        </figure>
+        <div class="foot" style="margin-top:auto;">01 / 01</div>
+      </div>
+    </section>`);
+  fs.writeFileSync(path.join(multiImageDir, "index.html"), validMultiImageHtml);
+  result = run(renderScript, multiImageDir);
+  assert(result.status === 0, "multi-image fixture should render", result);
+  result = run(validateScript, multiImageDir);
+  assert(
+    result.status === 0 && /2 provenance record\(s\) verified/i.test(result.stdout),
+    "validator must accept two illustrations with independent prompts and output sizes on one page",
+    result
+  );
+  console.log("[PASS] multi-image pages support independent prompts and sizes");
+
+  fs.writeFileSync(
+    path.join(multiImageDir, "index.html"),
+    validMultiImageHtml.replace(
+      "<div class=\"foot\"",
+      `<figure class="illust-frame row-thumb" style="width:160px;height:160px;">
+        <img data-generated-illustration="true" data-illustration-id="unplanned" src="assets/symptom-quality.png" alt="unplanned evidence">
+      </figure>
+      <div class="foot"`
+    )
+  );
+  result = run(renderScript, multiImageDir);
+  assert(result.status === 0, "unplanned-image fixture should render", result);
+  result = run(validateScript, multiImageDir);
+  assert(
+    result.status !== 0 && /unplanned|storyboard plans 2/i.test(result.stdout),
+    "validator must reject an extra generated image that is absent from the storyboard",
+    result
+  );
+  console.log("[PASS] unplanned generated images fail exact storyboard binding");
 
   const exampleDir = path.join(repoDir, "examples", "llmops");
   result = run(renderScript, exampleDir);

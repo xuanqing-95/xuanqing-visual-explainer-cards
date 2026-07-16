@@ -55,19 +55,24 @@ Generate the image for its final slot, not for a generic square canvas.
 
 Do not start from the image. Start from the card layout.
 
-For every non-cover page, define at least one final `image_slot` in `storyboard.yaml` **before** writing the prompt or running generation. Start from `assets/storyboard.template.yaml` and pass `scripts/validate-storyboard.mjs` first. The prompt, requested orientation, explicit model output size, pixel margin contract, and HTML wrapper must all be derived from that slot.
+For every non-cover page, define a non-empty `illustrations` list in `storyboard.yaml` **before** writing prompts or running generation. Each illustration has its own id, prompt, output path, and `image_slot`. Start from `assets/storyboard.template.yaml` and pass `scripts/validate-storyboard.mjs` first. The prompt, requested orientation, explicit model output size, pixel margin contract, and HTML wrapper must all be derived from that illustration's slot.
 
 Required shape:
 
 ```yaml
-image_slot:
-  html_wrapper: evidence-figure landscape
-  slot_px: 904x603
-  slot_ratio: 3:2
-  requested_orientation: landscape
-  model_output_size: 1536x1024
-  subject_bbox: x=120-1416,y=128-896
-  fit: contain
+illustrations:
+  - id: main
+    visual_type: labeled-gpt-image
+    prompt_file: prompts/page-02.md
+    output_file: assets/page-02.png
+    image_slot:
+      html_wrapper: evidence-figure landscape
+      slot_px: 904x603
+      slot_ratio: 3:2
+      requested_orientation: landscape
+      model_output_size: 1536x1024
+      subject_bbox: x=120-1416,y=128-896
+      fit: contain
 ```
 
 Slot registry for the 1080×1440 card seed:
@@ -385,7 +390,7 @@ In HTML, mark each accepted generated image so the validator can enforce the per
 
 ```html
 <div class="illust-frame">
-  <img data-generated-illustration="true" src="assets/page-02.png" alt="具体说明">
+  <img data-generated-illustration="true" data-illustration-id="main" src="assets/page-02.png" alt="具体说明">
 </div>
 ```
 

@@ -79,6 +79,91 @@ function isSafeRelativeFile(value, extension) {
   return value.toLowerCase().endsWith(extension);
 }
 
+function normalizePageIllustrations(page, schemaVersion) {
+  if (!isObject(page) || page.role === "cover") return [];
+  if (schemaVersion === 1) {
+    if (!isObject(page.illustration)) return [];
+    return [
+      {
+        id: "main",
+        visual_type: page.visual_type,
+        prompt_file: page.illustration.prompt_file,
+        output_file: page.illustration.output_file,
+        image_slot: page.image_slot,
+      },
+    ];
+  }
+  return Array.isArray(page.illustrations) ? page.illustrations : [];
+}
+
+function validateSlot(slot, label, errors) {
+  if (!isObject(slot)) {
+    errors.push(`${label} is required`);
+    return;
+  }
+
+  for (const field of REQUIRED_SLOT_FIELDS) {
+    if (!hasText(slot[field])) errors.push(`${label}.${field} is required`);
+  }
+
+  if (hasText(slot.html_wrapper)) {
+    const wrapperClasses = slot.html_wrapper.split(/\s+/).filter(Boolean);
+    if (!wrapperClasses.includes("evidence-figure") && !wrapperClasses.includes("illust-frame")) {
+      errors.push(`${label}.html_wrapper must include evidence-figure or illust-frame`);
+    }
+  }
+
+  const slotSize = parseSize(slot.slot_px);
+  if (hasText(slot.slot_px) && !slotSize) {
+    errors.push(`${label}.slot_px must use WIDTHxHEIGHT`);
+  }
+  const slotRatio = parseRatio(slot.slot_ratio);
+  if (hasText(slot.slot_ratio) && !slotRatio) {
+    errors.push(`${label}.slot_ratio must be a positive ratio such as 3:2`);
+  }
+  if (slotSize && slotRatio && Math.abs(slotSize.width / slotSize.height - slotRatio) > 0.08) {
+    errors.push(`${label}.slot_ratio does not match slot_px`);
+  }
+
+  const outputSize = parseSize(slot.model_output_size);
+  if (hasText(slot.model_output_size) && !outputSize) {
+    errors.push(`${label}.model_output_size must use WIDTHxHEIGHT`);
+  }
+  if (!ORIENTATIONS.has(slot.requested_orientation)) {
+    errors.push(`${label}.requested_orientation must be landscape, square, or portrait`);
+  } else if (outputSize) {
+    const { width, height } = outputSize;
+    const orientation = slot.requested_orientation;
+    if (
+      (orientation === "landscape" && width <= height) ||
+      (orientation === "portrait" && width >= height) ||
+      (orientation === "square" && width !== height)
+    ) {
+      errors.push(`${label}.model_output_size does not match requested_orientation`);
+    }
+  }
+
+  const subjectBox = parseSubjectBox(slot.subject_bbox);
+  if (hasText(slot.subject_bbox) && !subjectBox) {
+    errors.push(`${label}.subject_bbox must use x=LEFT-RIGHT,y=TOP-BOTTOM`);
+  } else if (subjectBox && outputSize) {
+    if (
+      subjectBox.left < 0 ||
+      subjectBox.top < 0 ||
+      subjectBox.right > outputSize.width ||
+      subjectBox.bottom > outputSize.height ||
+      subjectBox.left >= subjectBox.right ||
+      subjectBox.top >= subjectBox.bottom
+    ) {
+      errors.push(`${label}.subject_bbox must stay inside model_output_size`);
+    }
+  }
+
+  if (hasText(slot.fit) && slot.fit !== "contain") {
+    errors.push(`${label}.fit must be contain for generated illustrations`);
+  }
+}
+
 export function validateStoryboardTask(taskDirInput) {
   const taskDir = path.resolve(taskDirInput || ".");
   const storyboardPath = path.join(taskDir, "storyboard.yaml");
@@ -114,7 +199,8 @@ export function validateStoryboardTask(taskDirInput) {
     return { ok: false, errors, taskDir, storyboardPath, data, pages: [], beats: [] };
   }
 
-  if (data.schema_version !== 1) errors.push("schema_version must be 1");
+  const schemaVersion = data.schema_version;
+  if (![1, 2].includes(schemaVersion)) errors.push("schema_version must be 1 or 2");
   if (!hasText(data.topic)) errors.push("topic is required");
   if (!hasText(data.audience)) errors.push("audience is required");
 
@@ -134,13 +220,21 @@ export function validateStoryboardTask(taskDirInput) {
   const beats = rhythm && Array.isArray(rhythm.beats) ? rhythm.beats : [];
   if (rhythm && !Array.isArray(rhythm.beats)) errors.push("page_rhythm.beats must be a list");
 
-  const pages = Array.isArray(data.pages) ? data.pages : [];
-  if (!Array.isArray(data.pages) || pages.length === 0) {
+  const sourcePages = Array.isArray(data.pages) ? data.pages : [];
+  if (!Array.isArray(data.pages) || sourcePages.length === 0) {
     errors.push("pages must contain at least one page");
   }
 
+  const pages = sourcePages.map((page) =>
+    isObject(page)
+      ? { ...page, illustrations: normalizePageIllustrations(page, schemaVersion) }
+      : page
+  );
   const pageIds = [];
   const seenPageIds = new Set();
+  const allPromptFiles = [];
+  const allOutputFiles = [];
+  let illustrationCount = 0;
   let coverCount = 0;
 
   pages.forEach((page, index) => {
@@ -170,85 +264,52 @@ export function validateStoryboardTask(taskDirInput) {
           if (!hasText(page.cover[field])) errors.push(`${label}.cover.${field} is required`);
         }
       }
+      if (schemaVersion === 2 && Array.isArray(sourcePages[index]?.illustrations) && sourcePages[index].illustrations.length > 0) {
+        errors.push(`${label}.illustrations must be empty on a cover page`);
+      }
       return;
     }
 
-    if (!VISUAL_TYPES.has(page.visual_type)) {
-      errors.push(`${label}.visual_type must be labeled-gpt-image, html-label-overlay, or no-text`);
+    if (schemaVersion === 2 && !Array.isArray(sourcePages[index]?.illustrations)) {
+      errors.push(`${label}.illustrations must be a non-empty list for every non-cover page`);
+    }
+    if (page.illustrations.length === 0) {
+      errors.push(
+        schemaVersion === 1
+          ? `${label}.illustration is required for every non-cover page`
+          : `${label}.illustrations must contain at least one generated illustration`
+      );
     }
 
-    if (!isObject(page.image_slot)) {
-      errors.push(`${label}.image_slot is required for every non-cover page`);
-    } else {
-      for (const field of REQUIRED_SLOT_FIELDS) {
-        if (!hasText(page.image_slot[field])) errors.push(`${label}.image_slot.${field} is required`);
+    const seenIllustrationIds = new Set();
+    page.illustrations.forEach((illustration, illustrationIndex) => {
+      const illustrationLabel = `${label}.illustrations[${illustrationIndex}]`;
+      illustrationCount += 1;
+      if (!isObject(illustration)) {
+        errors.push(`${illustrationLabel} must be a mapping`);
+        return;
       }
-
-      if (hasText(page.image_slot.html_wrapper) && !page.image_slot.html_wrapper.split(/\s+/).includes("evidence-figure")) {
-        errors.push(`${label}.image_slot.html_wrapper must include evidence-figure`);
+      const illustrationId = normalizedId(illustration.id);
+      if (!illustrationId) errors.push(`${illustrationLabel}.id is required`);
+      if (illustrationId && seenIllustrationIds.has(illustrationId)) {
+        errors.push(`${illustrationLabel}.id duplicates illustration ${illustrationId} on page ${id}`);
       }
-
-      const slotSize = parseSize(page.image_slot.slot_px);
-      if (hasText(page.image_slot.slot_px) && !slotSize) {
-        errors.push(`${label}.image_slot.slot_px must use WIDTHxHEIGHT`);
+      if (illustrationId) seenIllustrationIds.add(illustrationId);
+      if (!VISUAL_TYPES.has(illustration.visual_type)) {
+        errors.push(`${illustrationLabel}.visual_type must be labeled-gpt-image, html-label-overlay, or no-text`);
       }
-      const slotRatio = parseRatio(page.image_slot.slot_ratio);
-      if (hasText(page.image_slot.slot_ratio) && !slotRatio) {
-        errors.push(`${label}.image_slot.slot_ratio must be a positive ratio such as 3:2`);
+      if (!isSafeRelativeFile(illustration.prompt_file, ".md")) {
+        errors.push(`${illustrationLabel}.prompt_file must be a task-relative .md file`);
+      } else {
+        allPromptFiles.push(illustration.prompt_file);
       }
-      if (slotSize && slotRatio && Math.abs(slotSize.width / slotSize.height - slotRatio) > 0.08) {
-        errors.push(`${label}.image_slot.slot_ratio does not match slot_px`);
+      if (!isSafeRelativeFile(illustration.output_file, ".png")) {
+        errors.push(`${illustrationLabel}.output_file must be a task-relative .png file`);
+      } else {
+        allOutputFiles.push(illustration.output_file);
       }
-
-      const outputSize = parseSize(page.image_slot.model_output_size);
-      if (hasText(page.image_slot.model_output_size) && !outputSize) {
-        errors.push(`${label}.image_slot.model_output_size must use WIDTHxHEIGHT`);
-      }
-      if (!ORIENTATIONS.has(page.image_slot.requested_orientation)) {
-        errors.push(`${label}.image_slot.requested_orientation must be landscape, square, or portrait`);
-      } else if (outputSize) {
-        const { width, height } = outputSize;
-        const orientation = page.image_slot.requested_orientation;
-        if (
-          (orientation === "landscape" && width <= height) ||
-          (orientation === "portrait" && width >= height) ||
-          (orientation === "square" && width !== height)
-        ) {
-          errors.push(`${label}.image_slot.model_output_size does not match requested_orientation`);
-        }
-      }
-
-      const subjectBox = parseSubjectBox(page.image_slot.subject_bbox);
-      if (hasText(page.image_slot.subject_bbox) && !subjectBox) {
-        errors.push(`${label}.image_slot.subject_bbox must use x=LEFT-RIGHT,y=TOP-BOTTOM`);
-      } else if (subjectBox && outputSize) {
-        if (
-          subjectBox.left < 0 ||
-          subjectBox.top < 0 ||
-          subjectBox.right > outputSize.width ||
-          subjectBox.bottom > outputSize.height ||
-          subjectBox.left >= subjectBox.right ||
-          subjectBox.top >= subjectBox.bottom
-        ) {
-          errors.push(`${label}.image_slot.subject_bbox must stay inside model_output_size`);
-        }
-      }
-
-      if (hasText(page.image_slot.fit) && page.image_slot.fit !== "contain") {
-        errors.push(`${label}.image_slot.fit must be contain for generated illustrations`);
-      }
-    }
-
-    if (!isObject(page.illustration)) {
-      errors.push(`${label}.illustration is required for every non-cover page`);
-    } else {
-      if (!isSafeRelativeFile(page.illustration.prompt_file, ".md")) {
-        errors.push(`${label}.illustration.prompt_file must be a task-relative .md file`);
-      }
-      if (!isSafeRelativeFile(page.illustration.output_file, ".png")) {
-        errors.push(`${label}.illustration.output_file must be a task-relative .png file`);
-      }
-    }
+      validateSlot(illustration.image_slot, `${illustrationLabel}.image_slot`, errors);
+    });
   });
 
   if (coverCount > 1) errors.push("pages may contain at most one cover");
@@ -288,12 +349,6 @@ export function validateStoryboardTask(taskDirInput) {
   const contentSilhouettes = contentPages
     .map(({ beat }) => (isObject(beat) ? beat.silhouette : ""))
     .filter(hasText);
-  const contentPromptFiles = contentPages
-    .map(({ page }) => page.illustration?.prompt_file)
-    .filter(hasText);
-  const contentOutputFiles = contentPages
-    .map(({ page }) => page.illustration?.output_file)
-    .filter(hasText);
   const requiredVariety = Math.min(3, contentPages.length);
 
   if (new Set(contentLayouts).size < requiredVariety) {
@@ -302,11 +357,11 @@ export function validateStoryboardTask(taskDirInput) {
   if (new Set(contentSilhouettes).size < requiredVariety) {
     errors.push(`content pages need at least ${requiredVariety} distinct silhouette(s)`);
   }
-  if (new Set(contentPromptFiles).size !== contentPromptFiles.length) {
-    errors.push("each content page must use a distinct illustration.prompt_file");
+  if (new Set(allPromptFiles).size !== allPromptFiles.length) {
+    errors.push("each illustration must use a distinct prompt_file");
   }
-  if (new Set(contentOutputFiles).size !== contentOutputFiles.length) {
-    errors.push("each content page must use a distinct illustration.output_file");
+  if (new Set(allOutputFiles).size !== allOutputFiles.length) {
+    errors.push("each illustration must use a distinct output_file");
   }
   for (let index = 1; index < contentPages.length; index += 1) {
     const previous = contentPages[index - 1];
@@ -332,6 +387,7 @@ export function validateStoryboardTask(taskDirInput) {
     summary: {
       pageCount: pages.length,
       contentCount: contentPages.length,
+      illustrationCount,
       layoutCount: new Set(contentLayouts).size,
       silhouetteCount: new Set(contentSilhouettes).size,
     },
@@ -343,9 +399,9 @@ function printResult(result) {
     for (const error of result.errors) console.log(`[FAIL] storyboard: ${error}`);
     return;
   }
-  const { pageCount, contentCount, layoutCount, silhouetteCount } = result.summary;
+  const { pageCount, contentCount, illustrationCount, layoutCount, silhouetteCount } = result.summary;
   console.log(
-    `[PASS] storyboard: ${pageCount} page(s), ${contentCount} content page(s), ${layoutCount} layout(s), ${silhouetteCount} silhouette(s)`
+    `[PASS] storyboard: ${pageCount} page(s), ${contentCount} content page(s), ${illustrationCount} illustration(s), ${layoutCount} layout(s), ${silhouetteCount} silhouette(s)`
   );
 }
 
