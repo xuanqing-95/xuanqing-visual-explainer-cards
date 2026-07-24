@@ -2,23 +2,27 @@
 
 Create illustrated Xiaohongshu/Rednote knowledge-card series with an editorial HTML layout and explanatory image evidence.
 
-The final card is always rendered from HTML at **1080×1440 (3:4)**. Every non-cover card contains one or more model-generated illustrations. Each illustration uses the canvas that matches its own HTML slot, so landscape, square, portrait, and supported custom sizes can coexist across a set or on one page.
+The final card is always rendered from HTML at **1080×1440 (3:4)**. Page count and image count are decided from the content, without reserved pure-text pages or a fixed image quota. Every generated canvas must match its final HTML slot.
+
+Install a fixed GitHub Release tag for reproducible sharing. Do not put API keys
+inside this repository or commit generated task folders.
 
 ## Install
 
-Requirements: Node.js 20+, Python 3.9+, network access for fonts and image generation.
+Requirements: Node.js 20+, Python 3.9+, and either a host image-generation
+tool or access to the user's own image API.
 
 ### Codex
 
 ```bash
-git clone https://github.com/xuanqing-95/xuanqing-visual-explainer-cards.git \
+git clone --branch <exact-release-tag> https://github.com/xuanqing-95/xuanqing-visual-explainer-cards.git \
   "$HOME/.agents/skills/xuanqing-visual-explainer-cards"
 ```
 
 ### Claude Code
 
 ```bash
-git clone https://github.com/xuanqing-95/xuanqing-visual-explainer-cards.git \
+git clone --branch <exact-release-tag> https://github.com/xuanqing-95/xuanqing-visual-explainer-cards.git \
   "$HOME/.claude/skills/xuanqing-visual-explainer-cards"
 ```
 
@@ -26,7 +30,7 @@ git clone https://github.com/xuanqing-95/xuanqing-visual-explainer-cards.git \
 
 ```bash
 openclaw skills install \
-  git:xuanqing-95/xuanqing-visual-explainer-cards@main \
+  git:xuanqing-95/xuanqing-visual-explainer-cards@<exact-release-tag> \
   --global
 ```
 
@@ -38,7 +42,35 @@ npx playwright install chromium
 python3 -m pip install -r requirements.txt
 ```
 
-Configure an OpenAI-compatible image endpoint:
+## Image generation
+
+Choose either route. Both keep the same storyboard, prompts, layout, rendering,
+and validation workflow.
+
+### Route A: Codex built-in ImageGen
+
+When the host provides an image-generation tool such as Codex `imagegen`, no
+user API key is required. Generate the exact storyboard size, save the returned
+PNG at the declared asset path, then import it:
+
+```bash
+python3 scripts/generate-illustration.py \
+  --import-tool-image \
+  --prompt-file prompts/page-02.md \
+  --output assets/page-02.png \
+  --orientation landscape \
+  --size 1536x1024 \
+  --quality high \
+  --provider codex-imagegen \
+  --model host-managed-imagegen
+```
+
+The importer writes prompt and image hashes. It does not fabricate token usage
+that the host tool does not expose.
+
+### Route B: Your own image API
+
+Configure any OpenAI-compatible image endpoint:
 
 ```bash
 export OPENAI_API_KEY=...
@@ -47,7 +79,20 @@ export OPENAI_BASE_URL=https://api.openai.com/v1
 export OPENAI_IMAGE_MODEL=gpt-image-2
 ```
 
-If `ZENMUX_API_KEY` is set instead, the local wrapper uses the ZenMux-compatible endpoint automatically. Image generation can incur provider charges.
+Then generate normally:
+
+```bash
+python3 scripts/generate-illustration.py \
+  --prompt-file prompts/page-02.md \
+  --output assets/page-02.png \
+  --orientation landscape \
+  --size 1536x1024 \
+  --quality high
+```
+
+If `ZENMUX_API_KEY` is set instead, the wrapper can use that compatible
+endpoint. API generation may incur provider charges. Never commit `.env` files
+or keys.
 
 ## Use
 
@@ -60,8 +105,8 @@ The workflow:
 1. Turn the source into a beginner-friendly explanation.
 2. Copy `assets/storyboard.template.yaml`, plan page rhythm, and vary content-page layouts and silhouettes.
 3. Validate `storyboard.yaml` before image prompting or HTML design.
-4. Define every final illustration slot for each non-cover page before prompting.
-5. Generate each slot-matched illustration with its own prompt and output size.
+4. Decide from the content whether each page needs generated imagery; define slots for every planned illustration.
+5. Run the deterministic preflight, choose one image route, then generate each slot-matched illustration with its own prompt, output size, and explicit quality level.
 6. Compose the cards in HTML and bind each page to its storyboard layout and silhouette.
 7. Render 1080×1440 PNGs.
 8. Validate storyboard binding, HTML, media, fonts, and final PNG artifacts.
@@ -71,13 +116,13 @@ The workflow:
 - Final cards: `1080x1440`, 3:4.
 - Storyboard: required pre-design source of truth for page order, rhythm, layout, silhouette, image slots, and asset paths.
 - Cover: fixed S00 editorial cover with HTML typography.
-- Content pages: composed from content shape, not fixed numbered templates; each contains one or more model-generated illustrations as the content requires.
+- Content pages: composed from content shape, not fixed numbered templates; page and image counts are content-driven and have no hard budget.
 - Multi-image mapping: every planned illustration has an independent storyboard id, prompt, asset path, slot, and model output size; HTML binds it with `data-illustration-id`.
-- HTML/CSS diagrams, exact code, numbers, labels, and screenshots may supplement but never replace the generated illustration.
+- Exact code, numbers, labels, and editable structures remain in HTML. HTML, screenshots, and placeholders may never masquerade as generated art.
 - Illustration slot: declared before generation.
 - Model output: explicit `model_output_size`; it does not have to be 3:4.
 - Generated image fit: `object-fit: contain`; photographs may use `cover`.
-- Generation proof: each generated PNG has a generator-written `.generation.json` sidecar; validation checks the model, provider, prompt hash, dimensions, and final image hash.
+- Generation proof: every generated PNG has script-written provenance containing prompt and image hashes. API usage is retained when the provider returns it; host-tool imports explicitly record that usage is not exposed instead of inventing numbers. Set `REQUIRE_IMAGE_USAGE_SIDECAR=true` only when strict API usage accounting is required.
 - Source hashtags remain publishing metadata and never enter cards or image prompts by default.
 
 ## Commands
@@ -97,6 +142,7 @@ Render and validate a task directory:
 
 ```bash
 node scripts/validate-storyboard.mjs <task-dir>
+node scripts/validate-preflight.mjs <task-dir> --write-plan
 node scripts/render.mjs <task-dir>
 node scripts/validate.mjs <task-dir>
 ```
@@ -110,6 +156,14 @@ npm run verify
 ## Complete example
 
 [`examples/llmops/`](examples/llmops/) contains a complete source, validated page-rhythm storyboard, per-content-page image prompts, storyboard-bound HTML, generated visual assets with provenance, and five rendered 3:4 cards. It contains no placeholder artwork.
+
+[`quality-baselines/`](quality-baselines/) contains five hash-pinned visual
+categories. `npm run quality:baselines` verifies that accepted samples were not
+replaced by placeholders or altered silently.
+
+Run `npm run audit:public` before sharing or publishing a Release. It rejects
+tracked credentials, personal paths, private email addresses, and internal
+production integrations.
 
 ## License
 

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import argparse
 from collections import deque
+from datetime import datetime, timezone
 import hashlib
 import json
 import os
@@ -140,31 +141,57 @@ def auto_frame(image_path, target=(250, 250, 248), threshold=24, padding_ratio=0
         print("Auto-frame skipped: detected content area is too small to trust.")
         return
 
-    padding = max(24, round(max(box_width, box_height) * padding_ratio))
-    min_x = max(0, min_x - padding)
-    min_y = max(0, min_y - padding)
-    max_x = min(width - 1, max_x + padding)
-    max_y = min(height - 1, max_y + padding)
     crop = image.crop((min_x, min_y, max_x + 1, max_y + 1))
-
-    canvas_ratio = width / height
+    padding_x = max(24, round(width * padding_ratio))
+    padding_y = max(24, round(height * padding_ratio))
+    inner_width = max(1, width - 2 * padding_x)
+    inner_height = max(1, height - 2 * padding_y)
+    canvas_ratio = inner_width / inner_height
     crop_ratio = crop.width / crop.height
     if crop_ratio > canvas_ratio:
-        new_width = width
-        new_height = max(1, round(width / crop_ratio))
+        new_width = inner_width
+        new_height = max(1, round(inner_width / crop_ratio))
     else:
-        new_height = height
-        new_width = max(1, round(height * crop_ratio))
+        new_height = inner_height
+        new_width = max(1, round(inner_height * crop_ratio))
 
     resized = crop.resize((new_width, new_height), Image.Resampling.LANCZOS)
     canvas = Image.new("RGBA", (width, height), (*target, 255))
     canvas.alpha_composite(resized, ((width - new_width) // 2, (height - new_height) // 2))
     canvas.save(image_path)
     print(
-        "Auto-framed illustration: "
+        "Auto-framed illustration into protected margins: "
         f"content_bbox={box_width / width:.0%}x{box_height / height:.0%}, "
         f"output={width}x{height}"
     )
+
+
+def detect_content_bbox(image_path, target=(250, 250, 248), threshold=24):
+    image = Image.open(image_path).convert("RGBA")
+    width, height = image.size
+    pixels = image.load()
+    min_x, min_y = width, height
+    max_x, max_y = -1, -1
+    for y in range(height):
+        for x in range(width):
+            red, green, blue, alpha = pixels[x, y]
+            if alpha >= 16 and max(
+                abs(red - target[0]), abs(green - target[1]), abs(blue - target[2])
+            ) > threshold:
+                min_x = min(min_x, x)
+                min_y = min(min_y, y)
+                max_x = max(max_x, x)
+                max_y = max(max_y, y)
+    if max_x < min_x or max_y < min_y:
+        return None
+    return {
+        "left": min_x,
+        "top": min_y,
+        "right": max_x + 1,
+        "bottom": max_y + 1,
+        "width_ratio": round((max_x - min_x + 1) / width, 6),
+        "height_ratio": round((max_y - min_y + 1) / height, 6),
+    }
 
 
 def parse_color(value):
@@ -182,7 +209,33 @@ def sha256_file(file_path):
     return digest.hexdigest()
 
 
-def finalize_provenance(output, expected_size, args):
+def write_tool_provenance(output, expected_size, args):
+    prompt_path = Path(args.prompt_file).resolve()
+    prompt_text = prompt_path.read_text(encoding="utf-8")
+    metadata_path = Path(f"{output}.generation.json")
+    metadata = {
+        "schema_version": 1,
+        "generated_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+        "provider": args.provider,
+        "model": args.model or "host-managed-imagegen",
+        "quality": args.quality,
+        "size": f"{expected_size[0]}x{expected_size[1]}",
+        "orientation": orientation_for_size(expected_size),
+        "output_file": output.name,
+        "prompt_file": os.path.relpath(prompt_path, output.parent.resolve()),
+        "prompt_sha256": hashlib.sha256(prompt_text.encode("utf-8")).hexdigest(),
+        "raw_sha256": sha256_file(output),
+        "request_id": None,
+        "generation_mode": "host_tool",
+    }
+    metadata_path.write_text(
+        json.dumps(metadata, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    print(f"Recorded host-tool provenance: {metadata_path}")
+
+
+def finalize_provenance(output, expected_size, args, content_bbox):
     metadata_path = Path(f"{output}.generation.json")
     if not metadata_path.is_file():
         print(
@@ -205,6 +258,7 @@ def finalize_provenance(output, expected_size, args):
             "final_sha256": sha256_file(output),
             "final_width": expected_size[0],
             "final_height": expected_size[1],
+            "content_bbox": content_bbox,
             "postprocessing": {
                 "background_normalized": not args.remove_background
                 and not args.skip_background_normalize,
@@ -222,6 +276,21 @@ def finalize_provenance(output, expected_size, args):
     )
     print(f"Verified generation provenance: {metadata_path}")
 
+    usage_path = Path(f"{output}.usage.json")
+    if usage_path.is_file():
+        try:
+            usage = json.loads(usage_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as error:
+            print(f"ERROR: invalid usage sidecar: {error}", file=sys.stderr)
+            raise SystemExit(1)
+        usage["final_sha256"] = metadata["final_sha256"]
+        usage["prompt_sha256"] = metadata["prompt_sha256"]
+        usage_path.write_text(
+            json.dumps(usage, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+        )
+        print(f"Verified provider usage: {usage_path}")
+
 
 def main():
     parser = argparse.ArgumentParser(
@@ -233,7 +302,22 @@ def main():
     parser.add_argument("--size", type=parse_size)
     parser.add_argument("--quality", choices=("low", "medium", "high"), default="medium")
     parser.add_argument("--model")
+    parser.add_argument(
+        "--provider",
+        default="codex-imagegen",
+        help="Provider label for --import-tool-image provenance.",
+    )
     parser.add_argument("--generator", default=str(Path(__file__).with_name("generate.mjs")))
+    parser.add_argument(
+        "--import-tool-image",
+        action="store_true",
+        help="Finalize an existing PNG returned by a trusted host image tool such as Codex imagegen. Writes honest provenance but no synthetic provider-usage record.",
+    )
+    parser.add_argument(
+        "--finalize-existing",
+        action="store_true",
+        help="Normalize and finalize an already-generated PNG plus its real generation/usage sidecars without another image API call.",
+    )
     parser.add_argument("--remove-background", action="store_true")
     parser.add_argument("--background-tolerance", type=int, default=34)
     parser.add_argument("--skip-background-normalize", action="store_true")
@@ -243,6 +327,8 @@ def main():
     parser.add_argument("--auto-frame-threshold", type=int, default=24)
     parser.add_argument("--auto-frame-padding", type=float, default=0.08)
     args = parser.parse_args()
+    if args.import_tool_image and args.finalize_existing:
+        parser.error("--import-tool-image and --finalize-existing are mutually exclusive")
 
     if not args.size and not args.orientation:
         parser.error("--size or --orientation is required; define image_slot before generation")
@@ -261,33 +347,49 @@ def main():
         parser.error("--output must use a .png extension")
     output.parent.mkdir(parents=True, exist_ok=True)
 
-    generator_path = Path(args.generator)
-    if not generator_path.is_file():
-        parser.error(f"generator not found: {generator_path}")
+    if args.import_tool_image:
+        if not output.is_file():
+            parser.error(f"--import-tool-image requires an existing PNG: {output}")
+        usage_path = Path(f"{output}.usage.json")
+        if usage_path.exists():
+            parser.error(
+                f"--import-tool-image refuses an existing provider usage sidecar: {usage_path}"
+            )
+    elif args.finalize_existing:
+        if not output.is_file():
+            parser.error(f"--finalize-existing requires an existing PNG: {output}")
+        for sidecar in (Path(f"{output}.generation.json"), Path(f"{output}.usage.json")):
+            if not sidecar.is_file():
+                parser.error(f"--finalize-existing requires the real sidecar: {sidecar}")
+        print(f"Finalizing existing paid image without another API call: {output}")
+    else:
+        generator_path = Path(args.generator)
+        if not generator_path.is_file():
+            parser.error(f"generator not found: {generator_path}")
 
-    command = [
-        "node",
-        str(generator_path),
-        "--prompt-file",
-        str(prompt_path),
-        "--output",
-        str(output),
-        "--size",
-        f"{expected_size[0]}x{expected_size[1]}",
-        "--quality",
-        args.quality,
-    ]
-    if args.orientation:
-        command.extend(["--orientation", args.orientation])
-    if args.model:
-        command.extend(["--model", args.model])
+        command = [
+            "node",
+            str(generator_path),
+            "--prompt-file",
+            str(prompt_path),
+            "--output",
+            str(output),
+            "--size",
+            f"{expected_size[0]}x{expected_size[1]}",
+            "--quality",
+            args.quality,
+        ]
+        if args.orientation:
+            command.extend(["--orientation", args.orientation])
+        if args.model:
+            command.extend(["--model", args.model])
 
-    result = subprocess.run(command, check=False)
-    if result.returncode:
-        raise SystemExit(result.returncode)
-    if not output.is_file():
-        print(f"ERROR: generator returned success but did not create {output}", file=sys.stderr)
-        raise SystemExit(1)
+        result = subprocess.run(command, check=False)
+        if result.returncode:
+            raise SystemExit(result.returncode)
+        if not output.is_file():
+            print(f"ERROR: generator returned success but did not create {output}", file=sys.stderr)
+            raise SystemExit(1)
 
     with Image.open(output) as image:
         actual_size = image.size
@@ -297,6 +399,12 @@ def main():
             file=sys.stderr,
         )
         raise SystemExit(1)
+    if args.import_tool_image:
+        write_tool_provenance(output, expected_size, args)
+        print(
+            "Importing host-tool image without fabricating provider usage. "
+            "Use API generation when strict usage accounting is required."
+        )
 
     target = parse_color(args.paper_color)
     if args.remove_background:
@@ -317,7 +425,15 @@ def main():
         if image.size != expected_size:
             print("ERROR: post-processing changed the output dimensions", file=sys.stderr)
             raise SystemExit(1)
-    finalize_provenance(output, expected_size, args)
+    content_bbox = detect_content_bbox(
+        output,
+        target=parse_color(args.paper_color),
+        threshold=args.auto_frame_threshold,
+    )
+    if not content_bbox:
+        print("ERROR: generated image has no measurable visual subject", file=sys.stderr)
+        raise SystemExit(1)
+    finalize_provenance(output, expected_size, args, content_bbox)
     print(f"Verified illustration: {output} ({expected_size[0]}x{expected_size[1]})")
 
 

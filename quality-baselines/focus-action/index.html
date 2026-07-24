@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="zh-CN" data-mode="editorial" data-accent="indigo-porcelain">
+<head>
+  <meta charset="utf-8">
+  <title>早晨时间管理：每日聚焦三步法 · Visual Explainer Cards</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@400;500;700;900&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+  <style>
+    /* =========================================================
+       Visual Explainer Cards — Editorial Seed (Indigo Porcelain)
+       ---------------------------------------------------------
+       Type scale + weights designed for an editorial knowledge-card
+       system. Hard rule: "the larger, the lighter".
+       Display sizes use weight 500 (not 700). Body uses serif-zh
+       (not sans-zh).
+
+       Board: .poster.xhs  1080×1440  (3:4 小红书)
+
+       Two-layer color logic:
+         --accent     IKB Klein Blue   — visible system color on every
+                      page (chrome / foot / section-label / optional title
+                      underline / page numbers / body strong / captions).
+         --highlight  Mustard Yellow   — cover-bar ONLY (the horizontal
+                      bar under .term-en on the series cover).
+
+       This file ships ONE fixed layout: the S00 Series Cover.
+       Content pages compose fresh from primitives — see
+       references/layouts.md.
+       ========================================================= */
+
+    /* ---------- 1. Indigo Porcelain (primary) ---------- */
+    :root,
+    [data-accent="indigo-porcelain"] {
+      --paper: #fafaf8;
+      --paper-2: #f0f0ee;
+      --ink: #0a0a0a;
+      --ink-soft: #1f1f1f;
+      --ink-rgb: 10,10,10;
+      --paper-rgb: 250,250,248;
+      --line: rgba(10,10,10,.16);
+      --muted: #6f6f6c;
+      --grey-1: #f0f0ee;
+      --grey-2: #d4d4d2;
+      --grey-3: #737373;
+      --accent: #002FA7;       /* IKB Klein Blue */
+      --accent-on: #ffffff;
+      --accent-rgb: 0,47,167;
+      --highlight: #F2D24B;    /* Mustard Yellow — cover bar only */
+      --highlight-on: #0a0a0a;
+    }
+
+    /* ---------- 2. Alternate accents (single-color, no cover bar) ---------- */
+    [data-accent="lemon-yellow"] {
+      --paper:#fafaf8;--paper-2:#f0f0ee;--ink:#0a0a0a;--ink-soft:#1f1f1f;
+      --ink-rgb:10,10,10;--paper-rgb:250,250,248;--line:rgba(10,10,10,.16);
+      --muted:#6f6f6c;--grey-1:#f0f0ee;--grey-2:#d4d4d2;--grey-3:#737373;
+      --accent:#FFD500;--accent-on:#0a0a0a;--accent-rgb:255,213,0;
+      --highlight:#FFD500;--highlight-on:#0a0a0a;
+    }
+    [data-accent="lemon-green"] {
+      --paper:#fafaf8;--paper-2:#f0f0ee;--ink:#0a0a0a;--ink-soft:#1f1f1f;
+      --ink-rgb:10,10,10;--paper-rgb:250,250,248;--line:rgba(10,10,10,.16);
+      --muted:#6f6f6c;--grey-1:#f0f0ee;--grey-2:#d4d4d2;--grey-3:#737373;
+      --accent:#C5E803;--accent-on:#0a0a0a;--accent-rgb:197,232,3;
+      --highlight:#C5E803;--highlight-on:#0a0a0a;
+    }
+    [data-accent="safety-orange"] {
+      --paper:#fafaf8;--paper-2:#f0f0ee;--ink:#0a0a0a;--ink-soft:#1f1f1f;
+      --ink-rgb:10,10,10;--paper-rgb:250,250,248;--line:rgba(10,10,10,.16);
+      --muted:#6f6f6c;--grey-1:#f0f0ee;--grey-2:#d4d4d2;--grey-3:#737373;
+      --accent:#FF6B35;--accent-on:#ffffff;--accent-rgb:255,107,53;
+      --highlight:#FF6B35;--highlight-on:#ffffff;
+    }
+
+    /* ---------- 3. Typography stack ---------- */
+    :root {
+      --serif-en: "Playfair Display","Source Serif Pro",Georgia,serif;
+      --serif-zh: "Noto Serif SC","Songti SC","STSong",serif;
+      --sans:     "Inter","Helvetica Neue",Helvetica,
+                  -apple-system,"PingFang SC","Microsoft YaHei UI",sans-serif;
+      --sans-zh:  "Noto Sans SC",-apple-system,"PingFang SC","Inter",sans-serif;
+      --mono:     "IBM Plex Mono",ui-monospace,"SF Mono",Consolas,monospace;
+    }
+
+    /* ---------- 4. Spacing tokens ---------- */
+    :root {
+      --sp-3:8px;--sp-4:12px;--sp-5:16px;--sp-6:24px;--sp-7:32px;
+      --sp-8:40px;--sp-9:48px;--sp-10:64px;--sp-11:80px;--sp-12:96px;
+    }
+
+    /* ---------- 5. Reset & sheet ---------- */
+    *,*::before,*::after{box-sizing:border-box;}
+    html,body{margin:0;padding:0;}
+    body{
+      background:#1a1a1a;font-family:var(--serif-zh);color:var(--ink);
+      -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+      padding:64px 32px;
+    }
+    .sheet{display:flex;flex-direction:column;align-items:center;gap:48px;}
+
+    /* ---------- 6. Poster shell ---------- */
+    .poster{position:relative;background:var(--paper);color:var(--ink);overflow:hidden;isolation:isolate;}
+    .poster.xhs{width:1080px;height:1440px;}
+    .poster figure{margin:0;}
+    /* Content padding: 96px top/bottom, 88px sides */
+    .poster.xhs .content{padding:96px 88px;position:relative;width:100%;height:100%;display:flex;flex-direction:column;z-index:2;}
+
+    /* ---------- 7. Typography roles ----------
+       The larger, the lighter. Display weights are 500, not 700.
+       Body family is serif-zh, not sans-zh. Tracking on display is
+       positive (+.03 to +.04em); kicker/meta tracking is +.20em+.
+    ---------------------------------------------------------- */
+
+    /* Display — the biggest serif title, used for cover series title and
+       (rarely) for content-page hero titles. Weight 500, +.04em tracking. */
+    .h-display{
+      font-family:var(--serif-zh);font-weight:500;
+      font-size:124px;line-height:1.06;letter-spacing:.04em;
+      color:var(--ink);margin:0;
+    }
+    /* Section title — used on most content pages as the dominant title. */
+    .h-xl{
+      font-family:var(--serif-zh);font-weight:500;
+      font-size:88px;line-height:1.10;letter-spacing:.03em;
+      color:var(--ink);margin:0;
+    }
+    /* Mid title — used for subordinate sections, ledger headers, etc. */
+    .h-md{
+      font-family:var(--serif-zh);font-weight:500;
+      font-size:56px;line-height:1.18;letter-spacing:.02em;
+      color:var(--ink);margin:0;
+    }
+    /* Sub — italic Playfair English subtitle. Goes under display titles. */
+    .h-sub{
+      font-family:var(--serif-en);font-style:italic;font-weight:400;
+      font-size:36px;line-height:1.3;color:var(--muted);margin:0;
+    }
+    /* Pull quote — italic serif, large. */
+    .pullquote{
+      font-family:var(--serif-zh);font-style:italic;font-weight:500;
+      font-size:64px;line-height:1.28;color:var(--ink);margin:0;
+    }
+    /* Lead — first paragraph after a title. SERIF, not sans. */
+    .lead{
+      font-family:var(--serif-zh);font-weight:400;
+      font-size:28px;line-height:1.55;color:rgba(var(--ink-rgb),.82);margin:0;
+    }
+    /* Body — paragraph copy. SERIF, not sans. */
+    .body{
+      font-family:var(--serif-zh);font-weight:400;
+      font-size:24px;line-height:1.65;color:rgba(var(--ink-rgb),.80);margin:0;
+    }
+    .body strong{color:var(--accent);font-weight:500;}
+
+    /* Title emphasis is opt-in. Plain <em> keeps copy editable without adding noise. */
+    .h-display em,.h-xl em,.h-md em{
+      font-style:normal;color:var(--ink);
+    }
+    .h-display.title-underline em,
+    .h-xl.title-underline em,
+    .h-md.title-underline em{
+      text-decoration:underline;
+      text-decoration-color:var(--accent);
+      text-decoration-thickness:6px;
+      text-underline-offset:10px;
+    }
+    .h-md.title-underline em{text-decoration-thickness:5px;text-underline-offset:8px;}
+
+    /* Kicker — mono uppercase, +.22em tracking. NOT yellow. */
+    .kicker{
+      font-family:var(--mono);font-weight:500;
+      font-size:21px;letter-spacing:.22em;text-transform:uppercase;
+      color:rgba(var(--ink-rgb),.55);margin:0;
+    }
+    /* Meta / label — even tighter, +.20em. */
+    .meta,.label{
+      font-family:var(--mono);font-weight:500;
+      font-size:18px;letter-spacing:.20em;text-transform:uppercase;
+      color:rgba(var(--ink-rgb),.55);
+    }
+
+    /* ---------- 8. Section label (IKB tag, replaces yellow kicker) ---------- */
+    /* IKB blue square + IKB mono uppercase. Use one per content page so
+       the system color is visible. */
+    .section-label{
+      display:inline-flex;align-items:center;gap:12px;
+      font-family:var(--mono);font-weight:500;
+      font-size:21px;letter-spacing:.22em;text-transform:uppercase;
+      color:var(--accent);margin:0;
+    }
+    .section-label::before{
+      content:"";display:inline-block;width:14px;height:14px;background:var(--accent);
+    }
+
+    /* ---------- 9. Issue row + footer (IKB visible) ---------- */
+    .issue-row{
+      display:flex;align-items:center;gap:16px;
+      font-family:var(--mono);font-weight:500;
+      font-size:20px;letter-spacing:.20em;text-transform:uppercase;
+      color:var(--muted);
+    }
+    .issue-row .dot{
+      width:8px;height:8px;border-radius:50%;background:var(--accent);
+    }
+    .chrome{
+      display:flex;justify-content:flex-start;align-items:center;
+      font-family:var(--mono);font-weight:500;
+      font-size:18px;letter-spacing:.20em;text-transform:uppercase;
+      padding-bottom:18px;border-bottom:1px solid var(--accent);
+      margin-bottom:48px;
+    }
+    .chrome .c-cat{color:var(--accent);}
+
+    .foot{
+      display:flex;justify-content:space-between;align-items:center;
+      font-family:var(--mono);font-weight:500;
+      font-size:18px;letter-spacing:.20em;text-transform:uppercase;
+      margin-top:auto;padding-top:32px;
+      border-top:1px solid var(--accent);
+    }
+    .foot .f-tag{color:var(--muted);min-width:0;max-width:76%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .foot .f-num{color:var(--accent);flex:0 0 auto;margin-left:24px;}
+
+    .grow{flex:1;}
+    .hr-hairline{height:1px;background:var(--line);border:0;margin:0;}
+    .hr-accent{height:2px;background:var(--accent);border:0;width:96px;margin:0;}
+
+    /* ---------- 10. Image containers ---------- */
+    .illust-frame{
+      width:100%;background:var(--paper);
+      display:flex;align-items:center;justify-content:center;
+      overflow:hidden;margin:0;
+    }
+    .illust-frame img{width:100%;height:100%;object-fit:contain;display:block;}
+    .illust-frame.zoom-110 img{width:110%;height:110%;max-width:none;max-height:none;}
+    .illust-frame.zoom-125 img{width:125%;height:125%;max-width:none;max-height:none;}
+    .illust-frame.zoom-140 img{width:140%;height:140%;max-width:none;max-height:none;}
+    .illust-frame.wide-flow img{width:118%;height:118%;max-width:none;max-height:none;}
+    .illust-frame.wide-flow.zoom-110 img{width:125%;height:125%;}
+    .illust-frame.wide-flow.zoom-125 img{width:140%;height:140%;}
+    .illust-frame.wide-flow.zoom-140 img{width:155%;height:155%;}
+    .evidence-figure{
+      width:100%;display:flex;flex-direction:column;justify-content:center;
+      margin:0;min-height:420px;
+    }
+    .evidence-figure .illust-frame{
+      height:100%;min-height:420px;max-height:560px;
+    }
+    .evidence-figure.compact{min-height:260px;}
+    .evidence-figure.compact .illust-frame{min-height:220px;max-height:300px;}
+    .evidence-figure.landscape{min-height:560px;}
+    .evidence-figure.landscape .illust-frame{
+      height:auto;min-height:0;max-height:none;aspect-ratio:3/2;
+    }
+    .evidence-figure.square{min-height:520px;align-items:center;}
+    .evidence-figure.square .illust-frame{
+      width:min(560px,100%);height:auto;min-height:0;max-height:none;aspect-ratio:1/1;
+    }
+    .evidence-figure.portrait{min-height:680px;align-items:center;}
+    .evidence-figure.portrait .illust-frame{
+      width:min(440px,100%);height:auto;min-height:0;max-height:none;aspect-ratio:2/3;
+    }
+    .evidence-figure.wide{min-height:380px;}
+    .evidence-figure.wide .illust-frame{min-height:340px;max-height:460px;}
+    .evidence-figure.hero{min-height:520px;}
+    .evidence-figure.hero .illust-frame{min-height:500px;max-height:600px;}
+    .frame-img{position:relative;overflow:hidden;background:var(--paper-2);}
+    .frame-img img{width:100%;height:100%;object-fit:cover;display:block;}
+    .img-cap{
+      font-family:var(--mono);font-weight:500;
+      font-size:18px;letter-spacing:.20em;text-transform:uppercase;
+      color:var(--accent);margin-top:14px;
+    }
+
+    /* ---------- 11. S00 — Series Cover (the ONE fixed layout) ---------- */
+    .cover-series .series-zh{
+      font-family:var(--serif-zh);font-weight:500;
+      font-size:96px;line-height:1.12;letter-spacing:.04em;
+      color:var(--ink);margin:0;
+    }
+    .cover-series .series-zh .ai-accent{
+      color:var(--accent);font-family:var(--serif-en);
+      font-style:italic;font-weight:700;
+    }
+    .cover-series .term-en{
+      position:relative;display:inline-block;
+      align-self:flex-start;width:max-content;max-width:100%;
+      font-family:var(--serif-en);font-weight:900;
+      font-size:240px;line-height:1;letter-spacing:-.02em;
+      color:var(--ink);margin:0;
+    }
+    .cover-series .term-en::before{
+      content:"";position:absolute;left:-8px;right:-8px;bottom:14px;
+      height:56px;background:var(--highlight);z-index:-1;
+    }
+    .cover-series .term-zh{
+      font-family:var(--serif-zh);font-style:normal;font-weight:500;
+      font-size:42px;line-height:1.35;letter-spacing:.04em;
+      color:var(--accent);margin:0;
+    }
+    .cover-series .term-question{
+      font-family:var(--serif-zh);font-weight:500;
+      font-size:56px;line-height:1.18;letter-spacing:.02em;
+      color:var(--ink);margin:0;max-width:880px;
+    }
+  </style>
+</head>
+<body>
+  <main class="sheet">
+
+    <!-- ============================================================
+         Page 1 — S00 Series Cover
+         data-page-id="1", data-layout="series-cover",
+         data-silhouette="huge-type-cover"
+         ============================================================ -->
+    <section class="poster xhs cover-series" id="xhs-01-cover" data-page-id="1" data-layout="series-cover" data-silhouette="huge-type-cover">
+      <div class="content" style="gap:40px;">
+        <div class="chrome">
+          <span class="c-cat">时间管理 · 实践卡</span>
+        </div>
+        <p class="section-label">每日聚焦</p>
+        <h1 class="series-zh">时间管理实践卡</h1>
+        <hr class="hr-hairline">
+        <div style="display:flex;flex-direction:column;gap:18px;">
+          <p class="term-en">Focus</p>
+          <p class="term-zh">每日聚焦三步法</p>
+        </div>
+        <p class="term-question">为什么每天很忙，却总觉得没推进真正重要的目标？</p>
+        <div class="grow"></div>
+        <div class="foot">
+          <span class="f-tag">每日聚焦三步法 · 时间管理实践卡</span>
+          <span class="f-num">01 / 04</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         Page 2 — Concept / Metaphor
+         data-page-id="2", data-layout="metaphor-evidence",
+         data-silhouette="image-led-hero"
+         Illustration: evidence-figure hero, landscape 1536x1024
+         ============================================================ -->
+    <section class="poster xhs" id="xhs-02-concept" data-page-id="2" data-layout="metaphor-evidence" data-silhouette="image-led-hero">
+      <div class="content" style="gap:20px;">
+        <div class="chrome" style="margin-bottom:20px;">
+          <span class="c-cat">核心概念 · CONCEPT</span>
+        </div>
+        <p class="section-label">早晨定优先</p>
+        <h2 class="h-xl">早晨先写下今天<br>最重要的一件事</h2>
+        <figure class="evidence-figure hero" style="min-height:460px;">
+          <div class="illust-frame">
+            <img data-generated-illustration="true" data-illustration-id="main" src="assets/page-02.png" alt="从众多散落的任务中选出一个最重要的放在中心">
+          </div>
+          <figcaption class="img-cap">Fig. 01 · 从散落任务中选定唯一优先</figcaption>
+        </figure>
+        <p class="body">把注意力放在真正能推进目标的行动上，<strong>而不是被琐事牵制</strong>。早晨的这一个决定，决定了全天的方向。</p>
+        <div class="foot">
+          <span class="f-tag">早晨 · 唯一优先事项</span>
+          <span class="f-num">02 / 04</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         Page 3 — Mechanism
+         data-page-id="3", data-layout="process-mechanism",
+         data-silhouette="square-evidence"
+         Illustration: evidence-figure square, 1024x1024
+         ============================================================ -->
+    <section class="poster xhs" id="xhs-03-mechanism" data-page-id="3" data-layout="process-mechanism" data-silhouette="square-evidence">
+      <div class="content" style="gap:32px;">
+        <div class="chrome">
+          <span class="c-cat">工作机制 · MECHANISM</span>
+        </div>
+        <p class="section-label">白天拆步骤</p>
+        <h2 class="h-xl">把复杂事项<br>拆成三个轻量步骤</h2>
+        <figure class="evidence-figure square">
+          <div class="illust-frame">
+            <img data-generated-illustration="true" data-illustration-id="main" src="assets/page-03.png" alt="一个复杂事项拆解为三个步骤并逐项完成">
+          </div>
+          <figcaption class="img-cap">Fig. 02 · 拆解为三步，完成即记录</figcaption>
+        </figure>
+        <p class="body">每完成一步就做一次<strong>简短记录</strong>，让进度清晰可见。三个小步骤让复杂任务不再令人生畏，记录让每个进展都有迹可循。</p>
+        <div class="foot">
+          <span class="f-tag">白天 · 拆三步骤 + 记录</span>
+          <span class="f-num">03 / 04</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         Page 4 — Action
+         data-page-id="4", data-layout="action-split",
+         data-silhouette="portrait-action-split"
+         Illustration: evidence-figure portrait, 1024x1536
+         ============================================================ -->
+    <section class="poster xhs" id="xhs-04-action" data-page-id="4" data-layout="action-split" data-silhouette="portrait-action-split">
+      <div class="content" style="gap:32px;">
+        <div class="chrome">
+          <span class="c-cat">今日行动 · ACTION</span>
+        </div>
+        <p class="section-label">晚上五分钟</p>
+        <h2 class="h-xl">晚上用五分钟<br>回看结果</h2>
+        <div style="display:grid;grid-template-columns:1fr 440px;gap:40px;align-items:center;flex:1;">
+          <div style="display:flex;flex-direction:column;gap:24px;">
+            <p class="body">保留有效方法，<strong>明天继续复用</strong>。五分钟的回看，让有效做法能被积累下来。</p>
+            <hr class="hr-accent">
+            <p class="lead">明天早晨先写下今天最重要的一件事，遇到复杂事项时拆成三个轻量步骤，晚上用五分钟回看结果。</p>
+          </div>
+          <figure class="evidence-figure portrait" style="min-height:640px;">
+            <div class="illust-frame">
+              <img data-generated-illustration="true" data-illustration-id="main" src="assets/page-04.png" alt="回看结果，选择有效方法继续复用">
+            </div>
+            <figcaption class="img-cap">Fig. 03 · 回看 → 保留 → 复用</figcaption>
+          </figure>
+        </div>
+        <div class="foot">
+          <span class="f-tag">晚上 · 五分钟回看复用</span>
+          <span class="f-num">04 / 04</span>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</body>
+</html>

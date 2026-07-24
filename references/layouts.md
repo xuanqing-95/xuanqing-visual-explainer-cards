@@ -2,15 +2,7 @@
 
 Read this when designing any page in a card set.
 
-This skill ships **exactly one fixed layout**: the S00 Series Cover. Compose every other page fresh from the content shape and shared primitives.
-
-## Contents
-
-- S00 Series Cover
-- Content-page composition workflow
-- Slot-first image placement
-- Shared template primitives
-- Content-page hard rules
+This skill ships **exactly one fixed layout**: the S00 Series Cover. Every other page in a set is composed fresh based on the content shape. Do not invent named layout "S01 / S02 / S03 / S04" and force pages into them — that produces the same five pages no matter what the content is, which is exactly what we don't want.
 
 ## The One Fixed Layout: S00 Series Cover
 
@@ -36,8 +28,6 @@ Hard rules for the cover:
 
 For pages 2 onwards, do not pick a pre-named recipe. Instead:
 
-The storyboard must already have passed `scripts/validate-storyboard.mjs`. Treat `pages[].layout` and `page_rhythm.beats[].silhouette` as design inputs, not descriptions added after the page is finished.
-
 ### Step 1 — Identify the content shape
 
 Read the page's storyboard message and ask: what shape is this? The seed template ships six **named content-page snippets** (commented HTML at the bottom of `assets/template.html`) that map to common shapes. Copy one as a starting point, then adjust.
@@ -45,19 +35,17 @@ Read the page's storyboard message and ask: what shape is this? The seed templat
 | Content shape | Snippet to copy | What it gives you |
 |---|---|---|
 | One metaphor / mental model / "X is like Y" | **P-METAPHOR** | Large 540px illustration + IKB caption + 2-3 line body |
-| Numbered list of 3-4 visible items (symptoms / tools / signals) | **P-LIST** | One 200px generated thumbnail per row + exact HTML copy |
-| Two visibly different states (before / after, wrong / right, demo / 生产) | **P-COMPARE** | Two 240px generated state images + exact HTML columns |
-| A sequence / pipeline / process with distinct visible steps | **P-MECHANISM** | One 130px generated icon per step + numbered HTML copy |
-| One pull-quote or definition that is the whole page | **P-QUOTE** | Pullquote left + 420px illustration right (the rare type-led page) |
+| Numbered list of 3-4 typical items (symptoms / steps / signals) | **P-LIST** | Stacked rows, each with 200px thumb + IKB number + body line |
+| Two states compared (before / after, wrong / right, demo / 生产) | **P-COMPARE** | Two side-by-side columns, each with 240px illustration + label + 3 bullets |
+| A sequence / pipeline / process | **P-MECHANISM** | 3-4 vertical step rows, each with 130px inline icon + IKB step no. + body |
+| One pull-quote or definition that is the whole page | **P-QUOTE** | Pullquote-led composition; add supporting evidence only when it helps explain the message |
 | Closing self-check / call to action | **P-ACTION** | Small 200px illustration + 2-3 lettered options + IKB accent line |
 
 These snippets are starting points, not constraints. You may invent variants, combine two shapes, drop sections — but every content page must follow the **Hard Rules** below.
 
-### Step 2 — Decide the illustration role and size
+### Step 2 — Decide whether to illustrate
 
-Every non-cover content page pairs **text + at least one model-generated illustration**. Text leads, illustration explains. HTML diagrams and screenshots may be added for precision, but they do not replace the generated illustration.
-
-Count independently visible referents. Use one image when one scene genuinely explains the whole page. Use multiple images when separate list items, comparison states, or process steps need separate visual evidence. A single generated strip remains an optional composition, not the default replacement for several referents.
+Most content pages should pair **text + small illustration**. Text leads, illustration explains.
 
 Default to including an illustration when:
 - The page introduces a metaphor or concrete scene
@@ -65,21 +53,20 @@ Default to including an illustration when:
 - The page lists items that have visible referents (kitchen stations, dashboard panels, food, tools, body parts, etc.)
 - The page compares two states that look different
 
-Use a compact supporting illustration when:
+An illustration may be unnecessary when:
 - The page is a pure pull-quote or definition
-- The page is a checklist of abstract verbs ("review", "decide", "ship")
-- Exact code, numbers, prices, or table data must remain in HTML
+- The page is a checklist of abstract verbs ("review", "decide", "ship") that has no clear visual
+- The page is the cover (already covered by S00)
 
-The S00 cover is the only default page without an illustration. Let the source content decide the exact page count before choosing layouts. Typical sets are **4-7 pages including the cover**. Vary the illustration scale so concept pages may be image-led while checklist or data pages use compact support.
+Let the source content decide the exact page count before choosing layouts. Typical sets are **4-7 pages including the cover**.
 
 ### Step 3 — Size the illustration to support, not dominate
 
 This is the rule that prevents illustrations from taking over the page:
 
 - Concept page where image IS the explanation: `.illust-frame` 480-560px tall
-- Page with visible list items: one 160-260px thumbnail per item
-- Page comparing visible states: one 200-280px image per state
-- Page with visible process steps: one inline 100-160px image per step
+- Page where image supports a list/comparison: thumbnails 160-260px, multiple per page
+- Page where image is one small mark of a mechanism: inline 100-160px
 
 The text content should still occupy at least 60% of the page's visual weight. If the illustration is louder than the title, shrink it.
 
@@ -106,7 +93,7 @@ Placement rules:
 
 ### Step 3.5 — Define the slot before generating
 
-Before writing an image prompt, define every final `illustrations[].image_slot`. Each slot decides that illustration's HTML wrapper, rendered size, requested orientation, explicit model output canvas, and pixel-safe subject box. Do not generate images first and then pick slots afterward.
+Before writing an image prompt, define the final `image_slot`. The slot decides the HTML wrapper, the approximate rendered size, the generator `--ar`, the expected physical canvas, and the pixel-safe subject box. Do not generate an image first and then pick a slot afterward.
 
 Minimum `image_slot` shape:
 
@@ -115,19 +102,19 @@ image_slot:
   html_wrapper: evidence-figure landscape
   slot_px: 904x603
   slot_ratio: 3:2
-  requested_orientation: landscape
-  model_output_size: 1536x1024
+  generator_ar: 4:3
+  generator_canvas: 1536x1024
   subject_bbox: x=120-1416,y=128-896
   fit: contain
 ```
 
 Slot choice:
 
-- Normal generated concept/metaphor/mechanism image: request `landscape` at `1536x1024`, then place it in `.evidence-figure.landscape`. The slot must stay close to 3:2 or the image will shrink.
+- Normal generated concept/metaphor/mechanism image: generate `4:3` or `16:10`, then place in `.evidence-figure.landscape`. The local generator returns a `1536x1024` landscape image; the slot must stay close to 3:2 or the image will shrink.
 - Wide process/metaphor/comparison wells: use `.evidence-figure.wide` only for genuinely long horizontal diagrams or HTML-native diagrams. If the generated bitmap is `1536x1024`, prefer `.evidence-figure.landscape` unless you intentionally crop/enlarge after inspecting labels.
-- Tall standalone evidence: request `portrait` at `1024x1536`, then place it in `.evidence-figure.portrait` or another deliberate vertical evidence well.
-- Square objects: request `square` at `1024x1024`, then use `.evidence-figure.square`, a side-by-side text/image module, or row thumbnails.
-- Row thumbnails or small mechanism marks: use square or landscape output, then place them in 100-260px wells.
+- Tall standalone evidence: generate `3:4`, then place in `.evidence-figure.portrait` or another deliberate vertical evidence well.
+- Square objects: generate `1:1`, then use `.evidence-figure.square`, a side-by-side text/image module, or row thumbnails.
+- Row thumbnails or small mechanism marks: generate `1:1` or `4:3`, then place in 100-260px wells.
 
 Do not put a square generated image into a wide workflow slot unless you intentionally add `.zoom-125` or `.zoom-140` and verify no label is cropped. If the image looks correct but too small because of safe margins, use these classes on the frame:
 
@@ -159,10 +146,19 @@ Add task-scoped CSS (inside `<style>` in `index.html`) for anything else the spe
 
 ## Hard Rules That Apply to Every Content Page
 
-1. **Model-generated illustration evidence is required.** Include every storyboard-planned `<img data-generated-illustration="true" data-illustration-id="...">` inside `.illust-frame`, with its generator-written `.generation.json` sidecar.
-2. **IKB blue must be visible.** At minimum on: top chrome hairline + category label, bottom foot hairline + page number. Plus at least one of: section label, divider, body `<strong>`, illustration caption.
-3. **Mustard yellow does not appear.** Not on titles, not on backgrounds, not on numbers, not on key options. Yellow lives only on the cover.
-4. **Content density ≥ 75%.** No pure-whitespace band wider than 216px without a stated reason.
-5. **Each page has a section label** (`.section-label`) explaining what kind of page this is in 2-5 mono English/Chinese words.
-6. **No 1-of-N letter highlight.** Don't pick a "key option" and wrap it in yellow. If a step is more important, write it that way in the copy.
-7. **Bind HTML to the storyboard.** Set `data-page-id`, `data-layout`, and `data-silhouette` on every `.poster`; keep each `data-illustration-id`, asset path, and wrapper class equal to its declared `illustrations[]` contract.
+1. **IKB blue must be visible.** At minimum on: top chrome hairline + category label, bottom foot hairline + page number. Plus at least one of: section label, divider, body `<strong>`, illustration caption.
+2. **Mustard yellow does not appear.** Not on titles, not on backgrounds, not on numbers, not on key options. Yellow lives only on the cover.
+3. **Content density ≥ 75%.** No pure-whitespace band wider than 216px without a stated reason.
+4. **Each page has a section label** (`.section-label`) explaining what kind of page this is in 2-5 mono English/Chinese words.
+5. **No 1-of-N letter highlight.** Don't pick a "key option" and wrap it in yellow. If a step is more important, write it that way in the copy.
+
+## What Was Removed and Why
+
+Earlier versions of this file listed S01-S04 as fixed templates (concept+image, tall ledger, before/after, closing). They were removed because:
+
+- They produced visually identical card sets across different topics.
+- They taught the agent to fit content to a template instead of designing for content.
+- They concentrated mustard yellow on multiple content-page elements (ledger numbers, key options, kickers), which over-saturated the emphasis color.
+- They led to "one illustration per set" because only the concept template had an `.illust-frame` slot.
+
+If you want a recipe-driven mode in the future, build it as an alternate seed under `assets/`, not by re-pinning S01-S04 here.

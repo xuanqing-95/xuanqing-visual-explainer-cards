@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="zh-CN" data-mode="editorial" data-accent="indigo-porcelain">
+<head>
+  <meta charset="utf-8">
+  <title>Plugins · Day 06 每天吃透一个 AI 知识点 · Visual Explainer Cards</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@400;500;700;900&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+  <style>
+    /* =========================================================
+       Visual Explainer Cards - Editorial Seed (Indigo Porcelain)
+       "the larger, the lighter" · serif body · IKB structure +
+       mustard cover bar only. Copied from assets/template.html.
+       ========================================================= */
+
+    :root,
+    [data-accent="indigo-porcelain"] {
+      --paper: #fafaf8;
+      --paper-2: #f0f0ee;
+      --ink: #0a0a0a;
+      --ink-soft: #1f1f1f;
+      --ink-rgb: 10,10,10;
+      --paper-rgb: 250,250,248;
+      --line: rgba(10,10,10,.16);
+      --muted: #6f6f6c;
+      --grey-1: #f0f0ee;
+      --grey-2: #d4d4d2;
+      --grey-3: #737373;
+      --accent: #002FA7;
+      --accent-on: #ffffff;
+      --accent-rgb: 0,47,167;
+      --highlight: #F2D24B;
+      --highlight-on: #0a0a0a;
+    }
+
+    :root {
+      --serif-en: "Playfair Display","Source Serif Pro",Georgia,serif;
+      --serif-zh: "Noto Serif SC","Songti SC","STSong",serif;
+      --sans:     "Inter","Helvetica Neue",Helvetica,-apple-system,"PingFang SC","Microsoft YaHei UI",sans-serif;
+      --sans-zh:  "Noto Sans SC",-apple-system,"PingFang SC","Inter",sans-serif;
+      --mono:     "IBM Plex Mono",ui-monospace,"SF Mono",Consolas,monospace;
+      --sp-3:8px;--sp-4:12px;--sp-5:16px;--sp-6:24px;--sp-7:32px;
+      --sp-8:40px;--sp-9:48px;--sp-10:64px;--sp-11:80px;--sp-12:96px;
+    }
+
+    *,*::before,*::after{box-sizing:border-box;}
+    html,body{margin:0;padding:0;}
+    body{
+      background:#1a1a1a;font-family:var(--serif-zh);color:var(--ink);
+      -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+      padding:64px 32px;
+    }
+    .sheet{display:flex;flex-direction:column;align-items:center;gap:48px;}
+
+    .poster{position:relative;background:var(--paper);color:var(--ink);overflow:hidden;isolation:isolate;}
+    .poster.xhs{width:1080px;height:1440px;}
+    .poster figure{margin:0;}
+    .poster.xhs .content{padding:96px 88px;position:relative;width:100%;height:100%;display:flex;flex-direction:column;z-index:2;}
+
+    .h-display{font-family:var(--serif-zh);font-weight:500;font-size:124px;line-height:1.06;letter-spacing:.04em;color:var(--ink);margin:0;}
+    .h-xl{font-family:var(--serif-zh);font-weight:500;font-size:88px;line-height:1.10;letter-spacing:.03em;color:var(--ink);margin:0;}
+    .h-md{font-family:var(--serif-zh);font-weight:500;font-size:56px;line-height:1.18;letter-spacing:.02em;color:var(--ink);margin:0;}
+    .h-sub{font-family:var(--serif-en);font-style:italic;font-weight:400;font-size:36px;line-height:1.3;color:var(--muted);margin:0;}
+    .pullquote{font-family:var(--serif-zh);font-style:italic;font-weight:500;font-size:64px;line-height:1.28;color:var(--ink);margin:0;}
+    .lead{font-family:var(--serif-zh);font-weight:400;font-size:28px;line-height:1.55;color:rgba(var(--ink-rgb),.82);margin:0;}
+    .body{font-family:var(--serif-zh);font-weight:400;font-size:24px;line-height:1.65;color:rgba(var(--ink-rgb),.80);margin:0;}
+    .body strong{color:var(--accent);font-weight:500;}
+
+    .h-display em,.h-xl em,.h-md em{font-style:normal;color:var(--ink);}
+    .h-display.title-underline em,
+    .h-xl.title-underline em,
+    .h-md.title-underline em{
+      text-decoration:underline;text-decoration-color:var(--accent);
+      text-decoration-thickness:6px;text-underline-offset:10px;
+    }
+    .h-md.title-underline em{text-decoration-thickness:5px;text-underline-offset:8px;}
+
+    .kicker{font-family:var(--mono);font-weight:500;font-size:21px;letter-spacing:.22em;text-transform:uppercase;color:rgba(var(--ink-rgb),.55);margin:0;}
+    .meta,.label{font-family:var(--mono);font-weight:500;font-size:18px;letter-spacing:.20em;text-transform:uppercase;color:rgba(var(--ink-rgb),.55);}
+
+    .section-label{display:inline-flex;align-items:center;gap:12px;font-family:var(--mono);font-weight:500;font-size:21px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);margin:0;}
+    .section-label::before{content:"";display:inline-block;width:14px;height:14px;background:var(--accent);}
+
+    .issue-row{display:flex;align-items:center;gap:16px;font-family:var(--mono);font-weight:500;font-size:20px;letter-spacing:.20em;text-transform:uppercase;color:var(--muted);}
+    .issue-row .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);}
+    .chrome{display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-weight:500;font-size:18px;letter-spacing:.20em;text-transform:uppercase;padding-bottom:18px;border-bottom:1px solid var(--accent);margin-bottom:48px;}
+    .chrome .c-cat{color:var(--accent);}
+    .chrome .c-num{color:var(--muted);}
+
+    .foot{display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-weight:500;font-size:18px;letter-spacing:.20em;text-transform:uppercase;margin-top:auto;padding-top:32px;border-top:1px solid var(--accent);}
+    .foot .f-tag{color:var(--muted);}
+    .foot .f-num{color:var(--accent);}
+
+    .grow{flex:1;}
+    .hr-hairline{height:1px;background:var(--line);border:0;margin:0;}
+    .hr-accent{height:2px;background:var(--accent);border:0;width:96px;margin:0;}
+
+    .illust-frame{width:100%;background:var(--paper);display:flex;align-items:center;justify-content:center;overflow:hidden;margin:0;}
+    .illust-frame img{width:100%;height:100%;object-fit:contain;display:block;}
+    .illust-frame.zoom-110 img{width:110%;height:110%;max-width:none;max-height:none;}
+    .illust-frame.zoom-125 img{width:125%;height:125%;max-width:none;max-height:none;}
+    .illust-frame.zoom-140 img{width:140%;height:140%;max-width:none;max-height:none;}
+    .illust-frame.wide-flow img{width:118%;height:118%;max-width:none;max-height:none;}
+    .evidence-figure{width:100%;display:flex;flex-direction:column;justify-content:center;margin:0;min-height:420px;}
+    .evidence-figure .illust-frame{height:100%;min-height:420px;max-height:560px;}
+    .evidence-figure.compact{min-height:260px;}
+    .evidence-figure.compact .illust-frame{min-height:220px;max-height:300px;}
+    .evidence-figure.landscape{min-height:560px;}
+    .evidence-figure.landscape .illust-frame{height:auto;min-height:0;max-height:none;aspect-ratio:3/2;}
+    .evidence-figure.square{min-height:520px;align-items:center;}
+    .evidence-figure.square .illust-frame{width:min(560px,100%);height:auto;min-height:0;max-height:none;aspect-ratio:1/1;}
+    .evidence-figure.portrait{min-height:680px;align-items:center;}
+    .evidence-figure.portrait .illust-frame{width:min(440px,100%);height:auto;min-height:0;max-height:none;aspect-ratio:2/3;}
+    .evidence-figure.wide{min-height:380px;}
+    .evidence-figure.wide .illust-frame{min-height:340px;max-height:460px;}
+    .evidence-figure.hero{min-height:520px;}
+    .evidence-figure.hero .illust-frame{min-height:500px;max-height:600px;}
+    .frame-img{position:relative;overflow:hidden;background:var(--paper-2);}
+    .frame-img img{width:100%;height:100%;object-fit:cover;display:block;}
+    .img-cap{font-family:var(--mono);font-weight:500;font-size:18px;letter-spacing:.20em;text-transform:uppercase;color:var(--accent);margin-top:14px;}
+
+    .cover-series .series-zh{font-family:var(--serif-zh);font-weight:500;font-size:96px;line-height:1.12;letter-spacing:.04em;color:var(--ink);margin:0;}
+    .cover-series .series-zh .ai-accent{color:var(--accent);font-family:var(--serif-en);font-style:italic;font-weight:700;}
+    .cover-series .term-en{position:relative;display:inline-block;align-self:flex-start;width:max-content;max-width:100%;font-family:var(--serif-en);font-weight:900;font-size:240px;line-height:1;letter-spacing:-.02em;color:var(--ink);margin:0;}
+    .cover-series .term-en::before{content:"";position:absolute;left:-8px;right:-8px;bottom:14px;height:56px;background:var(--highlight);z-index:-1;}
+    .cover-series .term-zh{font-family:var(--serif-zh);font-style:normal;font-weight:500;font-size:42px;line-height:1.35;letter-spacing:.04em;color:var(--accent);margin:0;}
+    .cover-series .term-question{font-family:var(--serif-zh);font-weight:500;font-size:56px;line-height:1.18;letter-spacing:.02em;color:var(--ink);margin:0;max-width:880px;}
+
+    /* ---------- Task-scoped CSS ----------
+       Only what this specific deck needs. Not added back into the seed.
+       1. Match the generator's actual 4:3 landscape canvas (1536x1152)
+          so illustrations fill the slot instead of shrinking inside 3:2.
+       2. Tidy list / compare / option grids used on content pages.
+    -------------------------------------- */
+    .evidence-figure.landscape .illust-frame{aspect-ratio:4/3;max-height:560px;}
+    .evidence-figure.hero .illust-frame{aspect-ratio:4/3;}
+    .case-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;flex:1;}
+    .case-col{display:flex;flex-direction:column;gap:16px;}
+    .case-col ul{margin:0;padding-left:1.1em;line-height:1.55;}
+    .case-col li{font-family:var(--serif-zh);font-weight:400;font-size:24px;line-height:1.5;color:rgba(var(--ink-rgb),.80);margin:0 0 10px;}
+    .options{display:flex;flex-direction:column;gap:14px;}
+    .opt{display:grid;grid-template-columns:64px 1fr;gap:24px;align-items:baseline;padding:14px 0;border-bottom:1px solid var(--line);}
+  </style>
+</head>
+<body>
+  <main class="sheet">
+
+    <!-- ============================================================
+         Page 1 - Series Cover (S00 fixed layout)
+         ============================================================ -->
+    <section class="poster xhs cover-series" id="xhs-01-cover">
+      <div class="content" style="gap:40px;">
+        <div class="chrome">
+          <span class="c-cat">AI Knowledge · Beginner Series</span>
+          <span class="c-num">Day 06</span>
+        </div>
+        <p class="section-label">Indigo Porcelain</p>
+        <h1 class="series-zh">每天吃透一个<br><span class="ai-accent">AI</span> 知识点</h1>
+        <hr class="hr-hairline">
+        <div style="display:flex;flex-direction:column;gap:18px;">
+          <p class="term-en">Plugins</p>
+          <p class="term-zh">给 AI 装的外挂 App</p>
+        </div>
+        <p class="term-question">为什么 AI 能聊天，却不能直接帮你订机票、查实时天气？</p>
+        <div class="grow"></div>
+        <div class="foot">
+          <span class="f-tag">Plugins · 从能说到能做</span>
+          <span class="f-num">AI Native · 006</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         Page 2 - Concept definition (landscape evidence + body)
+         ============================================================ -->
+    <section class="poster xhs" id="xhs-02-concept">
+      <div class="content" style="gap:32px;">
+        <div class="chrome">
+          <span class="c-cat">一句话说清楚 · Concept</span>
+          <span class="c-num">02 / 07</span>
+        </div>
+        <p class="section-label">概念定义</p>
+        <h2 class="h-xl">给 AI 装<em>外挂</em></h2>
+        <figure class="evidence-figure landscape">
+          <div class="illust-frame">
+            <img src="assets/page-02.png" alt="AI 大脑通过插件接口外接联网搜索、读 PDF、画图、订机票等可插拔工具模块">
+          </div>
+          <figcaption class="img-cap">Fig. 01 · AI 大脑外接一排可插拔的工具模块</figcaption>
+        </figure>
+        <p class="body">插件是给 AI 安装的可拆卸"外挂 App"。<strong>模型本身没变</strong>，但通过统一的插件接口，AI 能按需接上联网搜索、读 PDF、画图、订机票等外部工具，把自己的能力边界向外推一大截。</p>
+        <div class="foot">
+          <span class="f-tag">Plugins · 从能说到能做</span>
+          <span class="f-num">02 / 07</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         Page 3 - Core metaphor (hero illustration)
+         ============================================================ -->
+    <section class="poster xhs" id="xhs-03-metaphor">
+      <div class="content" style="gap:32px;">
+        <div class="chrome">
+          <span class="c-cat">核心比喻 · Metaphor</span>
+          <span class="c-num">03 / 07</span>
+        </div>
+        <p class="section-label">打个比方</p>
+        <h2 class="h-xl title-underline">学霸没变<br>能干的事<em>多了</em></h2>
+        <figure class="evidence-figure hero">
+          <div class="illust-frame">
+            <img src="assets/page-03.png" alt="关在书房的超级学霸，插件像窗户、电话、画笔一样给他接入外界">
+          </div>
+          <figcaption class="img-cap">Fig. 02 · 学霸还是那个学霸，多了窗、电话、画笔</figcaption>
+        </figure>
+        <p class="body">AI 原本像个关在书房里的<strong>超级学霸</strong>，满脑子知识却碰不到外面的世界。插件就是给它开了一扇<strong>窗</strong>（联网）、一部<strong>电话</strong>（调用服务）、一支<strong>画笔</strong>（图像生成）。学霸本身没变，能干的事瞬间多了几百倍。</p>
+        <div class="foot">
+          <span class="f-tag">Plugins · 从能说到能做</span>
+          <span class="f-num">03 / 07</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         Page 4 - Mechanism (landscape flow + body)
+         ============================================================ -->
+    <section class="poster xhs" id="xhs-04-mechanism">
+      <div class="content" style="gap:32px;">
+        <div class="chrome">
+          <span class="c-cat">工作机制 · Mechanism</span>
+          <span class="c-num">04 / 07</span>
+        </div>
+        <p class="section-label">握手协议</p>
+        <h2 class="h-xl">用完即<em>放手</em></h2>
+        <figure class="evidence-figure landscape">
+          <div class="illust-frame">
+            <img src="assets/page-04.png" alt="插件握手协议五步：注册能力、判断需求、唤醒插件、调用工具、用完放手">
+          </div>
+          <figcaption class="img-cap">Fig. 03 · 注册 → 判断 → 唤醒 → 调用 → 放手</figcaption>
+        </figure>
+        <p class="body">插件遵循一套固定的<strong>握手协议</strong>：每个插件先向 AI 注册自己擅长什么；AI 收到任务后判断需要哪个，按需<strong>唤醒</strong>它、调用工具拿到结果，然后立刻<strong>放手</strong>。不常驻、不占资源，所以非常高效。</p>
+        <div class="foot">
+          <span class="f-tag">Plugins · 从能说到能做</span>
+          <span class="f-num">04 / 07</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         Page 5 - Real case (structured before/after)
+         ============================================================ -->
+    <section class="poster xhs" id="xhs-05-case">
+      <div class="content" style="gap:30px;">
+        <div class="chrome">
+          <span class="c-cat">真实案例 · Case</span>
+          <span class="c-num">05 / 07</span>
+        </div>
+        <p class="section-label">规划成都 3 天行程</p>
+        <h2 class="h-xl">以前手动折腾<br>现在<em>一句话搞定</em></h2>
+        <p class="lead">场景：让 AI 规划 5 月去成都的 3 天行程，预算 3000 块，顺便找出合适的机票和酒店链接。</p>
+        <div class="case-grid">
+          <div class="case-col">
+            <p class="meta">Before · 自己来</p>
+            <p class="body" style="margin:0;"><strong>逐个网站切换</strong></p>
+            <ul>
+              <li>自己查机票，逐个比价</li>
+              <li>搜酒店，翻几十页评论</li>
+              <li>查攻略，拼凑行程</li>
+              <li>手算预算，容易超支</li>
+            </ul>
+          </div>
+          <div class="case-col">
+            <p class="meta" style="color:var(--accent);">After · AI + 插件</p>
+            <p class="body" style="margin:0;"><strong>多个插件协同</strong></p>
+            <ul>
+              <li>机票插件返回真实价格</li>
+              <li>酒店插件给出预订链接</li>
+              <li>地图插件排好路线</li>
+              <li>几秒输出完整方案</li>
+            </ul>
+          </div>
+        </div>
+        <div class="foot">
+          <span class="f-tag">Plugins · 从能说到能做</span>
+          <span class="f-num">05 / 07</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         Page 6 - Significance (pull-quote)
+         ============================================================ -->
+    <section class="poster xhs" id="xhs-06-significance">
+      <div class="content" style="gap:36px;">
+        <div class="chrome">
+          <span class="c-cat">为什么重要 · Why</span>
+          <span class="c-num">06 / 07</span>
+        </div>
+        <p class="section-label">从能说到能做</p>
+        <div style="display:flex;flex-direction:column;gap:28px;flex:1;justify-content:center;">
+          <p class="pullquote">"没有插件，AI 只能给你建议；有了插件，AI 可以直接帮你把事办了。"</p>
+          <hr class="hr-accent">
+          <p class="body">它把 AI 从一个聊天玩具，变成了真正能嵌入工作流的<strong>数字助理</strong>。模型本身没有变，变的是 AI 能触及的外部世界——这恰恰是从"会聊"到"会做"的分水岭。</p>
+        </div>
+        <div class="foot">
+          <span class="f-tag">Plugins · 从能说到能做</span>
+          <span class="f-num">06 / 07</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         Page 7 - Closing action (compact illustration + options)
+         ============================================================ -->
+    <section class="poster xhs" id="xhs-07-action">
+      <div class="content" style="gap:28px;">
+        <div class="chrome">
+          <span class="c-cat">今日行动 · Action</span>
+          <span class="c-num">07 / 07</span>
+        </div>
+        <p class="section-label">今天检查一件事</p>
+        <h2 class="h-xl">去设置里<br><em>找个插件</em></h2>
+        <figure class="evidence-figure compact">
+          <div class="illust-frame">
+            <img src="assets/page-07.png" alt="插件库里挑选一个插件装上的示意">
+          </div>
+          <figcaption class="img-cap">Fig. 04 · 插件库 · 挑一个装上</figcaption>
+        </figure>
+        <p class="body" style="margin:0;">打开你常用的 AI 工具，去设置里找"插件"或"功能扩展"入口，挑一个感兴趣的插件，完成一个原本要切换好几个网站才能搞定的小任务。你属于哪一档？</p>
+        <div class="options">
+          <div class="opt">
+            <span class="meta" style="color:var(--muted);">A</span>
+            <p class="body" style="margin:0;">从没打开过插件入口，今天先去设置里找一找。</p>
+          </div>
+          <div class="opt">
+            <span class="meta" style="color:var(--muted);">B</span>
+            <p class="body" style="margin:0;">装过插件，但只停留在试用，没真拿来办事。</p>
+          </div>
+          <div class="opt">
+            <span class="meta" style="color:var(--accent);">C</span>
+            <p class="body" style="margin:0;"><strong>已经用它完成过一个真实小任务，感受过一站式解决的爽感。</strong></p>
+          </div>
+        </div>
+        <hr class="hr-accent">
+        <p class="lead">从 A 到 C，只需要挑一个插件、办一件小事。</p>
+        <div class="foot">
+          <span class="f-tag">每天吃透一个 AI 知识点 · Day 06</span>
+          <span class="f-num">END</span>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</body>
+</html>

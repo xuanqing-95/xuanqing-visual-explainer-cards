@@ -1,6 +1,10 @@
 import fs from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
+import { fileURLToPath } from "node:url";
+import { loadVersionedLocalFontCss } from "./local-fonts.mjs";
+
+const skillDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 async function loadChromium() {
   try {
@@ -71,6 +75,7 @@ async function main() {
       waitUntil: "networkidle",
       timeout: 60_000,
     });
+    await page.addStyleTag({ content: loadVersionedLocalFontCss(skillDir) });
     await page.evaluate(() => document.fonts.ready);
     await page.waitForTimeout(300);
 

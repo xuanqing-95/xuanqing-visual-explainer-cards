@@ -1,0 +1,102 @@
+schema_version: 2
+topic: 早晨时间管理：每日聚焦三步法
+audience: 想要提高每日时间管理效率的人
+
+beginner_brief:
+  prior_knowledge: 读者知道时间规划的基本概念，但常常每天很忙却感觉没有推进重要目标
+  plain_definition: 每日聚焦三步法是一套日常时间管理循环——早晨定一件最重要的事，白天把复杂事项拆成三步并记录，晚上花五分钟回看并保留有效方法
+  not_this: 它不是只写下任务就结束，还包括拆分步骤、完成后记录，以及晚上回看并复用有效方法
+  how_it_works: 早晨先确定唯一优先事项以集中注意力，遇到复杂事项时拆成三个可执行步骤并在每步完成后简短记录，晚上用五分钟回看哪些方法有效，第二天继续复用
+  why_it_matters: 它把注意力从做了很多事转移到推进了真正重要的目标，同时通过每日回看让有效方法可以被复用
+  concrete_example: 早晨写下今天最重要的一件事，把它拆成三个轻量步骤，每完成一步做简短记录，晚上用五分钟回看结果，把有效的方法留着明天继续用
+  next_action: 明天早晨先写下今天最重要的一件事，遇到复杂事项时拆成三个轻量步骤，晚上用五分钟回看结果
+
+source_tags:
+  - "#时间管理"
+  - "#学习计划"
+  - "#效率工具"
+
+page_rhythm:
+  strategy: 从一个关于忙碌却无效的熟悉问题进入，依次展开早晨定优先、白天拆步骤、晚上回看三个行动，每页更换布局和视觉重心，不做额外总结页
+  beats:
+    - page: 1
+      purpose: 用熟悉问题建立阅读动机，引出每日聚焦三步法
+      silhouette: huge-type-cover
+      transition: open-with-question
+    - page: 2
+      purpose: 讲清早晨定一件最重要的事这个动作及其目的
+      silhouette: image-led-hero
+      transition: zoom-into-mechanism
+    - page: 3
+      purpose: 展开白天把复杂事项拆成三个轻量步骤并记录的行动
+      silhouette: square-evidence
+      transition: move-from-concept-to-action
+    - page: 4
+      purpose: 给出晚上五分钟回看并复用有效方法的具体行动
+      silhouette: portrait-action-split
+      transition: close-with-action
+
+pages:
+  - id: 1
+    message: 每日聚焦三步法把早晨聚焦、白天拆步和晚上回看连成循环，帮助行动真正推进目标
+    role: cover
+    layout: series-cover
+    cover:
+      series_line: 时间管理实践卡
+      english_term: Focus
+      chinese_explanation: 每日聚焦三步法
+      user_question: 为什么每天很忙，却总觉得没推进真正重要的目标？
+
+  - id: 2
+    message: 早晨先写下今天最重要的一件事，把注意力放在真正能推进目标的行动上
+    role: concept
+    layout: metaphor-evidence
+    illustrations:
+      - id: main
+        visual_type: no-text
+        prompt_file: prompts/page-02.md
+        output_file: assets/page-02.png
+        image_slot:
+          html_wrapper: evidence-figure hero
+          slot_px: 904x603
+          slot_ratio: "3:2"
+          requested_orientation: landscape
+          model_output_size: 1536x1024
+          subject_bbox: x=120-1416,y=128-896
+          fit: contain
+
+  - id: 3
+    message: 把复杂事项拆成三个轻量步骤，每完成一步就做一次简短记录
+    role: mechanism
+    layout: process-mechanism
+    illustrations:
+      - id: main
+        visual_type: no-text
+        prompt_file: prompts/page-03.md
+        output_file: assets/page-03.png
+        image_slot:
+          html_wrapper: evidence-figure square
+          slot_px: 560x560
+          slot_ratio: "1:1"
+          requested_orientation: square
+          model_output_size: 1024x1024
+          subject_bbox: x=112-912,y=112-912
+          fit: contain
+
+  - id: 4
+    message: 晚上用五分钟回看结果，保留有效方法，明天继续复用
+    role: action
+    layout: action-split
+    illustrations:
+      - id: main
+        visual_type: no-text
+        prompt_file: prompts/page-04.md
+        output_file: assets/page-04.png
+        image_slot:
+          html_wrapper: evidence-figure portrait
+          slot_px: 440x660
+          slot_ratio: "2:3"
+          requested_orientation: portrait
+          model_output_size: 1024x1536
+          subject_bbox: x=112-912,y=180-1356
+          fit: contain

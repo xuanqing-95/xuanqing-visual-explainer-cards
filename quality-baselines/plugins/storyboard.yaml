@@ -1,0 +1,195 @@
+topic: 插件 (Plugins) - 给 AI 装的外挂 App
+audience: 用过 AI 聊天工具、但不知道 AI 如何直接办事的初学者
+accent: indigo-porcelain
+mode: editorial
+
+beginner_brief:
+  prior_knowledge: 会用 AI 聊天框问答,但不清楚 AI 怎么直接订机票、读 PDF、画图
+  plain_definition: 插件是给 AI 安装的可拆卸"外挂 App",让 AI 能联网、调用外部工具,突破自身能力边界
+  not_this: 它不是 AI 模型本身的升级,模型没变;也不是固定写死的程序,而是按需被唤醒、用完就放手的临时工具
+  how_it_works: AI 接收任务 -> 判断需要哪个插件 -> 通过握手协议了解插件能力 -> 唤醒并调用 -> 拿到结果 -> 用完放手
+  concrete_example: 让 AI 规划成都 3 天行程、预算 3000,它唤醒机票/酒店/地图插件,几秒返回含真实价格和预订链接的完整方案
+  why_it_matters: 把 AI 从"只能给建议的聊天玩具"变成"能直接办成事的数字助理",可嵌入真实工作流
+  action: 打开常用 AI 工具,去设置里找"插件"或"功能扩展"入口,挑一个插件完成一个原本要切换多个网站的小任务
+
+source_tags:
+  - 每天吃透一个AI知识点
+  - AI学习
+  - 插件
+  - AI工具
+  - 职场效率
+  - 干货分享
+  - 科技
+
+page_rhythm:
+  natural_message_units:
+    - "钩子:AI 聊天框像基础工具箱,但订机票/读 PDF/画图它自己做不了,需要外挂"
+    - "一句话说清楚:插件是给 AI 的外挂 App,让它联网干活、调用外部工具"
+    - "一个类比:AI 像关在书房的超级学霸,插件就是给它开窗、电话、画笔"
+    - "补充机制:握手协议 - AI 知道每个插件擅长什么,按需唤醒、用完放手"
+    - "真实案例:规划成都 3 天行程,AI 唤醒机票/酒店/地图插件,几秒返回完整方案"
+    - "为什么重要:AI 从嘴强王者变成行动派,从聊天玩具变成嵌入工作流的数字助理"
+    - "今日行动:去 AI 工具设置里找插件入口,挑一个插件完成一个小任务"
+  page_count: 7
+  silhouettes:
+    - page: 1
+      role: cover
+      silhouette: "typography-only S00 cover, huge term-en Plugins + mustard bar"
+    - page: 2
+      role: concept
+      silhouette: "landscape evidence + body: AI 核心外接插件模块 (object-map)"
+    - page: 3
+      role: metaphor
+      silhouette: "hero metaphor illustration + short caption: 书房学霸 + 窗/电话/画笔"
+    - page: 4
+      role: mechanism
+      silhouette: "landscape mechanism-flow: 握手协议 注册->判断->唤醒->调用->放手"
+    - page: 5
+      role: case
+      silhouette: "structured before/after comparison"
+    - page: 6
+      role: significance
+      silhouette: "pull-quote page"
+    - page: 7
+      role: action
+      silhouette: "compact illustration + 3 self-check options, closing action"
+
+pages:
+  - id: 1
+    message: 插件让 AI 突破聊天边界,能联网、调工具、直接办事
+    role: cover
+    layout: series-cover
+    cover:
+      series_line: "每天吃透一个<br><span class=\"ai-accent\">AI</span> 知识点"
+      english_term: Plugins
+      chinese_explanation: 给 AI 装的外挂 App
+      user_question: 为什么 AI 能聊天，却不能直接帮你订机票、查实时天气？
+
+  - id: 2
+    message: 插件是给 AI 安装的可拆卸"外挂 App"，让 AI 能联网、调用外部工具，能力按需扩展
+    role: concept
+    visual_type: labeled-gpt-image
+    metaphor: AI 大脑外接一排可插拔的工具模块
+    layout: concept-evidence
+    image_slot:
+      html_wrapper: evidence-figure landscape
+      slot_px: 904x603
+      slot_ratio: "3:2"
+      generator_ar: "4:3"
+      generator_canvas: 1536x1024
+      subject_bbox: "x=120-1416,y=128-896"
+      fit: contain
+    illustration:
+      role: object-map
+      labels:
+        - AI 大脑
+        - 插件接口
+        - 联网搜索
+        - 读 PDF
+        - 画图
+        - 订机票
+
+  - id: 3
+    message: AI 像关在书房的超级学霸，插件就是给它开的窗、给的电话、给的画笔——学霸没变，能干的事多了几百倍
+    role: metaphor
+    visual_type: labeled-gpt-image
+    metaphor: 关在书房的学霸 + 窗户(联网)/电话(调用服务)/画笔(图像生成)
+    layout: hero-metaphor
+    image_slot:
+      html_wrapper: evidence-figure hero
+      slot_px: 904x540
+      slot_ratio: "5:3"
+      generator_ar: "4:3"
+      generator_canvas: 1536x1024
+      subject_bbox: "x=120-1416,y=128-896"
+      fit: contain
+    illustration:
+      role: hero-metaphor
+      labels:
+        - 超级学霸
+        - 窗户
+        - 电话
+        - 画笔
+
+  - id: 4
+    message: 插件靠握手协议工作——AI 先了解每个插件的能力，需要时才唤醒，用完立即放手，非常高效
+    role: mechanism
+    visual_type: labeled-gpt-image
+    metaphor: 工具台上 AI 按需取用工具、用完归位
+    layout: mechanism-flow
+    image_slot:
+      html_wrapper: evidence-figure landscape
+      slot_px: 904x603
+      slot_ratio: "3:2"
+      generator_ar: "4:3"
+      generator_canvas: 1536x1024
+      subject_bbox: "x=120-1416,y=128-896"
+      fit: contain
+    illustration:
+      role: mechanism-flow
+      labels:
+        - 注册能力
+        - 判断需求
+        - 唤醒插件
+        - 调用工具
+        - 用完放手
+
+  - id: 5
+    message: 以前规划旅行要自己查机票、搜酒店、做攻略、算预算；现在一句话，AI 唤醒多个插件几秒返回完整方案
+    role: case
+    visual_type: no-illustration
+    layout: structured-comparison
+    case:
+      scenario: 规划 5 月去成都的 3 天行程，预算 3000 块
+      before:
+        title: 以前 · 手动折腾
+        steps:
+          - 自己查机票，逐个比价
+          - 搜酒店，翻几十页评论
+          - 查攻略，拼凑行程
+          - 手算预算，容易超支
+      after:
+        title: 现在 · 一句话搞定
+        steps:
+          - 唤醒机票插件，返回真实价格
+          - 唤醒酒店插件，给出预订链接
+          - 唤醒地图插件，排好路线
+          - 几秒内输出完整方案，你只负责掏钱
+
+  - id: 6
+    message: 插件是 AI 从"嘴强王者"变成"行动派"的关键一步——没有它 AI 只能给建议，有了它 AI 能直接把事办了
+    role: significance
+    visual_type: no-illustration
+    layout: pull-quote
+    pullquote: "没有插件，AI 只能给你建议；有了插件，AI 可以直接帮你把事办了。"
+    body: |
+      它把 AI 从一个聊天玩具，变成了真正能嵌入工作流的数字助理。
+      模型本身没有变，变的是 AI 能触及的外部世界——这恰恰是从"会聊"到"会做"的分水岭。
+
+  - id: 7
+    message: 今天就去 AI 工具的设置里找插件入口，挑一个插件，完成一个原本要切换多个网站的小任务
+    role: action
+    visual_type: labeled-gpt-image
+    metaphor: 工具架上挑选一个插件装上
+    layout: closing-action
+    image_slot:
+      html_wrapper: evidence-figure compact
+      slot_px: 300x260
+      slot_ratio: "1:1"
+      generator_ar: "1:1"
+      generator_canvas: 1024x1024
+      subject_bbox: "x=112-912,y=112-912"
+      fit: contain
+    illustration:
+      role: object-map
+      labels:
+        - 插件库
+        - 联网搜索
+        - 读 PDF
+    options:
+      - letter: A
+        text: 我从没打开过插件入口，今天先去设置里找一找
+      - letter: B
+        text: 我装过插件，但只停留在试用，没真拿来办事
+      - letter: C
+        text: 我已经用插件完成过一个真实小任务，感受过一站式解决的爽感

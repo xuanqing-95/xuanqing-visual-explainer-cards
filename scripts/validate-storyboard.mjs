@@ -2,6 +2,12 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseDocument } from "yaml";
+import {
+  QUALITY_CONTRACT,
+  generationQualityMeetsFloor,
+  minimumGenerationQualityForSize,
+  relativeRatioDrift,
+} from "./quality-contract.mjs";
 
 const REQUIRED_BRIEF_FIELDS = [
   "prior_knowledge",
@@ -25,6 +31,7 @@ const REQUIRED_SLOT_FIELDS = [
 
 const VISUAL_TYPES = new Set(["labeled-gpt-image", "html-label-overlay", "no-text"]);
 const ORIENTATIONS = new Set(["landscape", "square", "portrait"]);
+const GENERATION_QUALITIES = new Set(["low", "medium", "high"]);
 
 function isObject(value) {
   return Boolean(value) && typeof value === "object" && !Array.isArray(value);
@@ -96,7 +103,7 @@ function normalizePageIllustrations(page, schemaVersion) {
   return Array.isArray(page.illustrations) ? page.illustrations : [];
 }
 
-function validateSlot(slot, label, errors) {
+function validateSlot(slot, label, errors, schemaVersion) {
   if (!isObject(slot)) {
     errors.push(`${label} is required`);
     return;
@@ -140,6 +147,16 @@ function validateSlot(slot, label, errors) {
       (orientation === "square" && width !== height)
     ) {
       errors.push(`${label}.model_output_size does not match requested_orientation`);
+    }
+  }
+
+  if (schemaVersion >= 3 && slotRatio && outputSize) {
+    const outputRatio = outputSize.width / outputSize.height;
+    const drift = relativeRatioDrift(outputRatio, slotRatio);
+    if (drift > QUALITY_CONTRACT.max_canvas_slot_ratio_drift) {
+      errors.push(
+        `${label}.model_output_size ratio differs from slot_ratio by ${(drift * 100).toFixed(1)}% (max ${QUALITY_CONTRACT.max_canvas_slot_ratio_drift * 100}%)`
+      );
     }
   }
 
@@ -200,7 +217,7 @@ export function validateStoryboardTask(taskDirInput) {
   }
 
   const schemaVersion = data.schema_version;
-  if (![1, 2].includes(schemaVersion)) errors.push("schema_version must be 1 or 2");
+  if (![1, 2, 3].includes(schemaVersion)) errors.push("schema_version must be 1, 2, or 3");
   if (!hasText(data.topic)) errors.push("topic is required");
   if (!hasText(data.audience)) errors.push("audience is required");
 
@@ -264,7 +281,7 @@ export function validateStoryboardTask(taskDirInput) {
           if (!hasText(page.cover[field])) errors.push(`${label}.cover.${field} is required`);
         }
       }
-      if (schemaVersion === 2 && Array.isArray(sourcePages[index]?.illustrations) && sourcePages[index].illustrations.length > 0) {
+      if (schemaVersion >= 2 && Array.isArray(sourcePages[index]?.illustrations) && sourcePages[index].illustrations.length > 0) {
         errors.push(`${label}.illustrations must be empty on a cover page`);
       }
       return;
@@ -273,7 +290,10 @@ export function validateStoryboardTask(taskDirInput) {
     if (schemaVersion === 2 && !Array.isArray(sourcePages[index]?.illustrations)) {
       errors.push(`${label}.illustrations must be a non-empty list for every non-cover page`);
     }
-    if (page.illustrations.length === 0) {
+    if (schemaVersion === 3 && !Array.isArray(sourcePages[index]?.illustrations)) {
+      errors.push(`${label}.illustrations must be a list (empty when no generation is needed)`);
+    }
+    if (page.illustrations.length === 0 && schemaVersion < 3) {
       errors.push(
         schemaVersion === 1
           ? `${label}.illustration is required for every non-cover page`
@@ -298,6 +318,19 @@ export function validateStoryboardTask(taskDirInput) {
       if (!VISUAL_TYPES.has(illustration.visual_type)) {
         errors.push(`${illustrationLabel}.visual_type must be labeled-gpt-image, html-label-overlay, or no-text`);
       }
+      if (schemaVersion >= 3 && !GENERATION_QUALITIES.has(illustration.generation_quality)) {
+        errors.push(`${illustrationLabel}.generation_quality must be low, medium, or high`);
+      } else if (schemaVersion >= 3) {
+        const minimumQuality = minimumGenerationQualityForSize(
+          illustration.image_slot?.model_output_size
+        );
+        if (!generationQualityMeetsFloor(illustration.generation_quality, minimumQuality)) {
+          errors.push(
+            `${illustrationLabel}.generation_quality ${illustration.generation_quality} is below `
+            + `${minimumQuality} for ${illustration.image_slot?.model_output_size || "this canvas"}`
+          );
+        }
+      }
       if (!isSafeRelativeFile(illustration.prompt_file, ".md")) {
         errors.push(`${illustrationLabel}.prompt_file must be a task-relative .md file`);
       } else {
@@ -308,7 +341,7 @@ export function validateStoryboardTask(taskDirInput) {
       } else {
         allOutputFiles.push(illustration.output_file);
       }
-      validateSlot(illustration.image_slot, `${illustrationLabel}.image_slot`, errors);
+      validateSlot(illustration.image_slot, `${illustrationLabel}.image_slot`, errors, schemaVersion);
     });
   });
 
@@ -328,7 +361,7 @@ export function validateStoryboardTask(taskDirInput) {
     if (!pageId) errors.push(`${label}.page is required`);
     if (pageId && seenBeatIds.has(pageId)) errors.push(`${label}.page duplicates page ${pageId}`);
     if (pageId) seenBeatIds.add(pageId);
-    for (const field of ["purpose", "silhouette", "visual_weight", "transition"]) {
+    for (const field of ["purpose", "silhouette", "transition"]) {
       if (!hasText(beat[field])) errors.push(`${label}.${field} is required`);
     }
   });

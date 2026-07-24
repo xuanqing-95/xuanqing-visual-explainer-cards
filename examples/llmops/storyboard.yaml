@@ -18,27 +18,22 @@ page_rhythm:
     - page: 1
       purpose: 用同模型不同效果的问题建立阅读动机
       silhouette: huge-type-cover
-      visual_weight: type-led
       transition: open-with-question
     - page: 2
       purpose: 用餐厅后厨解释模型之外的运维体系
       silhouette: image-led-hero
-      visual_weight: image-led
       transition: zoom-into-metaphor
     - page: 3
       purpose: 把抽象风险拆成三个可独立观察的信号
       silhouette: thumbnail-ledger
-      visual_weight: balanced
       transition: move-from-metaphor-to-symptoms
     - page: 4
       purpose: 用两个独立状态说明流程如何变得可控
       silhouette: comparison-split
-      visual_weight: split-led
       transition: prove-with-case
     - page: 5
       purpose: 让读者判断自己的 prompt 当前写在哪里
       silhouette: compact-action-ledger
-      visual_weight: text-led
       transition: close-with-action
 
 pages:

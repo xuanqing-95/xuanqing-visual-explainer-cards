@@ -1,0 +1,94 @@
+{
+  "status": "success",
+  "topic": "上下文窗口（Context Window）",
+  "audience": "刚开始使用 AI 对话与 AI Coding 的小白用户",
+  "page_count": 5,
+  "content_page_count": 4,
+  "illustration_count": 5,
+  "schema_version": 2,
+  "mode": "editorial",
+  "accent": "indigo-porcelain",
+  "validation": {
+    "storyboard": "PASS",
+    "generated_illustrations": "PASS",
+    "pages": ["PASS", "PASS", "PASS", "PASS", "PASS"],
+    "artifacts": "PASS",
+    "fail_count": 0,
+    "warnings": [
+      "xhs-04-compare: illustration evidence only 17% of canvas height (advisory - comparison thumbnails are intentionally 240px)",
+      "xhs-05-action: illustration evidence only 14% of canvas height (advisory - action illustration is intentionally 200px)"
+    ]
+  },
+  "pages": [
+    {
+      "id": 1,
+      "role": "cover",
+      "layout": "series-cover",
+      "silhouette": "huge-type-cover",
+      "title": "Context Window · 上下文窗口",
+      "illustrations": 0
+    },
+    {
+      "id": 2,
+      "role": "concept",
+      "layout": "metaphor-evidence",
+      "silhouette": "image-led-hero",
+      "title": "上下文窗口像考试桌面",
+      "illustrations": 1,
+      "illustration_ids": ["main"]
+    },
+    {
+      "id": 3,
+      "role": "mechanism",
+      "layout": "mechanism-sidecar",
+      "silhouette": "sidecar-mechanism",
+      "title": "超出窗口时 AI 会怎么办",
+      "illustrations": 1,
+      "illustration_ids": ["methods"]
+    },
+    {
+      "id": 4,
+      "role": "consequence",
+      "layout": "before-after-comparison",
+      "silhouette": "comparison-split",
+      "title": "多轮修改后规则被忘了",
+      "illustrations": 2,
+      "illustration_ids": ["before", "after"]
+    },
+    {
+      "id": 5,
+      "role": "action",
+      "layout": "closing-checklist",
+      "silhouette": "compact-action-ledger",
+      "title": "让 AI 总结目标与约束",
+      "illustrations": 1,
+      "illustration_ids": ["action"]
+    }
+  ],
+  "artifacts": {
+    "storyboard": "storyboard.yaml",
+    "prompts": [
+      "prompts/page-02.md",
+      "prompts/page-03.md",
+      "prompts/page-04-before.md",
+      "prompts/page-04-after.md",
+      "prompts/page-05.md"
+    ],
+    "illustrations": [
+      "assets/page-02.png",
+      "assets/page-03.png",
+      "assets/page-04-before.png",
+      "assets/page-04-after.png",
+      "assets/page-05.png"
+    ],
+    "html": "index.html",
+    "output": [
+      "output/xhs-01-cover.png",
+      "output/xhs-02-metaphor.png",
+      "output/xhs-03-mechanism.png",
+      "output/xhs-04-compare.png",
+      "output/xhs-05-action.png"
+    ]
+  },
+  "visual_inspection": "skipped - runtime uses a text-only orchestration model; deterministic validation, HTML rendering, and output file checks all pass"
+}
