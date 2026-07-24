@@ -2,7 +2,16 @@ import fs from "node:fs";
 import { createHash } from "node:crypto";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
+import { fileURLToPath } from "node:url";
 import { validateStoryboardTask } from "./validate-storyboard.mjs";
+import { loadVersionedLocalFontCss } from "./local-fonts.mjs";
+import {
+  slotKind,
+  validateContainedSubjectOccupancy,
+  validateFontSourceDeterminism,
+} from "./quality-contract.mjs";
+
+const skillDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 async function loadChromium() {
   try {
@@ -39,6 +48,8 @@ function sha256File(filePath) {
 }
 
 const taskDir = path.resolve(process.argv[2] || ".");
+const requireUsageSidecar = process.env.REQUIRE_IMAGE_USAGE_SIDECAR === "true";
+const allowSystemFontFallback = process.env.ALLOW_SYSTEM_FONT_FALLBACK === "true";
 const indexPath = path.join(taskDir, "index.html");
 if (!fs.existsSync(indexPath)) {
   console.error(`[ERROR] index.html not found in ${taskDir}`);
@@ -56,6 +67,15 @@ console.log(
   `[PASS] storyboard: ${storyboardResult.summary.pageCount} page(s), ${storyboardResult.summary.contentCount} content page(s), ${storyboardResult.summary.illustrationCount} illustration(s), ${storyboardResult.summary.layoutCount} layout(s), ${storyboardResult.summary.silhouetteCount} silhouette(s)`
 );
 
+const indexText = fs.readFileSync(indexPath, "utf8");
+const fontSource = validateFontSourceDeterminism(indexText, {
+  schemaVersion: storyboardResult.data.schema_version,
+});
+if (!fontSource.ok) {
+  console.log(`[FAIL] document: ${fontSource.errors.join("; ")}`);
+  process.exit(1);
+}
+
 const chromium = await loadChromium();
 let browser;
 try {
@@ -71,6 +91,7 @@ try {
 }
 const page = await browser.newPage({ viewport: { width: 1200, height: 1600 } });
 await page.goto(pathToFileURL(indexPath).href, { waitUntil: "networkidle" });
+await page.addStyleTag({ content: loadVersionedLocalFontCss(skillDir) });
 await page.evaluate(() => document.fonts.ready);
 await page.waitForTimeout(300);
 
@@ -160,16 +181,40 @@ const results = await page.locator(".poster").evaluateAll((cards) => {
       }
     });
 
-    // R3 — footer collision: .foot must not overlap previous sibling content
+    // R3 — footer collision: no visible content may enter the footer reserve.
+    // Checking only previousElementSibling misses flex/absolute layouts where
+    // the footer overlays an earlier paragraph while scrollHeight stays clipped.
     const foot = card.querySelector(".foot");
     if (foot) {
       const footRect = foot.getBoundingClientRect();
-      const prev = foot.previousElementSibling;
-      if (prev) {
-        const prevRect = prev.getBoundingClientRect();
-        if (prevRect.bottom > footRect.top + 1) {
-          failures.push(`R3 footer collision: content bottom ${Math.round(prevRect.bottom)} > foot top ${Math.round(footRect.top)}`);
+      const cardRect = card.getBoundingClientRect();
+      if (footRect.bottom > cardRect.bottom + 1) {
+        failures.push(`R3 footer exits board: foot bottom ${Math.round(footRect.bottom)} > board bottom ${Math.round(cardRect.bottom)}`);
+      }
+      for (const child of foot.children) {
+        const rect = child.getBoundingClientRect();
+        if (rect.left < footRect.left - 1 || rect.right > footRect.right + 1) {
+          failures.push(
+            `R3 footer child exits horizontal safe area: ${child.className || child.tagName.toLowerCase()} ${Math.round(rect.left - cardRect.left)}-${Math.round(rect.right - cardRect.left)} outside ${Math.round(footRect.left - cardRect.left)}-${Math.round(footRect.right - cardRect.left)}`
+          );
         }
+      }
+      const footerGap = 16;
+      const contentNodes = card.querySelectorAll(
+        "h1,h2,h3,p,li,img,.action-opt,.opt,.ledger .row,[data-visual-evidence]"
+      );
+      let offender = null;
+      for (const node of contentNodes) {
+        if (foot.contains(node) || node.contains(foot)) continue;
+        const rect = node.getBoundingClientRect();
+        if (rect.width <= 1 || rect.height <= 1) continue;
+        if (rect.top < footRect.top && rect.bottom > footRect.top - footerGap) {
+          if (!offender || rect.bottom > offender.rect.bottom) offender = { node, rect };
+        }
+      }
+      if (offender) {
+        const name = offender.node.className || offender.node.tagName.toLowerCase();
+        failures.push(`R3 footer collision: ${name} bottom ${Math.round(offender.rect.bottom)} enters ${footerGap}px footer reserve at ${Math.round(footRect.top)}`);
       }
     }
 
@@ -224,8 +269,8 @@ const results = await page.locator(".poster").evaluateAll((cards) => {
 
     // R7 — figure margin reset
     const stretchedFigures = [...card.querySelectorAll("figure")].filter((fig) => {
-      const margin = getComputedStyle(fig).margin;
-      return margin && margin !== "0px" && !/^0px( 0px)*$/.test(margin);
+      const style = getComputedStyle(fig);
+      return parseFloat(style.marginLeft) !== 0 || parseFloat(style.marginRight) !== 0;
     });
     if (stretchedFigures.length) {
       warnings.push(`R7 ${stretchedFigures.length} <figure> elements have default browser margin (add figure { margin:0 })`);
@@ -235,7 +280,14 @@ const results = await page.locator(".poster").evaluateAll((cards) => {
     const evidence = card.querySelector(".illust-frame, .frame-img, .image-hero, .hero-img-wrap");
     if (evidence) {
       const ratio = evidence.getBoundingClientRect().height / card.clientHeight;
-      if (ratio < 0.3) warnings.push(`illustration evidence only ${Math.round(ratio * 100)}% of canvas height`);
+      const layout = card.getAttribute("data-layout") || "";
+      const compactEvidenceIsExpected = Boolean(
+        evidence.closest(".evidence-figure.compact")
+        || /compare|comparison|action|checklist|ledger/i.test(layout)
+      );
+      if (!compactEvidenceIsExpected && ratio < 0.3) {
+        warnings.push(`illustration evidence only ${Math.round(ratio * 100)}% of canvas height`);
+      }
     }
 
     return { id, failures, warnings };
@@ -301,6 +353,11 @@ const mediaStats = await page.locator(".poster").evaluateAll((cards) => {
           illustrationId: img.getAttribute("data-illustration-id") || "",
           src: img.getAttribute("src") || "",
           alt: img.getAttribute("alt") || "",
+          naturalWidth: img.naturalWidth,
+          naturalHeight: img.naturalHeight,
+          objectFit: getComputedStyle(img).objectFit,
+          frameWidth: img.closest(".illust-frame")?.getBoundingClientRect().width || 0,
+          frameHeight: img.closest(".illust-frame")?.getBoundingClientRect().height || 0,
         })),
       })),
     broken: images.filter(
@@ -506,9 +563,9 @@ if (
     !docChecks.fonts.mono && "IBM Plex Mono",
   ].filter(Boolean);
   console.log(
-    `[FAIL] document: R6 required font face(s) did not actually load: ${missing.join(", ")}`
+    `[${allowSystemFontFallback ? "WARN" : "FAIL"}] document: R6 required font face(s) did not actually load: ${missing.join(", ")}`
   );
-  failed = true;
+  if (!allowSystemFontFallback) failed = true;
 }
 if (docChecks.accents.length > 1) {
   console.log(`[FAIL] document: R6 identity — multiple accents declared: ${docChecks.accents.join(", ")} (one per set)`);
@@ -558,26 +615,52 @@ const resolveTaskFile = (relativePath, label, baseDir = taskDir) => {
   }
   return resolved;
 };
+const resolveMetadataPath = (relativePath, label, provenanceDir, expectedPath = null) => {
+  const candidates = [];
+  const errors = [];
+  for (const baseDir of [provenanceDir, taskDir]) {
+    try {
+      const candidate = resolveTaskFile(relativePath, label, baseDir);
+      if (!candidates.includes(candidate)) candidates.push(candidate);
+    } catch (error) {
+      errors.push(error);
+    }
+  }
+  if (candidates.length === 0) throw errors[0] || new Error(`${label} is invalid`);
+  if (expectedPath && candidates.includes(expectedPath)) return expectedPath;
+  const existing = candidates.filter((candidate) => fs.existsSync(candidate));
+  if (existing.length === 1) return existing[0];
+  if (existing.length > 1) {
+    throw new Error(`${label} is ambiguous between provenance-relative and task-relative paths`);
+  }
+  return candidates[0];
+};
 
 for (const card of mediaStats.generatedByCard) {
   const expectedStoryboardPage = storyboardResult.pages.find(
     (page) => String(page.id) === card.pageId
   );
   if (card.images.length === 0) {
-    console.log(
-      `[FAIL] ${card.card}: every non-cover card requires at least one model-generated illustration inside .illust-frame with data-generated-illustration="true"`
-    );
-    failed = true;
-    generatedProvenanceFailed = true;
+    if ((expectedStoryboardPage?.illustrations || []).length > 0) {
+      console.log(
+        `[FAIL] ${card.card}: storyboard requires generated illustration(s), but none are bound in HTML`
+      );
+      failed = true;
+      generatedProvenanceFailed = true;
+    }
     continue;
   }
   for (const image of card.images) {
     try {
       const imagePath = resolveTaskFile(image.src, "generated image src");
       const metadataPath = `${imagePath}.generation.json`;
+      const usagePath = `${imagePath}.usage.json`;
       if (!fs.existsSync(imagePath)) throw new Error(`generated image is missing: ${image.src}`);
       if (!fs.existsSync(metadataPath)) {
         throw new Error(`generation provenance is missing: ${path.relative(taskDir, metadataPath)}`);
+      }
+      if (requireUsageSidecar && !fs.existsSync(usagePath)) {
+        throw new Error(`provider usage is missing: ${path.relative(taskDir, usagePath)}`);
       }
       const metadata = JSON.parse(fs.readFileSync(metadataPath, "utf8"));
       const required = [
@@ -602,34 +685,39 @@ for (const card of mediaStats.generatedByCard) {
       }
 
       const provenanceDir = path.dirname(metadataPath);
-      const declaredOutput = resolveTaskFile(
+      const declaredOutput = resolveMetadataPath(
         metadata.output_file,
         "output_file",
-        provenanceDir
+        provenanceDir,
+        imagePath,
       );
       if (declaredOutput !== imagePath) {
         throw new Error("generation provenance output_file does not match the HTML image");
       }
-      const promptPath = resolveTaskFile(metadata.prompt_file, "prompt_file", provenanceDir);
+      const expectedIllustration = expectedStoryboardPage?.illustrations.find(
+        (illustration) =>
+          String(illustration.id) ===
+          (image.illustrationId ||
+            (isLegacySingleIllustrationSchema && card.images.length === 1 ? "main" : ""))
+      );
+      const expectedPromptPath = expectedIllustration
+        ? resolveTaskFile(expectedIllustration.prompt_file, "storyboard illustrations[].prompt_file")
+        : null;
+      const promptPath = resolveMetadataPath(
+        metadata.prompt_file,
+        "prompt_file",
+        provenanceDir,
+        expectedPromptPath,
+      );
       if (!fs.existsSync(promptPath)) {
         throw new Error(`generation prompt is missing: ${metadata.prompt_file}`);
       }
       if (expectedStoryboardPage) {
-      const expectedIllustration = expectedStoryboardPage.illustrations.find(
-          (illustration) =>
-            String(illustration.id) ===
-            (image.illustrationId ||
-              (isLegacySingleIllustrationSchema && card.images.length === 1 ? "main" : ""))
-        );
         if (!expectedIllustration) {
           throw new Error(
             `generated image has no matching storyboard illustration id: ${image.illustrationId || "(missing)"}`
           );
         }
-        const expectedPromptPath = resolveTaskFile(
-          expectedIllustration.prompt_file,
-          "storyboard illustrations[].prompt_file"
-        );
         if (promptPath !== expectedPromptPath) {
           throw new Error(
             `generation provenance prompt_file does not match storyboard: ${metadata.prompt_file}`
@@ -640,12 +728,40 @@ for (const card of mediaStats.generatedByCard) {
             `generated image size ${metadata.size} does not match storyboard model_output_size ${expectedIllustration.image_slot.model_output_size}`
           );
         }
+        if (
+          expectedIllustration.generation_quality
+          && metadata.quality !== expectedIllustration.generation_quality
+        ) {
+          throw new Error(
+            `generated image quality ${metadata.quality} does not match storyboard generation_quality ${expectedIllustration.generation_quality}`
+          );
+        }
       }
       if (sha256File(promptPath) !== metadata.prompt_sha256) {
         throw new Error(`generation prompt hash does not match: ${metadata.prompt_file}`);
       }
       if (sha256File(imagePath) !== metadata.final_sha256) {
         throw new Error(`generated image hash does not match provenance: ${image.src}`);
+      }
+      if (requireUsageSidecar) {
+        const usage = JSON.parse(fs.readFileSync(usagePath, "utf8"));
+        if (!usage.usage || typeof usage.usage !== "object") {
+          throw new Error(`provider usage is empty: ${path.relative(taskDir, usagePath)}`);
+        }
+        if (usage.final_sha256 !== metadata.final_sha256) {
+          throw new Error(`provider usage final_sha256 does not match provenance: ${image.src}`);
+        }
+        if (usage.prompt_sha256 !== metadata.prompt_sha256) {
+          throw new Error(`provider usage prompt_sha256 does not match provenance: ${image.src}`);
+        }
+        const requestedQuality = usage.request?.requestedQuality || usage.request?.quality;
+        if (requestedQuality && requestedQuality !== metadata.quality) {
+          throw new Error(`provider usage quality does not match provenance: ${image.src}`);
+        }
+        const requestedSize = usage.request?.requestedSize || usage.request?.size;
+        if (requestedSize && requestedSize !== metadata.size) {
+          throw new Error(`provider usage size does not match provenance: ${image.src}`);
+        }
       }
       const size = readPngSize(imagePath);
       if (
@@ -657,6 +773,35 @@ for (const card of mediaStats.generatedByCard) {
           `generated image dimensions do not match provenance: ${size.width}x${size.height}`
         );
       }
+      if (storyboardResult.data.schema_version >= 3) {
+        const bbox = metadata.content_bbox;
+        const bboxFields = ["left", "top", "right", "bottom"];
+        if (!bbox || bboxFields.some((field) => !Number.isFinite(bbox[field]))) {
+          throw new Error(`generated image content_bbox is missing from provenance: ${image.src}`);
+        }
+        if (image.objectFit !== "contain") {
+          throw new Error(`generated image must use object-fit: contain; got ${image.objectFit}`);
+        }
+        const expectedIllustration = expectedStoryboardPage?.illustrations.find(
+          (illustration) => String(illustration.id) === String(image.illustrationId)
+        );
+        const kind = slotKind(
+          expectedIllustration?.image_slot?.html_wrapper,
+          expectedIllustration?.image_slot?.requested_orientation
+        );
+        const occupancy = validateContainedSubjectOccupancy({
+          bbox,
+          imageSize: size,
+          frameSize: { width: image.frameWidth, height: image.frameHeight },
+          kind,
+        });
+        if (!occupancy.ok) {
+          const { width: widthOccupancy, height: heightOccupancy, range } = occupancy;
+          throw new Error(
+            `generated subject occupancy ${Math.round(widthOccupancy * 100)}%×${Math.round(heightOccupancy * 100)}% is outside ${kind} range ${Math.round(range.min_width * 100)}-${Math.round(range.max_width * 100)}%×${Math.round(range.min_height * 100)}-${Math.round(range.max_height * 100)}%`
+          );
+        }
+      }
       verifiedGeneratedImages += 1;
     } catch (error) {
       console.log(`[FAIL] ${card.card}: ${error.message}`);
@@ -667,7 +812,7 @@ for (const card of mediaStats.generatedByCard) {
 }
 if (!generatedProvenanceFailed && mediaStats.generatedByCard.length > 0) {
   console.log(
-    `[PASS] generated illustrations: ${mediaStats.generatedByCard.length} content card(s), ${verifiedGeneratedImages} provenance record(s) verified`
+    `[PASS] generated illustrations: ${mediaStats.generatedByCard.length} content card(s), ${verifiedGeneratedImages} provenance record(s) verified${requireUsageSidecar ? " with provider usage" : ""}`
   );
 }
 for (const cover of coverStats) {

@@ -1,219 +1,119 @@
 # Design System
 
-Use this as the single source of truth for canvas, typography, colors, components, image containers, and background patterns.
-
-## Contents
-
-- Canvas and Editorial identity
-- Color and typography
-- Required page structure
-- Image containers
-- Page rhythm and background patterns
-- Release checks
-
 ## Canvas
 
-- Final board: `1080x1440` (3:4).
-- Content padding: 96px top/bottom and 88px left/right.
-- Stable pixels only inside posters; do not use `vw` or `vh`.
-- Spacing scale: 8, 12, 16, 24, 32, 40, 48, 64, 80, 96px.
-- Every `.poster` uses `overflow:hidden`.
+- Xiaohongshu: 1080 × 1440 (3:4).
+- Outer padding: 80px on all sides (handled by `.poster.xhs .content` in the template).
+- Spacing scale: 8, 12, 16, 24, 32, 40, 48, 64, 80, 96px (tokens `--sp-3` through `--sp-12`).
 
-## Editorial identity
+## Color System
 
-The default identity is magazine-like Editorial:
-
-- serif Chinese display, body, and lead;
-- Playfair Display for large English terms and italic subtitles;
-- IBM Plex Mono for chrome, labels, captions, and metadata;
-- straight modules and hairline rules;
-- off-white paper, black ink, restrained accent color;
-- no rounded cards, shadows, gradients, glass effects, or decorative blobs.
-
-Content shape decides layout. Visual evidence must explain, not decorate.
-
-## Color
-
-Default **Indigo Porcelain**:
+Default theme is **Indigo Porcelain** — a deliberate dual-color system:
 
 ```css
---paper: #fafaf8;
---paper-deep: #f0f0ee;
---ink: #0a0a0a;
---ink-soft: #1f1f1f;
---grey-1: #f0f0ee;
---grey-2: #d4d4d2;
---grey-3: #737373;
---accent: #002FA7;
---accent-on: #ffffff;
---highlight: #F2D24B;
---highlight-on: #0a0a0a;
+--accent:     #002FA7   /* IKB Klein Blue — system structure */
+--accent-on:  #ffffff
+--highlight:  #F2D24B   /* Mustard Yellow — emphasis only */
+--highlight-on: #0a0a0a
 ```
 
-Hard rules for the default:
+### Two-Layer Color Logic (hard rule)
 
-- IKB blue is visible on every page through chrome, foot, labels, dividers, page numbers, inline emphasis, or illustration accents.
-- Mustard yellow appears once per set: the bar under the cover's English term.
-- Do not use mustard on content-page titles, numbers, options, or backgrounds.
-- Use one accent preset for the entire set.
+| Token | Role | Use on |
+|---|---|---|
+| `--accent` (IKB Blue) | The visible system color | Chrome hairline + category label, foot hairline + page number, `.section-label`, `.hr-accent`, optional `.title-underline` heading emphasis, `.img-cap`, `.body strong`, illustrations |
+| `--highlight` (Mustard) | Cover bar ONLY | The horizontal bar under `.term-en` on the cover. Nowhere else. |
+| `--ink` / `--ink-soft` | Body text | All copy |
+| `--grey-1/2/3` | Surfaces & meta | Card backgrounds, hairlines, metadata |
 
-The template also includes three working single-color alternatives:
+**IKB blue must be visible on every page.** If you finish a page and the only colors on it are black + grey + paper, you've failed the system. Use IKB on at minimum: chrome hairline + label, foot hairline + page number.
 
-| `data-accent` | Accent | Best fit |
-|---|---:|---|
-| `lemon-yellow` | `#FFD500` | young, consumer, playful |
-| `lemon-green` | `#C5E803` | ecology, health, emerging tech |
-| `safety-orange` | `#FF6B35` | warning, urgency, decisions |
+**Mustard yellow appears exactly once in a card set** — on the cover bar under `.term-en`. Not on content-page titles, not on backgrounds, not on numbers, not on key options. Concentrating mustard on one place is what makes the cover read as a cover.
 
-These alternatives use the same color for `--accent` and `--highlight`. Use them only when Indigo Porcelain does not fit; do not invent extra presets.
+Earlier versions of this skill used mustard on `.kicker`, `em` fills, ledger numbers, and key options. That over-saturated the emphasis color and made every page look the same. Don't go back to that.
+
+### Alt Accents
+
+3 single-color alternatives in `theme-presets.md` (Lemon Yellow, Lemon Green, Safety Orange). They collapse `--accent` and `--highlight` to one color — use only when Indigo Porcelain truly doesn't fit. The dual-color logic above does not apply.
 
 ## Typography
 
-The larger, the lighter. Display text uses weight 500 unless the cover's English term explicitly calls for heavier Playfair.
+**Editorial-first**: Serif for display + body + lead, italic Playfair for English subtitles, mono for meta.
 
-| Role | Class | Size | Weight | Family |
-|---|---|---:|---:|---|
-| Display | `.h-display` | 124px | 500 | serif-zh |
-| Section title | `.h-xl` | 88px | 500 | serif-zh |
-| Mid title | `.h-md` | 56px | 500 | serif-zh |
-| English subtitle | `.h-sub` | 36px | 400 italic | serif-en |
-| Pull quote | `.pullquote` | 64px | 500 italic | serif-zh |
-| Lead | `.lead` | 28px | 400 | serif-zh |
-| Body | `.body` | 24px | 400 | serif-zh |
-| Kicker / section label | `.kicker`, `.section-label` | 21px | 500 | mono |
-| Meta / caption / chrome | `.meta`, `.img-cap`, `.chrome`, `.foot` | 18px | 500 | mono |
+The single most important rule: **"the larger, the lighter"** — display sizes use weight 500, never 700+. Heavy display weights collapse cards into "heavy infographic banner" and destroy the editorial identity.
 
-Cover-only:
+The second most important rule: **body and lead use serif-zh, not sans-zh.** Sans body reads as landing page, not magazine.
 
-| Role | Class | Size | Weight |
-|---|---|---:|---:|
-| Series title | `.cover-series .series-zh` | 96px | 500 |
-| English term | `.cover-series .term-en` | 240px | 900 |
-| Chinese explanation | `.cover-series .term-zh` | 42px | 500 |
-| Scenario question | `.cover-series .term-question` | 56px | 500 |
+| Role | Class | Size | Weight | Tracking | Family |
+|---|---|---|---|---|---|
+| Display | `.h-display` | 124px | 500 | +.04em | serif-zh |
+| Section title | `.h-xl` | 88px | 500 | +.03em | serif-zh |
+| Mid title | `.h-md` | 56px | 500 | +.02em | serif-zh |
+| English sub italic | `.h-sub` | 36px | 400 italic | normal | serif-en |
+| Pull quote | `.pullquote` | 64px | 500 italic | normal | serif-zh |
+| Lead | `.lead` | 28px | 400 | normal | **serif-zh** |
+| Body | `.body` | 24px | 400 | normal | **serif-zh** |
+| Kicker / section-label | `.kicker` / `.section-label` | 21px | 500 | +.22em | mono |
+| Meta / label / caption / chrome | `.meta` / `.label` / `.img-cap` / `.chrome` | 18px | 500 | +.20em | mono |
 
-Rules:
+Cover-only: `.cover-series .series-zh` = 96px serif-zh; `.cover-series .term-en` = 240px Playfair weight 900; `.cover-series .term-zh` = 42px serif-zh IKB Chinese explanation of the English term; `.cover-series .term-question` = 56px serif-zh.
 
-- Body and lead are serif Chinese, never sans.
-- Display tracking is positive, about `+.03em` to `+.04em`.
-- Mono labels use at least `+.20em` tracking.
-- Keep mono out of body copy.
-- Minimum body size is 24px; cut copy instead of shrinking below it.
-- The cover `.term-zh` is a Chinese explanation, not an English slogan.
+### Fonts
 
-### Chinese title bands
+- `--serif-en`: Playfair Display (loaded from Google Fonts)
+- `--serif-zh`: Noto Serif SC
+- `--sans-zh`: Noto Sans SC (utility only; do NOT use for body)
+- `--mono`: IBM Plex Mono
 
-| Shape | Suggested size |
-|---|---:|
-| 1 line, up to 6 Chinese characters | 124px display / 88px xl |
-| 1 line, 7–10 characters | 108px / 78px |
-| 2 lines, up to 8 characters each | 96px / 78px |
-| 2 lines, 9–12 characters on a line | 84px / 68px |
-| 3 lines | shorten or split the page |
+Hard rules:
 
-### Emphasis
+- **Display weights are 500.** Never 700+. The system is "the larger, the lighter".
+- **Body and lead are serif-zh.** Never sans. Sans body breaks the magazine feel.
+- **Tracking on display is positive** (+.03 to +.04em). Negative tracking on serif Chinese looks crushed.
+- **Tracking on kicker/meta/section-label is ≥+.20em.** Tight mono uppercase looks like a code editor, not a magazine label.
+- **Do not** load additional serif families. Stick to Playfair + Noto Serif SC.
+- **Do not** use mono outside chrome/meta/kicker/section-label/caption. Mono in body reads as code.
+- **Do not** stretch `em` highlights across more than 4-6 characters. Long highlight blocks lose emphasis.
 
-Plain `em` is semantic emphasis only. Add `.title-underline` for an IKB underline on at most 0–2 key turning-point pages.
+## Emphasis Pattern
+
+Plain `em` inside `.h-display` / `.h-xl` / `.h-md` only marks the phrase semantically. It does not draw a line.
+
+Add `.title-underline` to the heading only when the page needs a sharp visual turn. The underline is thick IKB blue (6px on display/xl, 5px on md) with large offset (10/8px) so it reads as deliberate, not as a hyperlink.
 
 ```html
 <h2 class="h-xl title-underline">Demo 漂亮<br><em>上生产翻车</em></h2>
 ```
 
-Use `.body strong` for restrained IKB inline emphasis. Do not create yellow text backgrounds on content pages.
+Use title underline sparingly: 0-2 content pages per set, usually for the key contrast or turning point. If every content page has one, the set looks templated and noisy.
 
-## Required page structure
+If you only need a readable title, use no `em` or use plain `em` without `.title-underline`.
 
-Every page contains:
+Yellow background fills on em are forbidden on content pages. Yellow lives only on the cover bar.
 
-1. `.chrome` at the top;
-2. a clear focal title or statement;
-3. visual or structural evidence;
-4. `.foot` pinned at the bottom with `margin-top:auto`.
+## Page Rhythm
 
-```html
-<div class="chrome">
-  <span class="c-cat">核心比喻 · METAPHOR</span>
-  <span class="c-num">02 / 05</span>
-</div>
-...
-<div class="foot">
-  <span class="f-tag">一句收束</span>
-  <span class="f-num">02 / 05</span>
-</div>
-```
+Most content pages pair **text + small illustration**. Text leads, illustration explains.
 
-Use `.section-label` for the per-page IKB marker. Use `.img-cap` for image captions.
+Common 4-7 page rhythm:
+1. Cover (S00) — typography only, mustard yellow bar
+2. Concept / metaphor — one evidence illustration + short caption
+3. Mechanism / causal chain — workflow, comparison, or labeled scene
+4. Example / use case — concrete scenario with supporting visual evidence
+5. Boundary / misconception / tradeoff — type-led or comparison-led
+6. Closing / action — type-led, optional small illustration
 
-## Image containers
+Do not treat this as a fixed 6-page template. Extract the source's natural message units first, then keep only the pages needed to explain them clearly.
 
-| Class | Natural role |
-|---|---|
-| `.evidence-figure.landscape` | default 3:2 evidence well for `1536x1024` output |
-| `.evidence-figure.hero` | 500–600px concept or metaphor band |
-| `.evidence-figure.wide` | 340–460px genuinely wide strip |
-| `.evidence-figure.square` | centered 1:1 object or compact scene |
-| `.evidence-figure.portrait` | centered tall mechanism or scene |
-| `.evidence-figure.compact` | 220–300px supporting mark |
-| `.illust-frame` | generated illustration with `object-fit:contain` |
-| `.illust-frame.row-thumb` | 200×200 list-item illustration |
-| `.illust-frame.compare-thumb` | 240px-tall comparison-state illustration |
-| `.illust-frame.step-icon` | 130×130 process-step illustration |
-| `.frame-img` | photograph with intentional `object-fit:cover` crop |
+Avoid both extremes: "one illustration on page 2 only" (boring) or "one big illustration on every single page" (overwhelming).
 
-Major generated illustrations use both layers:
+## Hard Rules
 
-```html
-<figure class="evidence-figure landscape">
-  <div class="illust-frame">
-    <img data-generated-illustration="true" data-illustration-id="main" src="assets/page-03.png" alt="具体描述图中机制">
-  </div>
-  <figcaption class="img-cap">Fig. 03 · 一句说明</figcaption>
-</figure>
-```
-
-Small row thumbnails and inline step marks may use `.illust-frame` directly. Do not place a square or portrait image in a shallow full-width band.
-
-Available recovery classes:
-
-- `.wide-flow`: enlarge a margin-heavy wide diagram to about 118%;
-- `.zoom-110`, `.zoom-125`, `.zoom-140`: controlled enlargement after background normalization.
-
-Use them only after checking that no label, arrow, or subject is cropped.
-
-## Page rhythm
-
-For a typical 4–7 page set:
-
-1. cover;
-2. concept or metaphor;
-3. mechanism or causal chain;
-4. example or comparison;
-5. boundary, tradeoff, or misconception;
-6. closing action.
-
-This is a rhythm reference, not a fixed page count. Every non-cover content page needs a model-generated illustration. HTML diagrams, comparisons, processes, and ledgers may supplement that illustration when they communicate exact information more clearly.
-
-Record the chosen rhythm in `storyboard.yaml` before writing HTML. Every `.poster` must expose the planned `data-page-id`, `data-layout`, and `data-silhouette`; final validation compares them with the storyboard.
-
-## Background patterns
-
-Use at most one quiet matrix layer on a sparse cover or statement page:
-
-- `.dot-mat`: sparse dot matrix;
-- `.cross-mat`: cross-hatch matrix;
-- `.ring-mat`: ring matrix.
-
-Apply the class directly to `.poster`; the seed supplies the pseudo-element and keeps `.content` above it. Omit patterns on dense pages and never stack them.
-
-## Release checks
-
-- storyboard preflight passes before HTML design;
-- HTML page ids, layouts, silhouettes, wrappers, and generated asset paths match the storyboard;
-- final board is 1080×1440;
-- content uses at least 75% of the vertical canvas;
-- one accent preset per set;
-- no rounded cards, shadows, or gradients;
-- body remains at least 24px;
-- generated image wrapper and actual canvas match the storyboard;
-- no broken images or placeholder artwork;
-- fonts, media, and final PNG artifacts pass `scripts/validate.mjs`.
+- Exactly one `--accent` per set
+- IKB blue is visible on every page (chrome + foot, minimum)
+- Mustard yellow appears exactly once per set, on the cover bar only
+- No border-radius, no box-shadow, no gradients
+- Content density ≥ 75% on 3:4 cards
+- Title underline is opt-in and should appear on no more than 0-2 content pages per set
+- Most content pages should pair text + small illustration
+- The cover is the only fixed layout. Content pages are composed fresh from primitives.

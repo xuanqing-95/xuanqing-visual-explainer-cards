@@ -1,0 +1,138 @@
+schema_version: 2
+topic: 上下文窗口（Context Window）
+audience: 刚开始使用 AI 对话与 AI Coding 的小白用户
+
+beginner_brief:
+  prior_knowledge: 无需额外背景知识，只要用过 AI 对话即可
+  plain_definition: 上下文窗口是 AI 每次回答时能够同时参考多少信息的"工作空间"，就像开卷考试时桌面能摊开的资料总量。
+  not_this: 它不是 AI"能记住多少"的记忆能力，而是这一次回答时能同时放在眼前参考的信息量；聊天记录长不等于 AI 每次都能完整关注前面所有内容。
+  how_it_works: AI 把聊天记录、要求、上传文件和代码都摆在"桌面"上回答问题；桌面空间以 Token 为单位计算且有限，资料越来越多时旧内容可能被移出桌面；不同模型窗口大小不同，处理超长内容时有截取、压缩总结、检索相关片段等不同方式，不一定总是简单"删除最早一句话"。
+  why_it_matters: 在 AI Coding 中，代码、报错、截图和修改记录会不断占用上下文，如果重要规则只在最开始说过一次，聊到后面 AI 可能就无法继续稳定遵守，导致按钮被移动、原有组件被删除。
+  concrete_example: 让 AI Coding 修改一个页面并在开始时强调"只更换视觉皮肤，不要改变原来的布局和功能"，经过多轮修改又加入大量截图、代码和报错记录后，AI 可能开始移动按钮甚至删除原有组件。
+  next_action: 在一段较长的 AI 对话中，让它总结当前任务的目标、已经确认的决定、绝对不能修改的内容以及下一步要做什么，把这份总结保存下来再继续或开新对话。
+
+source_tags:
+  - 每天吃透一个AI知识点
+  - AI学习
+  - 上下文窗口
+  - Token
+  - AICoding
+
+page_rhythm:
+  strategy: 先用真实场景疑问切入，再用开卷考试桌面比喻建立直觉，接着补全 Token 与处理超长内容的机制，然后用 AI Coding 案例展示后果与解法，最后落到一个可立即执行的行动和一句金句。
+  beats:
+    - page: 1
+      purpose: 用"AI 聊久了突然忘记前面要求"的真实场景疑问引出上下文窗口主题
+      silhouette: huge-type-cover
+      transition: open-with-question
+    - page: 2
+      purpose: 用开卷考试桌面的比喻解释上下文窗口是什么，桌面空间有限、资料多了旧内容会被移出
+      silhouette: image-led-hero
+      transition: zoom-into-mechanism
+    - page: 3
+      purpose: 说明 Token 是模型处理文字时切分的小单位，以及处理超长内容的三种不同方式
+      silhouette: sidecar-mechanism
+      transition: move-from-concept-to-signals
+    - page: 4
+      purpose: 用 AI Coding 改页面的案例说明长对话中重要规则会被遗忘，以及先总结再开新对话的解法
+      silhouette: comparison-split
+      transition: move-to-action
+    - page: 5
+      purpose: 给出今日行动（让 AI 总结目标、决定、约束、下一步）和一句金句收尾
+      silhouette: compact-action-ledger
+      transition: close-with-action
+
+pages:
+  - id: 1
+    message: 跟 AI 聊了很久，它为什么突然忘了你前面确认过的要求？这不是它真的"失忆"，而是一次能放在眼前处理的信息有限。
+    role: cover
+    layout: series-cover
+    cover:
+      series_line: 每天吃透一个 AI 知识点 · Day 08
+      english_term: Context Window
+      chinese_explanation: 上下文窗口 · AI 每次回答时能同时参考多少信息的工作空间
+      user_question: 跟 AI 聊了很久，它为什么突然忘了你前面确认过的要求？
+
+  - id: 2
+    message: 上下文窗口是 AI 每次回答时能同时参考多少信息的工作空间，就像开卷考试桌面空间有限，资料越堆越多时旧内容会被移出桌面。
+    role: concept
+    layout: metaphor-evidence
+    illustrations:
+      - id: main
+        visual_type: labeled-gpt-image
+        prompt_file: prompts/page-02.md
+        output_file: assets/page-02.png
+        image_slot:
+          html_wrapper: evidence-figure landscape
+          slot_px: 904x603
+          slot_ratio: "3:2"
+          requested_orientation: landscape
+          model_output_size: 1536x1024
+          subject_bbox: x=120-1416,y=128-896
+          fit: contain
+
+  - id: 3
+    message: Token 是模型处理文字时切分的小单位；不同模型窗口大小不同，处理超长内容时有截取、压缩总结、检索相关片段三种不同方式，不一定总是简单删除最早一句话。
+    role: mechanism
+    layout: mechanism-sidecar
+    illustrations:
+      - id: methods
+        visual_type: labeled-gpt-image
+        prompt_file: prompts/page-03.md
+        output_file: assets/page-03.png
+        image_slot:
+          html_wrapper: evidence-figure portrait
+          slot_px: 440x660
+          slot_ratio: "2:3"
+          requested_orientation: portrait
+          model_output_size: 1024x1536
+          subject_bbox: x=112-912,y=180-1356
+          fit: contain
+
+  - id: 4
+    message: 在 AI Coding 中代码、报错、截图会不断占用上下文，重要规则可能被遗忘；更稳妥的做法是先让 AI 总结已确认的目标、规则和进度，再把总结放进新对话继续工作。
+    role: consequence
+    layout: before-after-comparison
+    illustrations:
+      - id: before
+        visual_type: no-text
+        prompt_file: prompts/page-04-before.md
+        output_file: assets/page-04-before.png
+        image_slot:
+          html_wrapper: illust-frame
+          slot_px: 240x240
+          slot_ratio: "1:1"
+          requested_orientation: square
+          model_output_size: 1024x1024
+          subject_bbox: x=112-912,y=112-912
+          fit: contain
+      - id: after
+        visual_type: no-text
+        prompt_file: prompts/page-04-after.md
+        output_file: assets/page-04-after.png
+        image_slot:
+          html_wrapper: illust-frame
+          slot_px: 240x240
+          slot_ratio: "1:1"
+          requested_orientation: square
+          model_output_size: 1024x1024
+          subject_bbox: x=112-912,y=112-912
+          fit: contain
+
+  - id: 5
+    message: 在长对话中让 AI 总结当前任务的目标、已确认的决定、绝对不能修改的内容和下一步，把总结保存下来再继续；记住上下文窗口不是 AI 能记住多少，而是它这一次回答时能同时参考多少。
+    role: action
+    layout: closing-checklist
+    illustrations:
+      - id: action
+        visual_type: no-text
+        prompt_file: prompts/page-05.md
+        output_file: assets/page-05.png
+        image_slot:
+          html_wrapper: illust-frame
+          slot_px: 200x200
+          slot_ratio: "1:1"
+          requested_orientation: square
+          model_output_size: 1024x1024
+          subject_bbox: x=112-912,y=112-912
+          fit: contain

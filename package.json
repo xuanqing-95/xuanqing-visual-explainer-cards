@@ -1,8 +1,8 @@
 {
   "name": "xuanqing-visual-explainer-cards",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "private": true,
-  "description": "Create validated 3:4 editorial cards with model-generated imagery on every content page.",
+  "description": "Create validated 3:4 editorial cards with content-driven, slot-matched visual evidence.",
   "license": "AGPL-3.0-only",
   "type": "module",
   "engines": {
@@ -12,7 +12,14 @@
     "render:example": "node scripts/render.mjs examples/llmops",
     "validate:example": "node scripts/validate.mjs examples/llmops",
     "test": "node scripts/test.mjs",
-    "verify": "node --check scripts/generate.mjs && node --check scripts/render.mjs && node --check scripts/validate-storyboard.mjs && node --check scripts/validate.mjs && node --check scripts/test.mjs && python3 -m py_compile scripts/generate-illustration.py && npm test"
+    "preflight:example": "node scripts/validate-preflight.mjs examples/llmops --write-plan",
+    "quality:baselines": "node scripts/verify-quality-baselines.mjs",
+    "quality:fonts": "node scripts/verify-local-fonts.mjs",
+    "visual:compare": "node scripts/compare-visual-replay.mjs",
+    "audit:public": "node scripts/audit-public-release.mjs",
+    "package:release": "node scripts/package-release.mjs",
+    "cost:compare": "node scripts/compare-cost-runs.mjs",
+    "verify": "node --check scripts/generate.mjs && node --check scripts/render.mjs && node --check scripts/local-fonts.mjs && node --check scripts/quality-contract.mjs && node --check scripts/validate-storyboard.mjs && node --check scripts/validate-preflight.mjs && node --check scripts/validate.mjs && node --check scripts/verify-local-fonts.mjs && node --check scripts/verify-quality-baselines.mjs && node --check scripts/compare-visual-replay.mjs && node --check scripts/audit-public-release.mjs && node --check scripts/test_generate_api.mjs && node --check scripts/test.mjs && python3 -m py_compile scripts/generate-illustration.py scripts/compare_visual_pixels.py && python3 scripts/generate-illustration.py --help | grep -q -- --import-tool-image && python3 -m unittest scripts/test_generate_illustration.py && node scripts/test_generate_api.mjs && npm run audit:public && npm run quality:fonts && npm run quality:baselines && npm test"
   },
   "dependencies": {
     "playwright": "1.61.1",

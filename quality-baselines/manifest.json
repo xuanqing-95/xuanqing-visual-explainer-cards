@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "policy": {
+    "uses_existing_visual_samples_only": true,
+    "human_visual_approval_required": true,
+    "placeholders_are_not_baselines": true,
+    "known_bad_examples_live_under_quality_regressions": true,
+    "baseline_sources_are_immutable": true
+  },
+  "source_contracts": [
+    { "file": "context-regeneration/index.html", "sha256": "2620b4a36fb589594055689360dddd17353d40a958ca8fef22b1a0cbfe216f40" },
+    { "file": "context-regeneration/storyboard.yaml", "sha256": "78a8398391bdb6f1cd2b4c02e40488944566155041c0cda327c70c0173b3aba7" },
+    { "file": "context-regeneration/prompts/page-02.md", "sha256": "b67c697d5e0a50254c3f7e7d5c038e83b57766e940dd5d31b325110bb82e3a98" },
+    { "file": "context-regeneration/prompts/page-03.md", "sha256": "367e724c4b72e823889d6ae9b8d1b52bee078643793e219985f9469d81fb976b" },
+    { "file": "context-regeneration/prompts/page-04-before.md", "sha256": "1b4ea8aaf028a233f9d77cf7808ab963db6c1a094e2838edd24b5a282171cde2" },
+    { "file": "context-regeneration/prompts/page-04-after.md", "sha256": "39907d1038130731103b86e4f59c89aea18afb76d93a291b1d98824b900cc629" },
+    { "file": "context-regeneration/prompts/page-05.md", "sha256": "eacdbea4b5883a7d5a7a24b29e8aaaa22e1cc30ede4d72a8b32a2b0cc0e55c42" }
+  ],
+  "samples": [
+    {
+      "category": "abstract-metaphor",
+      "label": "抽象概念 / 隐喻",
+      "image": "plugins/output/xhs-03-metaphor.png",
+      "sha256": "73e72f5599c9768b2bcd29a37ff82ec34fa220d6e8f09093e72bf1ee771e333c",
+      "source": "plugins/source.md"
+    },
+    {
+      "category": "horizontal-process",
+      "label": "横向流程",
+      "image": "plugins/output/xhs-04-mechanism.png",
+      "sha256": "87a94e6f477c3c0ec6eca73dcdd08d11e30b276f5b246a4e3bf1c14f8bd5ff36",
+      "source": "plugins/source.md"
+    },
+    {
+      "category": "before-after",
+      "label": "前后对比",
+      "image": "context-regeneration/output/xhs-04-compare.png",
+      "sha256": "14404b654487d3d46a4d5e9a0bfe4486f50c67f2b9780764ab479ce289fe102e",
+      "source": "context-regeneration/source.md"
+    },
+    {
+      "category": "multi-step-mechanism",
+      "label": "多步骤机制",
+      "image": "context-regeneration/output/xhs-03-mechanism.png",
+      "sha256": "25d71a407042d1089a7647e48f8f0036f9aa081b67ee5c7feb80615f7a7e9484",
+      "source": "context-regeneration/source.md"
+    },
+    {
+      "category": "closing-action",
+      "label": "结尾行动页",
+      "image": "focus-action/output/xhs-04-action.png",
+      "sha256": "c0fc41f8a0b02b543c585f4863147e9197344c8ed12a4f76fbdcbcf521507f70",
+      "source": "focus-action/source.md"
+    }
+  ],
+  "generated_assets": [
+    { "image": "plugins/assets/page-03.png", "sha256": "c37ee958db0302e6f5d7c29c4b3f8403ecab9d118b77e89a24177e12483f2f6f" },
+    { "image": "plugins/assets/page-04.png", "sha256": "0b35db58e04332dedac95aab617ea1a25d78c5a959ba3a7513948c025b1eac3a" },
+    { "image": "context-regeneration/assets/page-04-before.png", "sha256": "5611cdea5d0b2e5b63caeb4e6c11162e3e435fbe5c16da3399e97c10809f56c0" },
+    { "image": "context-regeneration/assets/page-04-after.png", "sha256": "638cb1e61b281da2c8b716c7ac544e6b0120e9d368d0387da611dc6fe6682578" },
+    { "image": "context-regeneration/assets/page-03.png", "sha256": "ea26a38c115773121e42ed101385dbcf1e2d6e6f236a09d18061d43fc3bac165" },
+    { "image": "focus-action/assets/page-04.png", "sha256": "98bda12cf7483c56ea780d9d9dd8ea94e137cdaeabfe1e937a0c6d2fbe665f5d" }
+  ]
+}

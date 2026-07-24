@@ -1,0 +1,125 @@
+{
+  "status": "success",
+  "task_id": "quality-baseline-plugins",
+  "topic": "插件 (Plugins) - 给 AI 装的外挂 App",
+  "page_count": 7,
+  "accent": "indigo-porcelain",
+  "mode": "editorial",
+  "pages": [
+    {
+      "id": "xhs-01-cover",
+      "role": "cover",
+      "layout": "series-cover",
+      "message": "插件让 AI 突破聊天边界，能联网、调工具、直接办事",
+      "output": "output/xhs-01-cover.png"
+    },
+    {
+      "id": "xhs-02-concept",
+      "role": "concept",
+      "layout": "concept-evidence",
+      "message": "插件是给 AI 安装的可拆卸外挂 App，能力按需扩展",
+      "illustration": "assets/page-02.png",
+      "output": "output/xhs-02-concept.png"
+    },
+    {
+      "id": "xhs-03-metaphor",
+      "role": "metaphor",
+      "layout": "hero-metaphor",
+      "message": "AI 像关在书房的超级学霸，插件就是给它开的窗、电话、画笔",
+      "illustration": "assets/page-03.png",
+      "output": "output/xhs-03-metaphor.png"
+    },
+    {
+      "id": "xhs-04-mechanism",
+      "role": "mechanism",
+      "layout": "mechanism-flow",
+      "message": "插件靠握手协议工作，按需唤醒、用完放手，非常高效",
+      "illustration": "assets/page-04.png",
+      "output": "output/xhs-04-mechanism.png"
+    },
+    {
+      "id": "xhs-05-case",
+      "role": "case",
+      "layout": "structured-comparison",
+      "message": "以前规划旅行要手动折腾，现在一句话 AI 唤醒多插件几秒返回完整方案",
+      "output": "output/xhs-05-case.png"
+    },
+    {
+      "id": "xhs-06-significance",
+      "role": "significance",
+      "layout": "pull-quote",
+      "message": "插件是 AI 从嘴强王者变成行动派的关键一步",
+      "output": "output/xhs-06-significance.png"
+    },
+    {
+      "id": "xhs-07-action",
+      "role": "action",
+      "layout": "closing-action",
+      "message": "今天去 AI 工具设置里找插件入口，挑一个插件完成一个小任务",
+      "illustration": "assets/page-07.png",
+      "output": "output/xhs-07-action.png"
+    }
+  ],
+  "illustrations": [
+    {
+      "file": "assets/page-02.png",
+      "prompt": "prompts/page-02.md",
+      "mode": "labeled-gpt-image",
+      "generator_ar": "4:3",
+      "canvas": "1536x1152",
+      "role": "object-map",
+      "labels": ["AI 大脑", "插件接口", "联网搜索", "读 PDF", "画图", "订机票"]
+    },
+    {
+      "file": "assets/page-03.png",
+      "prompt": "prompts/page-03.md",
+      "mode": "labeled-gpt-image",
+      "generator_ar": "4:3",
+      "canvas": "1536x1152",
+      "role": "hero-metaphor",
+      "labels": ["超级学霸", "窗户", "电话", "画笔"]
+    },
+    {
+      "file": "assets/page-04.png",
+      "prompt": "prompts/page-04.md",
+      "mode": "labeled-gpt-image",
+      "generator_ar": "4:3",
+      "canvas": "1536x1152",
+      "role": "mechanism-flow",
+      "labels": ["注册能力", "判断需求", "唤醒插件", "调用工具", "用完放手"]
+    },
+    {
+      "file": "assets/page-07.png",
+      "prompt": "prompts/page-07.md",
+      "mode": "labeled-gpt-image",
+      "generator_ar": "1:1",
+      "canvas": "1024x1024",
+      "role": "object-map",
+      "labels": ["插件库", "联网搜索", "读 PDF"]
+    }
+  ],
+  "validation": {
+    "status": "all_pass",
+    "failures": 0,
+    "warnings": 1,
+    "details": [
+      {"id": "xhs-01-cover", "result": "PASS"},
+      {"id": "xhs-02-concept", "result": "PASS"},
+      {"id": "xhs-03-metaphor", "result": "PASS"},
+      {"id": "xhs-04-mechanism", "result": "PASS"},
+      {"id": "xhs-05-case", "result": "PASS"},
+      {"id": "xhs-06-significance", "result": "PASS"},
+      {"id": "xhs-07-action", "result": "PASS", "warnings": ["illustration evidence only 18% of canvas height (advisory; intended compact action mark per P-ACTION design)"]}
+    ]
+  },
+  "output_dimensions": "1080x1440 (3:4 Xiaohongshu), sRGB",
+  "source_tags": ["每天吃透一个AI知识点", "AI学习", "插件", "AI工具", "职场效率", "干货分享", "科技"],
+  "source_tags_handling": "kept as source_tags in storyboard.yaml only; not rendered into any card text, footer, caption, or illustration prompt",
+  "model_based_visual_inspection": "skipped (text-only orchestration model; per runtime constraints, image-only visual review was not performed; deterministic validation, HTML rendering, and output file checks completed)",
+  "dependencies": {
+    "playwright": "available (module importable; system Chromium at /usr/bin/google-chrome-stable via PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH)",
+    "pillow": "available",
+    "image_generator": "/home/ubuntu/skill-server/bin/xhs-image-generate.mjs (gpt-image-2 via OpenAI-compatible wrapper; usage sidecars written for billing)"
+  },
+  "notes": "storyboard.yaml written before any illustration or HTML work. Evidence for each page was selected from its message rather than a reserved illustrated or text-only page mix. No dependency installation commands were run."
+}

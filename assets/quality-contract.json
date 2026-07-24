@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "paper_color": "#fafaf8",
+  "subject_detection_threshold": 24,
+  "max_canvas_slot_ratio_drift": 0.15,
+  "generation_quality_floor": {
+    "default": "medium",
+    "large_canvas_long_edge": 1536,
+    "large_canvas": "high"
+  },
+  "illustration_line_hierarchy": {
+    "structural_lines": ["#0a0a0a", "#d4d4d2", "#737373"],
+    "accent": "#002FA7",
+    "max_accent_roles": 1,
+    "forbid_accent_as": ["perimeter", "frame", "border", "bracket", "grid", "wireframe", "repeated-divider"]
+  },
+  "occupancy": {
+    "wide": { "min_width": 0.78, "max_width": 0.95, "min_height": 0.42, "max_height": 0.92 },
+    "landscape": { "min_width": 0.70, "max_width": 0.92, "min_height": 0.50, "max_height": 0.92 },
+    "square": { "min_width": 0.60, "max_width": 0.90, "min_height": 0.60, "max_height": 0.90 },
+    "portrait": { "min_width": 0.60, "max_width": 0.90, "min_height": 0.70, "max_height": 0.95 }
+  },
+  "release": {
+    "requires_human_visual_approval": true,
+    "generated_image_ab_is_separate": true
+  }
+}

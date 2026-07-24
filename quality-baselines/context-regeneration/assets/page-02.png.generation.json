@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-07-20T19:53:43.617570+00:00",
+  "provider": "openai-compatible",
+  "model": "gpt-image-2",
+  "quality": "high",
+  "size": "1536x1024",
+  "output_file": "assets/page-02.png",
+  "prompt_file": "prompts/page-02.md",
+  "prompt_sha256": "b67c697d5e0a50254c3f7e7d5c038e83b57766e940dd5d31b325110bb82e3a98",
+  "final_sha256": "26acd9c568202a1e98a58421b10bf3f2a2f3050fd34410e4820ba1f2d047614a",
+  "final_width": 1536,
+  "final_height": 1024
+}

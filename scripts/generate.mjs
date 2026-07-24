@@ -269,6 +269,23 @@ async function generate() {
     `${JSON.stringify(provenance, null, 2)}\n`,
     "utf8"
   );
+  if (result.usage && typeof result.usage === "object") {
+    await writeFile(
+      `${outputPath}.usage.json`,
+      `${JSON.stringify({
+        schema_version: 1,
+        provider,
+        model,
+        request_id: requestId === "(not provided)" ? null : requestId,
+        raw_sha256: sha256(bytes),
+        usage: result.usage,
+      }, null, 2)}\n`,
+      "utf8"
+    );
+    console.log(`Saved provider usage: ${options.output}.usage.json`);
+  } else {
+    console.warn("WARN: provider omitted image usage; strict usage-accounting validation will reject this asset");
+  }
   console.log(`Saved ${options.output} (${bytes.length} bytes, request_id=${requestId})`);
   console.log(`Saved generation provenance: ${options.output}.generation.json`);
 }

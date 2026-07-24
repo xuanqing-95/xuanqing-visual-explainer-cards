@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "policy": "Versioned local fonts are part of the visual layout contract. Do not replace them with remote CDN fonts.",
+  "fonts": [
+    {
+      "family": "Noto Serif SC",
+      "file": "NotoSerifSC-wght.ttf",
+      "weight": "200 900",
+      "style": "normal",
+      "sha256": "050080d9255a86808f2945bffac582b31ef32bc36411ce29563b4961670c66f9",
+      "source": "https://github.com/google/fonts/tree/main/ofl/notoserifsc",
+      "license_file": "OFL-NotoSerifSC.txt"
+    },
+    {
+      "family": "Noto Sans SC",
+      "file": "NotoSansSC-wght.ttf",
+      "weight": "200 900",
+      "style": "normal",
+      "sha256": "a3041811a78c361b1de50f953c805e0244951c21c5bd412f7232ef0d899af0da",
+      "source": "https://github.com/google/fonts/tree/main/ofl/notosanssc",
+      "license_file": "OFL-NotoSansSC.txt"
+    },
+    {
+      "family": "Playfair Display",
+      "file": "PlayfairDisplay-wght.ttf",
+      "weight": "400 900",
+      "style": "normal",
+      "sha256": "c40f2293766a503bc70cce9e512ef844a4ccb7cbcde792fe2ea31d191917d8d6",
+      "source": "https://github.com/google/fonts/tree/main/ofl/playfairdisplay",
+      "license_file": "OFL-PlayfairDisplay.txt"
+    },
+    {
+      "family": "IBM Plex Mono",
+      "file": "IBMPlexMono-Regular.ttf",
+      "weight": "400",
+      "style": "normal",
+      "sha256": "6a3412f058c7d8dfd9170c41e85ade48e5156ecb89356110ca57a0a27734af46",
+      "source": "https://github.com/google/fonts/tree/main/ofl/ibmplexmono",
+      "license_file": "OFL-IBMPlexMono.txt"
+    },
+    {
+      "family": "IBM Plex Mono",
+      "file": "IBMPlexMono-Medium.ttf",
+      "weight": "500",
+      "style": "normal",
+      "sha256": "a9b4c49bb299e05b5f6c481e7fb5e78943d2793249a0c8874ab574a2d1ea6755",
+      "source": "https://github.com/google/fonts/tree/main/ofl/ibmplexmono",
+      "license_file": "OFL-IBMPlexMono.txt"
+    }
+  ]
+}
