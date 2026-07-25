@@ -7,7 +7,47 @@ The final card is always rendered from HTML at **1080×1440 (3:4)**. Page count 
 Install a fixed GitHub Release tag for reproducible sharing. Do not put API keys
 inside this repository or commit generated task folders.
 
-## Install
+## 快速开始（推荐）
+
+如果你使用 Codex，不需要先看懂下面的命令。把这段话直接发给 Codex：
+
+```text
+请安装并使用这个固定版本的 Skill：
+https://github.com/xuanqing-95/xuanqing-visual-explainer-cards/releases/tag/v1.1.1
+
+请按 README 完成依赖安装并运行 npm run verify。
+优先使用 Codex 自带的 ImageGen；如果当前环境没有生图工具，再提醒我配置自己的图片 API。
+不要读取或复用其他项目里的 API Key。
+
+安装完成后，请使用 $xuanqing-visual-explainer-cards，
+把“Token 是什么”制作成一套小红书知识解释卡片。
+```
+
+安装完成后，新开一个 Codex 任务再使用这个 Skill。你也可以把最后一行的
+“Token 是什么”替换成自己的主题或文章。
+
+> 说明：GitHub 链接本身不是在线应用。使用者需要 Codex、Claude Code 或
+> OpenClaw，并需要 Codex 自带的 ImageGen，或者自己的兼容图片 API。
+
+## Quick start for Codex
+
+Paste this into Codex:
+
+```text
+Install and use this exact Skill release:
+https://github.com/xuanqing-95/xuanqing-visual-explainer-cards/releases/tag/v1.1.1
+
+Follow the README to install dependencies and run npm run verify.
+Prefer the built-in Codex ImageGen tool. If it is unavailable, ask me to
+configure my own image API. Do not read or reuse API keys from other projects.
+
+After installation, use $xuanqing-visual-explainer-cards to turn
+"What is a token?" into an illustrated knowledge-card series.
+```
+
+Start a new Codex task after installation so the Skill can be discovered.
+
+## Manual install
 
 Requirements: Node.js 20+, Python 3.9+, and either a host image-generation
 tool or access to the user's own image API.
@@ -15,32 +55,40 @@ tool or access to the user's own image API.
 ### Codex
 
 ```bash
-git clone --branch <exact-release-tag> https://github.com/xuanqing-95/xuanqing-visual-explainer-cards.git \
+git clone --branch v1.1.1 --depth 1 https://github.com/xuanqing-95/xuanqing-visual-explainer-cards.git \
   "$HOME/.agents/skills/xuanqing-visual-explainer-cards"
+cd "$HOME/.agents/skills/xuanqing-visual-explainer-cards"
 ```
 
 ### Claude Code
 
 ```bash
-git clone --branch <exact-release-tag> https://github.com/xuanqing-95/xuanqing-visual-explainer-cards.git \
+git clone --branch v1.1.1 --depth 1 https://github.com/xuanqing-95/xuanqing-visual-explainer-cards.git \
   "$HOME/.claude/skills/xuanqing-visual-explainer-cards"
+cd "$HOME/.claude/skills/xuanqing-visual-explainer-cards"
 ```
 
 ### OpenClaw
 
 ```bash
 openclaw skills install \
-  git:xuanqing-95/xuanqing-visual-explainer-cards@<exact-release-tag> \
+  git:xuanqing-95/xuanqing-visual-explainer-cards@v1.1.1 \
   --global
 ```
 
-Then install the runtime dependencies inside the installed skill directory:
+For Codex or Claude Code, install the runtime dependencies from the skill
+directory:
 
 ```bash
 npm ci
 npx playwright install chromium
 python3 -m pip install -r requirements.txt
+npm run verify
 ```
+
+`npm run verify` must pass before first use. If the destination directory
+already exists, update or remove the old installation intentionally instead of
+merging two versions.
 
 ## Image generation
 
