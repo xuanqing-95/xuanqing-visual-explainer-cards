@@ -12,6 +12,7 @@
 - Does nearby copy explicitly tell the reader what to notice in the illustration?
 - Does every illustration-led page visibly connect input -> transformation -> result -> consequence?
 - Does every annotation point to a specific visual element instead of floating beside the image?
+- Does every illustration include a short, meaningful label, either rendered in the image or anchored to the object with HTML?
 - With paragraphs hidden, can a beginner identify the image's input, action, direction, and result?
 - With text restored, can a beginner explain why the result happens?
 - Would the page remain structurally clear if the illustration were removed?
@@ -53,6 +54,7 @@
 
 ## Technical
 
+- Does every storyboard illustration use only `labeled-gpt-image` or `html-label-overlay`?
 - Run `render.mjs`.
 - Run `validate.mjs`.
 - Fix every FAIL.

@@ -95,7 +95,7 @@ pages:
     layout: before-after-comparison
     illustrations:
       - id: before
-        visual_type: no-text
+        visual_type: html-label-overlay
         prompt_file: prompts/page-04-before.md
         output_file: assets/page-04-before.png
         image_slot:
@@ -107,7 +107,7 @@ pages:
           subject_bbox: x=112-912,y=112-912
           fit: contain
       - id: after
-        visual_type: no-text
+        visual_type: html-label-overlay
         prompt_file: prompts/page-04-after.md
         output_file: assets/page-04-after.png
         image_slot:
@@ -125,7 +125,7 @@ pages:
     layout: closing-checklist
     illustrations:
       - id: action
-        visual_type: no-text
+        visual_type: html-label-overlay
         prompt_file: prompts/page-05.md
         output_file: assets/page-05.png
         image_slot:

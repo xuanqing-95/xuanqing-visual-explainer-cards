@@ -241,6 +241,13 @@
     .illust-frame.wide-flow.zoom-110 img{width:125%;height:125%;}
     .illust-frame.wide-flow.zoom-125 img{width:140%;height:140%;}
     .illust-frame.wide-flow.zoom-140 img{width:155%;height:155%;}
+    .illust-frame.label-overlay{position:relative;}
+    .image-overlay-label{
+      position:absolute;left:18px;right:18px;bottom:18px;z-index:2;
+      padding:8px 12px;background:rgba(250,250,248,.94);
+      border:1px solid var(--line);color:var(--ink);
+      font:500 22px/1.25 var(--serif-zh);text-align:center;
+    }
     .evidence-figure{
       width:100%;display:flex;flex-direction:column;justify-content:center;
       margin:0;min-height:420px;
@@ -350,8 +357,9 @@
         <p class="section-label">早晨定优先</p>
         <h2 class="h-xl">早晨先写下今天<br>最重要的一件事</h2>
         <figure class="evidence-figure hero" style="min-height:460px;">
-          <div class="illust-frame">
+          <div class="illust-frame label-overlay">
             <img data-generated-illustration="true" data-illustration-id="main" src="assets/page-02.png" alt="从众多散落的任务中选出一个最重要的放在中心">
+            <span class="image-overlay-label">选出唯一优先</span>
           </div>
           <figcaption class="img-cap">Fig. 01 · 从散落任务中选定唯一优先</figcaption>
         </figure>
@@ -377,8 +385,9 @@
         <p class="section-label">白天拆步骤</p>
         <h2 class="h-xl">把复杂事项<br>拆成三个轻量步骤</h2>
         <figure class="evidence-figure square">
-          <div class="illust-frame">
+          <div class="illust-frame label-overlay">
             <img data-generated-illustration="true" data-illustration-id="main" src="assets/page-03.png" alt="一个复杂事项拆解为三个步骤并逐项完成">
+            <span class="image-overlay-label">拆成三个步骤</span>
           </div>
           <figcaption class="img-cap">Fig. 02 · 拆解为三步，完成即记录</figcaption>
         </figure>
@@ -410,8 +419,9 @@
             <p class="lead">明天早晨先写下今天最重要的一件事，遇到复杂事项时拆成三个轻量步骤，晚上用五分钟回看结果。</p>
           </div>
           <figure class="evidence-figure portrait" style="min-height:640px;">
-            <div class="illust-frame">
+            <div class="illust-frame label-overlay">
               <img data-generated-illustration="true" data-illustration-id="main" src="assets/page-04.png" alt="回看结果，选择有效方法继续复用">
+              <span class="image-overlay-label">回看 · 保留 · 复用</span>
             </div>
             <figcaption class="img-cap">Fig. 03 · 回看 → 保留 → 复用</figcaption>
           </figure>

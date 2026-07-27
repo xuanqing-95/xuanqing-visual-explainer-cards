@@ -103,7 +103,7 @@ pages:
     layout: test-layout
     illustrations:
       - id: main
-        visual_type: no-text
+        visual_type: html-label-overlay
         image_slot:
           html_wrapper: evidence-figure compact
           slot_px: 300x300
@@ -213,6 +213,23 @@ Never use blue as the perimeter, border, bracket, grid, or wireframe skeleton.
   );
   console.log("[PASS] image generation contract fails fast");
 
+  const removedNoTextModeDir = path.join(tempRoot, "removed-no-text-mode");
+  fs.mkdirSync(removedNoTextModeDir);
+  writeStoryboard(removedNoTextModeDir);
+  fs.writeFileSync(
+    path.join(removedNoTextModeDir, "storyboard.yaml"),
+    fs
+      .readFileSync(path.join(removedNoTextModeDir, "storyboard.yaml"), "utf8")
+      .replace("visual_type: html-label-overlay", "visual_type: no-text")
+  );
+  result = run(validateStoryboardScript, removedNoTextModeDir);
+  assert(
+    result.status !== 0 && /visual_type must be labeled-gpt-image or html-label-overlay/i.test(result.stdout),
+    "storyboard validator must reject the removed no-text mode",
+    result
+  );
+  console.log("[PASS] removed no-text illustration mode fails storyboard validation");
+
   const missingStoryboardDir = path.join(tempRoot, "missing-storyboard");
   fs.mkdirSync(missingStoryboardDir);
   fs.writeFileSync(
@@ -257,7 +274,7 @@ pages:
     message: First repeated page
     role: concept
     layout: repeated-layout
-    visual_type: no-text
+    visual_type: html-label-overlay
     image_slot: { html_wrapper: evidence-figure compact, slot_px: 300x300, slot_ratio: "1:1", requested_orientation: square, model_output_size: 1024x1024, subject_bbox: "x=112-912,y=112-912", fit: contain }
     illustration: { prompt_file: prompts/page-01.md, output_file: assets/page-01.png }
   - <<: *page
@@ -351,7 +368,7 @@ pages:
   fs.writeFileSync(path.join(ratioMismatchDir, "storyboard.yaml"), fs.readFileSync(path.join(zeroIllustrationStoryboardDir, "storyboard.yaml"), "utf8")
     .replace("    illustrations: []", `    illustrations:
       - id: main
-        visual_type: no-text
+        visual_type: html-label-overlay
         generation_quality: high
         prompt_file: prompts/page-01.md
         output_file: assets/page-01.png
@@ -711,7 +728,7 @@ pages:
         output_file: assets/page-02.png
         image_slot: { html_wrapper: evidence-figure landscape, slot_px: 320x213, slot_ratio: "3:2", requested_orientation: landscape, model_output_size: 1536x1024, subject_bbox: "x=120-1416,y=128-896", fit: contain }
       - id: square
-        visual_type: no-text
+        visual_type: html-label-overlay
         prompt_file: prompts/symptom-quality.md
         output_file: assets/symptom-quality.png
         image_slot: { html_wrapper: illust-frame row-thumb, slot_px: 200x200, slot_ratio: "1:1", requested_orientation: square, model_output_size: 1024x1024, subject_bbox: "x=112-912,y=112-912", fit: contain }
@@ -752,7 +769,7 @@ pages:
     fs.readFileSync(path.join(qualityMismatchDir, "storyboard.yaml"), "utf8")
       .replace("schema_version: 2", "schema_version: 3")
       .replace("        visual_type: labeled-gpt-image", "        visual_type: labeled-gpt-image\n        generation_quality: high")
-      .replace("        visual_type: no-text", "        visual_type: no-text\n        generation_quality: medium")
+      .replace("        visual_type: html-label-overlay", "        visual_type: html-label-overlay\n        generation_quality: medium")
   );
   result = run(validateScript, qualityMismatchDir);
   assert(
