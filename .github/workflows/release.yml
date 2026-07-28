@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: Exact release tag, matching package.json (for example v1.1.1)
+        description: Exact release tag, matching package.json (for example v1.1.2)
         required: true
 
 permissions:
