@@ -242,6 +242,14 @@
     .illust-frame.wide-flow.zoom-110 img{width:125%;height:125%;}
     .illust-frame.wide-flow.zoom-125 img{width:140%;height:140%;}
     .illust-frame.wide-flow.zoom-140 img{width:155%;height:155%;}
+    .illust-frame.label-overlay{position:relative;}
+    .image-overlay-label{
+      position:absolute;left:10px;right:10px;bottom:10px;z-index:2;
+      padding:6px 8px;background:rgba(250,250,248,.94);
+      border:1px solid var(--line);color:var(--ink);
+      font-family:var(--serif-zh);font-size:20px;line-height:1.25;
+      text-align:center;
+    }
     .evidence-figure{
       width:100%;display:flex;flex-direction:column;justify-content:center;
       margin:0;min-height:420px;
@@ -359,6 +367,8 @@
 
          5. Illustration rule (HARD):
               - Most content pages should pair text + small illustration.
+              - Every illustration must contain a short, meaningful label:
+                generated in-image text or an anchored .image-overlay-label.
               - .illust-frame heights: 480-560 (concept-led), 160-260 (list
                 thumb), 100-160 (inline step). Never one giant centerpiece.
      ===================================================== -->
@@ -455,8 +465,9 @@
         <h2 class="h-xl title-underline">Demo 漂亮<br><em>上生产翻车</em></h2>
         <div class="list-rows" style="display:flex;flex-direction:column;gap:24px;flex:1;">
           <div class="list-row" style="display:grid;grid-template-columns:200px 1fr;gap:32px;align-items:center;padding-bottom:24px;border-bottom:1px solid var(--line);">
-            <figure class="illust-frame" style="height:200px;">
+            <figure class="illust-frame label-overlay" style="height:200px;">
               <img src="assets/symptom-01.png" alt="症状 1 的小插图">
+              <span class="image-overlay-label">症状一</span>
             </figure>
             <div>
               <p class="meta" style="color:var(--accent);margin:0 0 8px;">01</p>
@@ -464,8 +475,9 @@
             </div>
           </div>
           <div class="list-row" style="display:grid;grid-template-columns:200px 1fr;gap:32px;align-items:center;padding-bottom:24px;border-bottom:1px solid var(--line);">
-            <figure class="illust-frame" style="height:200px;">
+            <figure class="illust-frame label-overlay" style="height:200px;">
               <img src="assets/symptom-02.png" alt="症状 2 的小插图">
+              <span class="image-overlay-label">症状二</span>
             </figure>
             <div>
               <p class="meta" style="color:var(--accent);margin:0 0 8px;">02</p>
@@ -473,8 +485,9 @@
             </div>
           </div>
           <div class="list-row" style="display:grid;grid-template-columns:200px 1fr;gap:32px;align-items:center;">
-            <figure class="illust-frame" style="height:200px;">
+            <figure class="illust-frame label-overlay" style="height:200px;">
               <img src="assets/symptom-03.png" alt="症状 3 的小插图">
+              <span class="image-overlay-label">症状三</span>
             </figure>
             <div>
               <p class="meta" style="color:var(--accent);margin:0 0 8px;">03</p>
@@ -509,8 +522,9 @@
         <div class="compare" style="display:grid;grid-template-columns:1fr 1fr;gap:32px;flex:1;">
           <div class="compare-col" style="display:flex;flex-direction:column;gap:18px;">
             <p class="meta">Before · 上线初期</p>
-            <figure class="illust-frame" style="height:240px;">
+            <figure class="illust-frame label-overlay" style="height:240px;">
               <img src="assets/before.png" alt="before 状态的示意插图">
+              <span class="image-overlay-label">Before 状态</span>
             </figure>
             <p class="body" style="margin:0;"><strong>硬编码 prompt</strong></p>
             <ul class="body" style="margin:0;padding-left:1.1em;line-height:1.55;">
@@ -521,8 +535,9 @@
           </div>
           <div class="compare-col" style="display:flex;flex-direction:column;gap:18px;">
             <p class="meta" style="color:var(--accent);">After · 引入方案</p>
-            <figure class="illust-frame" style="height:240px;">
+            <figure class="illust-frame label-overlay" style="height:240px;">
               <img src="assets/after.png" alt="after 状态的示意插图">
+              <span class="image-overlay-label">After 状态</span>
             </figure>
             <p class="body" style="margin:0;"><strong>可配置 + 可监控</strong></p>
             <ul class="body" style="margin:0;padding-left:1.1em;line-height:1.55;">
@@ -643,8 +658,9 @@
         </div>
         <p class="section-label">今天检查一件事</p>
         <h2 class="h-xl">你的 X<br><em>在哪一档?</em></h2>
-        <figure class="illust-frame" style="height:200px;">
+        <figure class="illust-frame label-overlay" style="height:200px;">
           <img src="assets/action-illust.png" alt="行动主题的小插图">
+          <span class="image-overlay-label">行动提示</span>
         </figure>
         <div class="options" style="display:flex;flex-direction:column;gap:16px;">
           <div class="opt" style="display:grid;grid-template-columns:64px 1fr;gap:24px;align-items:baseline;padding:14px 0;border-bottom:1px solid var(--line);">

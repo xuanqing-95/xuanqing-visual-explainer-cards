@@ -73,7 +73,7 @@ pages:
     layout: signal-list
     illustrations:
       - id: item-01
-        visual_type: no-text
+        visual_type: html-label-overlay
         prompt_file: prompts/item-01.md
         output_file: assets/item-01.png
         image_slot:
@@ -85,7 +85,7 @@ pages:
           subject_bbox: x=112-912,y=112-912
           fit: contain
       - id: item-02
-        visual_type: no-text
+        visual_type: html-label-overlay
         prompt_file: prompts/item-02.md
         output_file: assets/item-02.png
         image_slot:
@@ -97,7 +97,7 @@ pages:
           subject_bbox: x=112-912,y=112-912
           fit: contain
       - id: item-03
-        visual_type: no-text
+        visual_type: html-label-overlay
         prompt_file: prompts/item-03.md
         output_file: assets/item-03.png
         image_slot:
@@ -115,7 +115,7 @@ pages:
     layout: action-split
     illustrations:
       - id: action
-        visual_type: no-text
+        visual_type: html-label-overlay
         prompt_file: prompts/action.md
         output_file: assets/action.png
         image_slot:

@@ -53,7 +53,7 @@ pages:
     layout: metaphor-evidence
     illustrations:
       - id: main
-        visual_type: no-text
+        visual_type: html-label-overlay
         prompt_file: prompts/page-02.md
         output_file: assets/page-02.png
         image_slot:
@@ -71,7 +71,7 @@ pages:
     layout: process-mechanism
     illustrations:
       - id: main
-        visual_type: no-text
+        visual_type: html-label-overlay
         prompt_file: prompts/page-03.md
         output_file: assets/page-03.png
         image_slot:
@@ -89,7 +89,7 @@ pages:
     layout: action-split
     illustrations:
       - id: main
-        visual_type: no-text
+        visual_type: html-label-overlay
         prompt_file: prompts/page-04.md
         output_file: assets/page-04.png
         image_slot:

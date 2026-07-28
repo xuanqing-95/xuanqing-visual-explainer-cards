@@ -222,15 +222,14 @@ Do NOT use yellow, orange, red, green, purple, or any other color.
 Do NOT use gradients, glows, shadows, or 3D rendering.
 ```
 
-## Three Illustration Modes
+## Two Illustration Modes
 
 | Mode | Use When | Text Handling |
 |---|---|---|
 | `labeled-gpt-image` | Beginner needs to understand the picture without reading nearby copy | GPT Image 2 generates 3-8 short exact labels inside the illustration |
-| `html-label-overlay` | Text must be perfectly editable or the model struggles with labels | Generated image has no text; HTML labels are overlaid inside the image well |
-| `no-text` | The image is a metaphor, atmosphere, object, or evidence that does not need labels | Generated image has no text |
+| `html-label-overlay` | Text must be perfectly editable or the model struggles with labels | The model creates the artwork; exact HTML labels are anchored to the matching objects inside the image well |
 
-Default to `labeled-gpt-image` for abstract AI concepts such as token, context window, hallucination, embeddings, retrieval, agent, model, prompt, and tool use.
+Every illustration must carry a small set of high-value labels. Default to `labeled-gpt-image`; use `html-label-overlay` when exact wording or editability matters more than model-rendered text. In overlay mode, anchor each HTML label to the visual object it names instead of leaving the image as an unlabeled decoration.
 
 ## Responsibility Split
 
@@ -427,16 +426,10 @@ Reject and regenerate if:
 - the image background visibly differs from the outer card paper;
 - the image introduces colors not in the system palette (e.g., yellow in an Indigo Porcelain set).
 
-## Fallback Modes
+## Exact-Label Fallback
 
 Use `html-label-overlay` when:
 
 - exact wording matters more than image naturalness;
 - labels must be edited after generation;
 - GPT Image 2 repeatedly introduces wrong characters.
-
-Use `no-text` when:
-
-- the image is only atmosphere or a metaphor;
-- the concept is already explained well by HTML;
-- generated labels would create clutter.
