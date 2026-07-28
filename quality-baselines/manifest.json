@@ -8,13 +8,13 @@
     "baseline_sources_are_immutable": true
   },
   "source_contracts": [
-    { "file": "context-regeneration/index.html", "sha256": "12c83125ed0da763591ac5d9cbfa1f13ace56ef4eaf5cfa2db05a7e451795e19" },
-    { "file": "context-regeneration/storyboard.yaml", "sha256": "44cc24755cd1f7294c01f9708ff2cee999de4944935f0bb17d60ef97c91130a7" },
+    { "file": "context-regeneration/index.html", "sha256": "2620b4a36fb589594055689360dddd17353d40a958ca8fef22b1a0cbfe216f40" },
+    { "file": "context-regeneration/storyboard.yaml", "sha256": "4e4fedb76e79592e06ebd9f6532db58542f131ec051c86aafc7d1e8d79368fe2" },
     { "file": "context-regeneration/prompts/page-02.md", "sha256": "b67c697d5e0a50254c3f7e7d5c038e83b57766e940dd5d31b325110bb82e3a98" },
     { "file": "context-regeneration/prompts/page-03.md", "sha256": "367e724c4b72e823889d6ae9b8d1b52bee078643793e219985f9469d81fb976b" },
-    { "file": "context-regeneration/prompts/page-04-before.md", "sha256": "1b4ea8aaf028a233f9d77cf7808ab963db6c1a094e2838edd24b5a282171cde2" },
-    { "file": "context-regeneration/prompts/page-04-after.md", "sha256": "39907d1038130731103b86e4f59c89aea18afb76d93a291b1d98824b900cc629" },
-    { "file": "context-regeneration/prompts/page-05.md", "sha256": "eacdbea4b5883a7d5a7a24b29e8aaaa22e1cc30ede4d72a8b32a2b0cc0e55c42" }
+    { "file": "context-regeneration/prompts/page-04-before.md", "sha256": "22824c28058499bad0b4432d201d2139d1fb76d2f10a77e1f0e464fe18930363" },
+    { "file": "context-regeneration/prompts/page-04-after.md", "sha256": "8f509796cc09eb053c3181b89e1f644ac668e465c109cad4c5276c6cfa9841cb" },
+    { "file": "context-regeneration/prompts/page-05.md", "sha256": "579b4ecf97dd4eaa955b0b0dafafc8aaaf931d8c6841569eea12f5af63c22c9b" }
   ],
   "samples": [
     {
@@ -35,30 +35,30 @@
       "category": "before-after",
       "label": "前后对比",
       "image": "context-regeneration/output/xhs-04-compare.png",
-      "sha256": "f73608194c1f7185a3ac4cd90c5749d924ccf3bf0c1f0237b134938c931670f6",
+      "sha256": "88cdb4464394faabf67c9e14a527f75a17210e81c8045a9aff5bc46a4f6af7c9",
       "source": "context-regeneration/source.md"
     },
     {
       "category": "multi-step-mechanism",
       "label": "多步骤机制",
       "image": "context-regeneration/output/xhs-03-mechanism.png",
-      "sha256": "25d71a407042d1089a7647e48f8f0036f9aa081b67ee5c7feb80615f7a7e9484",
+      "sha256": "6f41f97e7ae02a8feca719ee4a16d8103b110f4283ea10d039331303bc142551",
       "source": "context-regeneration/source.md"
     },
     {
       "category": "closing-action",
       "label": "结尾行动页",
       "image": "focus-action/output/xhs-04-action.png",
-      "sha256": "cfca227942fc4844f621aa686c9ffcae874275606eb1c5829551880725513293",
+      "sha256": "7224060b2bf88dae5734e0751f383f8a13cff0f41c58df5bf7ea3df02fd29d6c",
       "source": "focus-action/source.md"
     }
   ],
   "generated_assets": [
     { "image": "plugins/assets/page-03.png", "sha256": "c37ee958db0302e6f5d7c29c4b3f8403ecab9d118b77e89a24177e12483f2f6f" },
     { "image": "plugins/assets/page-04.png", "sha256": "0b35db58e04332dedac95aab617ea1a25d78c5a959ba3a7513948c025b1eac3a" },
-    { "image": "context-regeneration/assets/page-04-before.png", "sha256": "5611cdea5d0b2e5b63caeb4e6c11162e3e435fbe5c16da3399e97c10809f56c0" },
-    { "image": "context-regeneration/assets/page-04-after.png", "sha256": "638cb1e61b281da2c8b716c7ac544e6b0120e9d368d0387da611dc6fe6682578" },
+    { "image": "context-regeneration/assets/page-04-before.png", "sha256": "395a6e22cf9729dfcf940601ff8aef17e45289870e6205bff7ab0cfd506e6fa2" },
+    { "image": "context-regeneration/assets/page-04-after.png", "sha256": "dbc21d86e28856f74b717bb0fa34c0b104dd15359a567d7c2868a7936cba603d" },
     { "image": "context-regeneration/assets/page-03.png", "sha256": "ea26a38c115773121e42ed101385dbcf1e2d6e6f236a09d18061d43fc3bac165" },
-    { "image": "focus-action/assets/page-04.png", "sha256": "98bda12cf7483c56ea780d9d9dd8ea94e137cdaeabfe1e937a0c6d2fbe665f5d" }
+    { "image": "focus-action/assets/page-04.png", "sha256": "492584ce807bbf0d23142637d1f73dfcce10615f9fb9423a235256185177ce85" }
   ]
 }

@@ -1,13 +1,19 @@
-Generate a clean square Chinese educational illustration panel for a 1024x1024 canvas. No text, no labels, no captions anywhere in the image.
+Generate a clean square Chinese educational illustration panel for a 1024x1024 canvas.
 
 PURPOSE
 The reader should feel: a long AI Coding conversation that has become cluttered and out of control--code, error screenshots and modification records pile up, and the original layout rule is being broken as a UI button drifts out of place.
 
+EXACT IN-IMAGE TEXT
+Only render these Chinese labels, exactly:
+- 代码变多
+- 报错堆积
+- 规则被冲掉
+
 SCENE
 A top-down editorial view of a cluttered workstation desk.
-On the desk: scattered code printout sheets, several error warning windows overlapping, a tangle of screenshot cards, and a small browser/panel mockup whose button element is visibly displaced from its original position (a dashed outline shows where it should be, the solid button sits offset).
+On the desk: scattered code printout sheets labeled `代码变多`, several overlapping error cards labeled `报错堆积`, and a small browser/panel mockup whose button element is visibly displaced from its original position. Place the label `规则被冲掉` directly below the displaced button.
 The desk feels overcrowded and slightly chaotic, with papers stacked unevenly and edges overlapping.
-No people. No legible text anywhere--any marks on papers must be clearly non-legible strokes.
+No people.
 Fill the central 68-80% of the image with the desk and objects. Keep only a narrow paper margin.
 Compose for a centered editorial evidence well. Keep the main subject optically centered in the canvas, with balanced top and bottom paper margin.
 
@@ -37,5 +43,4 @@ Do NOT use yellow, orange, red, green, purple, or any other color.
 Do NOT use gradients, glows, shadows, or 3D rendering.
 
 EXCLUDE
-No logos, watermark, decorative clutter, fake UI chrome, extra titles, labels, hashtags, source tags, social media metadata, or noisy background.
-No legible text of any kind.
+No logos, watermark, decorative clutter, fake UI chrome, extra titles, extra labels, hashtags, source tags, social media metadata, or noisy background.

@@ -1,14 +1,21 @@
-Generate a clean square Chinese educational illustration panel for a 1024x1024 canvas. No text, no labels, no captions anywhere in the image.
+Generate a clean square Chinese educational illustration panel for a 1024x1024 canvas.
 
 PURPOSE
 The reader should feel: the action of asking an AI to summarize the task--a single notebook page being filled with a short structured checklist of goals, confirmed decisions, fixed constraints and next steps.
 
+EXACT IN-IMAGE TEXT
+Only render these Chinese labels, exactly:
+- 当前目标
+- 已确认决定
+- 不能修改
+- 下一步
+
 SCENE
 A top-down editorial view of an open notebook on a clean desk.
-The notebook page has a header band and four short checklist rows, each row a checkbox followed by clearly non-legible horizontal strokes (not real text).
+The notebook page has a header band and four short checklist rows labeled `当前目标`, `已确认决定`, `不能修改`, and `下一步`.
 A pen rests diagonally on the page, tip near the first row, as if just finishing writing.
 The scene is calm, focused and tidy.
-No people. No legible text anywhere--all strokes must be clearly non-legible.
+No people.
 Fill the central 68-80% of the image with the notebook and pen. Keep only a narrow paper margin.
 Compose for a centered editorial evidence well. Keep the main subject optically centered in the canvas, with balanced top and bottom paper margin.
 
@@ -38,5 +45,4 @@ Do NOT use yellow, orange, red, green, purple, or any other color.
 Do NOT use gradients, glows, shadows, or 3D rendering.
 
 EXCLUDE
-No logos, watermark, decorative clutter, fake UI chrome, extra titles, labels, hashtags, source tags, social media metadata, or noisy background.
-No legible text of any kind.
+No logos, watermark, decorative clutter, fake UI chrome, extra titles, extra labels, hashtags, source tags, social media metadata, or noisy background.

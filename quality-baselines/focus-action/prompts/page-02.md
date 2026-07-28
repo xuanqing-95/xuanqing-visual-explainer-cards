@@ -8,10 +8,13 @@ Show a clear left-to-right arrangement:
 scattered task slips on the left and upper area -> one slip pulled forward to the center -> a pen resting on that center slip.
 
 EXACT IN-IMAGE TEXT
-No text. Do not render any words, letters, numbers, or labels. All paper slips must be blank or contain only clearly non-legible strokes.
+Only render these Chinese labels, exactly:
+- 其他任务
+- 今日最重要
+- 先做这一件
 
 SCENE
-A clean desk surface in soft directional light. Several small rectangular paper slips are scattered across the upper-left two-thirds of the desk, slightly overlapping, each blank. One single slip has been pulled forward and separated from the rest, placed at the optical center of the desk. A pen rests diagonally across this center slip, as if just set down after writing. The center slip is the clear visual focal point. The other slips remain in the background, slightly smaller and less prominent. The desk surface is neutral and uncluttered.
+A clean desk surface in soft directional light. Several small rectangular paper slips labeled `其他任务` are scattered across the upper-left two-thirds of the desk, slightly overlapping. One single slip labeled `今日最重要` has been pulled forward and separated from the rest, placed at the optical center of the desk. A short label `先做这一件` sits directly below the center slip. A pen rests diagonally across this center slip, as if just set down after writing. The center slip is the clear visual focal point. The other slips remain in the background, slightly smaller and less prominent. The desk surface is neutral and uncluttered.
 
 Fill the central 84-92% of the image width with the desk and objects. Keep only a narrow paper margin.
 Compose for a centered editorial evidence well. Keep the main subject optically centered in the canvas, with balanced top and bottom paper margin.
@@ -30,7 +33,7 @@ The main subject should touch this safe box visually; do not leave an extra blan
 No important object may sit outside this box.
 
 TEXT QUALITY
-No text of any kind should appear in this image. All paper slips must be blank or contain only non-legible pen strokes that do not form readable characters.
+All Chinese must be simplified Chinese, crisp, upright, readable, and typo-free. Use clean modern sans-serif Chinese lettering.
 
 STYLE
 Editorial textbook isometric × electronic ink.

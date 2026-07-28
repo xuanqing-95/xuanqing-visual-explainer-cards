@@ -107,14 +107,6 @@
     .evidence-figure.compact .illust-frame{width:300px;height:240px;}
     .illust-frame.row-thumb{width:176px;height:176px;}
     .illust-frame.compare-thumb{width:240px;height:240px;align-self:center;}
-    .illust-frame.label-overlay{position:relative;}
-    .image-overlay-label{
-      position:absolute;left:10px;right:10px;bottom:10px;z-index:2;
-      padding:6px 8px;background:rgba(250,250,248,.94);
-      border-top:2px solid var(--accent);
-      font-family:var(--mono);font-weight:500;font-size:14px;
-      line-height:1.25;letter-spacing:.08em;text-align:center;color:var(--accent);
-    }
     .frame-img{position:relative;overflow:hidden;background:var(--paper-2);}
     .frame-img img{width:100%;height:100%;object-fit:cover;display:block;}
     .img-cap{font-family:var(--mono);font-weight:500;font-size:18px;letter-spacing:.20em;text-transform:uppercase;color:var(--accent);margin-top:14px;}
@@ -195,9 +187,8 @@
         <h2 class="h-xl title-underline">Demo 漂亮<br><em>上生产翻车</em></h2>
         <div class="list-rows" style="display:flex;flex-direction:column;gap:14px;flex:1;">
           <div class="list-row" style="display:grid;grid-template-columns:176px 1fr;gap:28px;align-items:center;padding-bottom:14px;border-bottom:1px solid var(--line);">
-            <figure class="illust-frame row-thumb label-overlay">
+            <figure class="illust-frame row-thumb">
               <img data-generated-illustration="true" data-illustration-id="quality" src="assets/symptom-quality.png" alt="质量指针剧烈波动，表示相同输入的输出不稳定">
-              <span class="image-overlay-label">质量波动</span>
             </figure>
             <div>
               <p class="meta" style="color:var(--accent);margin:0 0 8px;">01 · QUALITY</p>
@@ -205,9 +196,8 @@
             </div>
           </div>
           <div class="list-row" style="display:grid;grid-template-columns:176px 1fr;gap:28px;align-items:center;padding-bottom:14px;border-bottom:1px solid var(--line);">
-            <figure class="illust-frame row-thumb label-overlay">
+            <figure class="illust-frame row-thumb">
               <img data-generated-illustration="true" data-illustration-id="cost" src="assets/symptom-cost.png" alt="Token 计量不断上升并溢出预算托盘">
-              <span class="image-overlay-label">成本上升</span>
             </figure>
             <div>
               <p class="meta" style="color:var(--accent);margin:0 0 8px;">02 · COST</p>
@@ -215,9 +205,8 @@
             </div>
           </div>
           <div class="list-row" style="display:grid;grid-template-columns:176px 1fr;gap:28px;align-items:center;">
-            <figure class="illust-frame row-thumb label-overlay">
+            <figure class="illust-frame row-thumb">
               <img data-generated-illustration="true" data-illustration-id="safety" src="assets/symptom-safety.png" alt="安全网出现缺口，危险片段从缺口穿出">
-              <span class="image-overlay-label">安全缺口</span>
             </figure>
             <div>
               <p class="meta" style="color:var(--accent);margin:0 0 8px;">03 · SAFETY</p>
@@ -246,9 +235,8 @@
         <div class="compare" style="display:grid;grid-template-columns:1fr 1fr;gap:32px;flex:1;">
           <div class="compare-col" style="display:flex;flex-direction:column;gap:16px;">
             <p class="meta">Before · 上线初期</p>
-            <figure class="illust-frame compare-thumb label-overlay">
+            <figure class="illust-frame compare-thumb">
               <img data-generated-illustration="true" data-illustration-id="before" src="assets/before.png" alt="Prompt 被锁在代码块中，任何修改都要重新发布">
-              <span class="image-overlay-label">写死在代码</span>
             </figure>
             <p class="body" style="margin:0;"><strong>硬编码 prompt</strong></p>
             <ul class="body" style="margin:0;padding-left:1.1em;line-height:1.55;">
@@ -259,9 +247,8 @@
           </div>
           <div class="compare-col" style="display:flex;flex-direction:column;gap:16px;">
             <p class="meta" style="color:var(--accent);">After · 引入 LLMOps</p>
-            <figure class="illust-frame compare-thumb label-overlay">
+            <figure class="illust-frame compare-thumb">
               <img data-generated-illustration="true" data-illustration-id="after" src="assets/after.png" alt="Prompt 进入可配置、可评估、可转人工的控制流程">
-              <span class="image-overlay-label">可配置 · 可监控</span>
             </figure>
             <p class="body" style="margin:0;"><strong>可配置 + 可监控</strong></p>
             <ul class="body" style="margin:0;padding-left:1.1em;line-height:1.55;">
@@ -290,9 +277,8 @@
         <p class="section-label">今天检查一件事</p>
         <h2 class="h-xl">你的 prompt<br><em>写在哪?</em></h2>
         <figure class="evidence-figure compact">
-          <div class="illust-frame label-overlay">
+          <div class="illust-frame">
             <img data-generated-illustration="true" data-illustration-id="action" src="assets/action.png" alt="用放大镜查找 Prompt 当前位于代码、配置还是运维平台">
-            <span class="image-overlay-label">先定位 Prompt</span>
           </div>
           <figcaption class="img-cap">Fig. 04 · 先定位 Prompt 在哪里</figcaption>
         </figure>

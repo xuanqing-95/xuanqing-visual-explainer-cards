@@ -85,7 +85,7 @@ Decision rules:
 | Wide workflow / process strip | `16:10` or `4:3` | `Generate a wide 16:10 Chinese educational illustration panel.` | Main diagram spans 82-90% of canvas width; no large empty margins |
 | Large concept evidence well | `4:3` | `Generate a wide 4:3 Chinese educational illustration panel.` | Main subject fills 72-84% of canvas width and 60-78% height |
 | Tall standalone mechanism | `3:4` | `Generate a clean 3:4 vertical Chinese educational illustration panel.` | Use only when the image itself is the main vertical evidence |
-| Inline icon / row thumbnail | `1:1` or `4:3` | `Generate a compact icon-like illustration.` | One object, centered, no labels unless essential |
+| Inline icon / row thumbnail | `1:1` or `4:3` | `Generate a compact icon-like illustration.` | One object, centered; render any required label directly in the image |
 
 For content-page illustrations, avoid square-looking compositions unless the final HTML slot is square. A square drawing inside a wide slot will render too small. The local generator maps `4:3` to a landscape canvas; if your output log says `1024x1024` for a `4:3` request, stop and fix the generator before accepting the image.
 
@@ -222,14 +222,9 @@ Do NOT use yellow, orange, red, green, purple, or any other color.
 Do NOT use gradients, glows, shadows, or 3D rendering.
 ```
 
-## Two Illustration Modes
+## Illustration Text Contract
 
-| Mode | Use When | Text Handling |
-|---|---|---|
-| `labeled-gpt-image` | Beginner needs to understand the picture without reading nearby copy | GPT Image 2 generates 3-8 short exact labels inside the illustration |
-| `html-label-overlay` | Text must be perfectly editable or the model struggles with labels | The model creates the artwork; exact HTML labels are anchored to the matching objects inside the image well |
-
-Every illustration must carry a small set of high-value labels. Default to `labeled-gpt-image`; use `html-label-overlay` when exact wording or editability matters more than model-rendered text. In overlay mode, anchor each HTML label to the visual object it names instead of leaving the image as an unlabeled decoration.
+Every generated illustration uses `labeled-gpt-image` and carries 3-8 short, high-value labels rendered directly by the image model.
 
 ## Responsibility Split
 
@@ -337,7 +332,7 @@ For generated labels:
 - Do not place paragraphs inside the image.
 - Do not use publish hashtags as generated labels. Hashtags are metadata, not visual explanation.
 
-If the page needs more text than this, use HTML outside or overlay mode.
+If the page needs more text than this, keep the longer explanation in HTML outside the illustration.
 
 ## Image Role
 
@@ -425,11 +420,3 @@ Reject and regenerate if:
 - the style looks like a chunky cartoon icon set instead of a refined editorial diagram;
 - the image background visibly differs from the outer card paper;
 - the image introduces colors not in the system palette (e.g., yellow in an Indigo Porcelain set).
-
-## Exact-Label Fallback
-
-Use `html-label-overlay` when:
-
-- exact wording matters more than image naturalness;
-- labels must be edited after generation;
-- GPT Image 2 repeatedly introduces wrong characters.
