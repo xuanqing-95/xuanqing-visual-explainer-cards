@@ -1,14 +1,32 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-07-19T13:52:56.894759+00:00",
-  "provider": "openai-compatible",
-  "model": "openai/gpt-image-2",
+  "generated_at": "2026-07-28T13:53:10.268994Z",
+  "provider": "codex-imagegen",
+  "model": "host-managed-imagegen",
   "quality": "medium",
   "size": "1024x1536",
-  "output_file": "assets/page-04.png",
-  "prompt_file": "prompts/page-04.md",
-  "prompt_sha256": "0684f3a52bbe9a5cbfa7de2d78f261cd0ad83cc9c128336a3246ea0eecd2e6f4",
-  "final_sha256": "98bda12cf7483c56ea780d9d9dd8ea94e137cdaeabfe1e937a0c6d2fbe665f5d",
+  "orientation": "portrait",
+  "output_file": "page-04.png",
+  "prompt_file": "../prompts/page-04.md",
+  "prompt_sha256": "218c4201b56fade717a78eb6131255665d35bb73dfad78dce8ffcee46055be18",
+  "raw_sha256": "1a3fac6192af6bec4551911ae09139ea6d7c2b0bbf510bd345442303ba98f980",
+  "request_id": null,
+  "generation_mode": "host_tool",
+  "final_sha256": "492584ce807bbf0d23142637d1f73dfcce10615f9fb9423a235256185177ce85",
   "final_width": 1024,
-  "final_height": 1536
+  "final_height": 1536,
+  "content_bbox": {
+    "left": 82,
+    "top": 166,
+    "right": 942,
+    "bottom": 1370,
+    "width_ratio": 0.839844,
+    "height_ratio": 0.783854
+  },
+  "postprocessing": {
+    "background_normalized": true,
+    "background_removed": false,
+    "auto_frame_requested": true,
+    "paper_color": "#fafaf8"
+  }
 }

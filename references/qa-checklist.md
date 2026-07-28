@@ -12,7 +12,7 @@
 - Does nearby copy explicitly tell the reader what to notice in the illustration?
 - Does every illustration-led page visibly connect input -> transformation -> result -> consequence?
 - Does every annotation point to a specific visual element instead of floating beside the image?
-- Does every illustration include a short, meaningful label, either rendered in the image or anchored to the object with HTML?
+- Does every illustration include short, meaningful labels rendered directly in the image?
 - With paragraphs hidden, can a beginner identify the image's input, action, direction, and result?
 - With text restored, can a beginner explain why the result happens?
 - Would the page remain structurally clear if the illustration were removed?
@@ -22,11 +22,11 @@
 ## Typography
 
 - Are outer-card titles, definitions, caveats, dates, prices, and unstable claims rendered in HTML?
-- If generated images contain text, is every character correct, readable, and intentionally requested?
+- Is every requested in-image label correct, readable, and intentionally placed?
 - Does the generated image avoid duplicating the outer HTML title?
 - Is body text at least 28px?
 - Is the page title at most two lines?
-- Is there any generated-image text or gibberish?
+- Is there any unrequested generated-image text or gibberish?
 
 ## Composition
 
@@ -54,7 +54,7 @@
 
 ## Technical
 
-- Does every storyboard illustration use only `labeled-gpt-image` or `html-label-overlay`?
+- Does every storyboard illustration use `labeled-gpt-image`?
 - Run `render.mjs`.
 - Run `validate.mjs`.
 - Fix every FAIL.

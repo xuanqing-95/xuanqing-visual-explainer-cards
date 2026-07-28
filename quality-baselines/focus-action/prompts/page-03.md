@@ -8,10 +8,15 @@ Show a clear left-to-right flow:
 one large task block on the left -> splitting action in the middle -> three smaller step blocks on the right -> a small checkmark on each step.
 
 EXACT IN-IMAGE TEXT
-No text. Do not render any words, letters, numbers, or labels. All blocks and surfaces must be blank or contain only clearly non-legible strokes.
+Only render these Chinese labels, exactly:
+- 复杂事项
+- 步骤一
+- 步骤二
+- 步骤三
+- 简短记录
 
 SCENE
-A clean diagrammatic scene on a paper surface. On the left side, one large rectangular block represents a complex task. Dashed cut lines extend from the large block to the right, splitting into three smaller rectangular blocks arranged vertically on the right side. Each small block has a small checkmark in its upper-right corner, indicating completion. A pen lies near the bottom of the scene, suggesting brief recording after each step. The overall flow reads clearly from left to right: one block becomes three, each checked off.
+A clean diagrammatic scene on a paper surface. On the left side, one large rectangular block labeled `复杂事项` represents a complex task. Thin solid arrows extend from the large block to the right, splitting into three smaller rectangular blocks arranged vertically and labeled `步骤一`, `步骤二`, and `步骤三`. Each small block has a small checkmark in its upper-right corner, indicating completion. A pen and the short label `简短记录` sit near the bottom of the scene. The overall flow reads clearly from left to right: one block becomes three, each checked off.
 
 Fill the central 68-80% of the image with the diagram. Keep balanced margins on all sides.
 Compose for a centered editorial evidence well. Keep the main subject optically centered in the canvas, with balanced top and bottom paper margin.
@@ -29,13 +34,13 @@ The main subject should touch this safe box visually; do not leave an extra blan
 No important object may sit outside this box.
 
 TEXT QUALITY
-No text of any kind should appear in this image. All blocks must be blank or contain only non-legible marks that do not form readable characters.
+All Chinese must be simplified Chinese, crisp, upright, readable, and typo-free. Use clean modern sans-serif Chinese lettering.
 
 STYLE
 Editorial textbook isometric × electronic ink.
 Off-white paper background #fafaf8, visually flat and uniform.
 Thin ink linework, precise geometric forms, restrained fills.
-Use IKB Blue #002FA7 only for the checkmarks and the dashed splitting lines, not as large filled regions.
+Use IKB Blue #002FA7 only for the checkmarks and the thin solid splitting arrows, not as large filled regions.
 Hairline rules, quiet whitespace, magazine-diagram hierarchy.
 No cartoon toy look, no childish icon style, no 3D blocks, no glossy shadows.
 No people.

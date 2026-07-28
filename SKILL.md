@@ -53,8 +53,8 @@ Default to a hybrid composition:
 7. Route each content page using `references/visual-routing.md`.
 8. The cover (page 1) uses the fixed S00 layout in `references/layouts.md`. For pages 2 onwards, do NOT pick a pre-named recipe — read `references/layouts.md` to choose a layout pattern based on the content shape, and compose the page fresh from primitives.
 9. For every illustration-led page, define `image_slot` before writing any image prompt. The slot must state the final HTML wrapper, slot dimensions, slot ratio, generator aspect ratio, expected output canvas, and subject bounding box. Use `references/illustration-prompts.md` as the slot registry.
-10. Choose one illustration mode using `references/illustration-prompts.md`: `labeled-gpt-image` or `html-label-overlay`. Every illustration must carry a small set of high-value labels, either rendered by the image model or overlaid in HTML at the corresponding visual objects.
-11. For the default `labeled-gpt-image` mode, write a compact GPT Image 2 prompt derived from `image_slot`, with 3-8 exact in-image labels and no duplicate card title inside the illustration. Never include `source_tags` or any text beginning with `#`.
+10. Use `labeled-gpt-image` for every generated illustration. Every illustration must carry a small set of high-value labels rendered directly by the image model.
+11. Write a compact GPT Image 2 prompt derived from `image_slot`, with 3-8 exact in-image labels and no duplicate card title inside the illustration. Never include `source_tags` or any text beginning with `#`.
 12. Choose one image route for the task. Do not silently switch routes after generation begins.
 
 For a host image tool such as Codex `imagegen`, pass it the exact prompt, save

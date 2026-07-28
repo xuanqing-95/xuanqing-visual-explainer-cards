@@ -1,13 +1,19 @@
-Generate a clean square Chinese educational illustration panel for a 1024x1024 canvas. No text, no labels, no captions anywhere in the image.
+Generate a clean square Chinese educational illustration panel for a 1024x1024 canvas.
 
 PURPOSE
 The reader should feel: a fresh, orderly new start--one clean summary card sits on a tidy desk, ready to begin a new conversation with the key goals and rules preserved.
 
+EXACT IN-IMAGE TEXT
+Only render these Chinese labels, exactly:
+- 任务目标
+- 绝对约束
+- 下一步
+
 SCENE
 A top-down editorial view of a clean, almost empty workstation desk.
-On the desk: a single neat summary card placed at the center (a small card with a few clearly non-legible checklist strokes and a header band), a pen resting beside it, and a small fresh empty chat window outline.
+On the desk: a single neat summary card placed at the center with three checklist rows labeled `任务目标`, `绝对约束`, and `下一步`, a pen resting beside it, and a small fresh empty chat window outline.
 The desk feels calm, organized and spacious, with generous breathing room.
-No people. No legible text anywhere--any marks on the card must be clearly non-legible strokes.
+No people.
 Fill the central 68-80% of the image with the desk and objects. Keep only a narrow paper margin.
 Compose for a centered editorial evidence well. Keep the main subject optically centered in the canvas, with balanced top and bottom paper margin.
 
@@ -37,5 +43,4 @@ Do NOT use yellow, orange, red, green, purple, or any other color.
 Do NOT use gradients, glows, shadows, or 3D rendering.
 
 EXCLUDE
-No logos, watermark, decorative clutter, fake UI chrome, extra titles, labels, hashtags, source tags, social media metadata, or noisy background.
-No legible text of any kind.
+No logos, watermark, decorative clutter, fake UI chrome, extra titles, extra labels, hashtags, source tags, social media metadata, or noisy background.

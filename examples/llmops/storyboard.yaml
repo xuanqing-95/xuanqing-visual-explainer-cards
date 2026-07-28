@@ -72,7 +72,7 @@ pages:
     layout: signal-list
     illustrations:
       - id: quality
-        visual_type: html-label-overlay
+        visual_type: labeled-gpt-image
         prompt_file: prompts/symptom-quality.md
         output_file: assets/symptom-quality.png
         image_slot:
@@ -84,7 +84,7 @@ pages:
           subject_bbox: x=112-912,y=112-912
           fit: contain
       - id: cost
-        visual_type: html-label-overlay
+        visual_type: labeled-gpt-image
         prompt_file: prompts/symptom-cost.md
         output_file: assets/symptom-cost.png
         image_slot:
@@ -96,7 +96,7 @@ pages:
           subject_bbox: x=112-912,y=112-912
           fit: contain
       - id: safety
-        visual_type: html-label-overlay
+        visual_type: labeled-gpt-image
         prompt_file: prompts/symptom-safety.md
         output_file: assets/symptom-safety.png
         image_slot:
@@ -114,7 +114,7 @@ pages:
     layout: before-after-comparison
     illustrations:
       - id: before
-        visual_type: html-label-overlay
+        visual_type: labeled-gpt-image
         prompt_file: prompts/before.md
         output_file: assets/before.png
         image_slot:
@@ -126,7 +126,7 @@ pages:
           subject_bbox: x=112-912,y=112-912
           fit: contain
       - id: after
-        visual_type: html-label-overlay
+        visual_type: labeled-gpt-image
         prompt_file: prompts/after.md
         output_file: assets/after.png
         image_slot:
@@ -144,7 +144,7 @@ pages:
     layout: action-path
     illustrations:
       - id: action
-        visual_type: html-label-overlay
+        visual_type: labeled-gpt-image
         prompt_file: prompts/action.md
         output_file: assets/action.png
         image_slot:

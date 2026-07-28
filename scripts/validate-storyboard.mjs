@@ -29,7 +29,7 @@ const REQUIRED_SLOT_FIELDS = [
   "fit",
 ];
 
-const VISUAL_TYPES = new Set(["labeled-gpt-image", "html-label-overlay"]);
+const VISUAL_TYPES = new Set(["labeled-gpt-image"]);
 const ORIENTATIONS = new Set(["landscape", "square", "portrait"]);
 const GENERATION_QUALITIES = new Set(["low", "medium", "high"]);
 
@@ -316,7 +316,7 @@ export function validateStoryboardTask(taskDirInput) {
       }
       if (illustrationId) seenIllustrationIds.add(illustrationId);
       if (!VISUAL_TYPES.has(illustration.visual_type)) {
-        errors.push(`${illustrationLabel}.visual_type must be labeled-gpt-image or html-label-overlay`);
+        errors.push(`${illustrationLabel}.visual_type must be labeled-gpt-image`);
       }
       if (schemaVersion >= 3 && !GENERATION_QUALITIES.has(illustration.generation_quality)) {
         errors.push(`${illustrationLabel}.generation_quality must be low, medium, or high`);

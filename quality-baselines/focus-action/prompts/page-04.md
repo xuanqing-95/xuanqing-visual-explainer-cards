@@ -8,10 +8,13 @@ Show a clear top-to-bottom and left-to-right mechanism:
 desk lamp above -> completed result marks on the left notebook page -> one successful method card selected with an IKB-blue outline -> a clear thin arrow carries that same selected card into a clean slot on the fresh right page.
 
 EXACT IN-IMAGE TEXT
-No text. Do not render any words, letters, numbers, or labels. The notebook pages must be blank or contain only clearly non-legible pen strokes.
+Only render these Chinese labels, exactly:
+- 回看结果
+- 保留方法
+- 明天复用
 
 SCENE
-A quiet end-of-day review desk, viewed from slightly above. An open notebook fills the optical center. The left page contains several completed result rows represented only by abstract non-legible strokes and small checkmarks. One compact method card on the left page is visibly selected with a thin IKB-blue outline. A single clean curved arrow carries that same outlined card across the notebook fold into one reserved slot on the otherwise fresh right page, making selection and reuse unmistakable without words. A pen rests below the notebook. A small desk lamp above provides soft directional light. Keep the desk uncluttered and the mechanism visually dominant.
+A quiet end-of-day review desk, viewed from slightly above. An open notebook fills the optical center. The left page is labeled `回看结果` and contains several completed result rows with small checkmarks. One compact method card labeled `保留方法` is visibly selected with a thin IKB-blue outline. A single clean curved arrow carries that same outlined card across the notebook fold into one reserved slot labeled `明天复用` on the fresh right page. A pen rests below the notebook. A small desk lamp above provides soft directional light. Keep the desk uncluttered and the mechanism visually dominant.
 
 Fill the central 70-82% of the image with the desk and objects. Keep balanced margins.
 Compose for a centered editorial evidence well. Keep the main subject optically centered in the canvas, with balanced top and bottom paper margin.
@@ -29,7 +32,7 @@ The main subject should touch this safe box visually; do not leave an extra blan
 No important object may sit outside this box.
 
 TEXT QUALITY
-No text of any kind should appear in this image. The notebook pages must contain only non-legible pen strokes that do not form readable characters.
+All Chinese must be simplified Chinese, crisp, upright, readable, and typo-free. Use clean modern sans-serif Chinese lettering.
 
 STYLE
 Editorial textbook isometric × electronic ink.
