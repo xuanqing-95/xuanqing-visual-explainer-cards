@@ -54,7 +54,7 @@ Default to a hybrid composition:
 8. The cover (page 1) uses the fixed S00 layout in `references/layouts.md`. For pages 2 onwards, do NOT pick a pre-named recipe — read `references/layouts.md` to choose a layout pattern based on the content shape, and compose the page fresh from primitives.
 9. For every illustration-led page, define `image_slot` before writing any image prompt. The slot must state the final HTML wrapper, slot dimensions, slot ratio, generator aspect ratio, expected output canvas, and subject bounding box. Use `references/illustration-prompts.md` as the slot registry.
 10. Use `labeled-gpt-image` for every generated illustration. Every illustration must carry a small set of high-value labels rendered directly by the image model.
-11. Write a compact GPT Image 2 prompt derived from `image_slot`, with 3-8 exact in-image labels and no duplicate card title inside the illustration. Never include `source_tags` or any text beginning with `#`.
+11. Write a compact GPT Image 2 prompt derived from `image_slot`, with only the short in-image labels needed to explain the picture and no duplicate card title. Describe the required scene, action, composition, and labels positively. Do not append generic avoid lists or invent visual restrictions that are not required by the message, the design system, or explicit user feedback. Never include `source_tags` or any text beginning with `#`.
 12. Choose one image route for the task. Do not silently switch routes after generation begins.
 
 For a host image tool such as Codex `imagegen`, pass it the exact prompt, save
@@ -180,6 +180,7 @@ Hard rules:
 - Keep long explanations, caveats, prices, dates, and unstable facts out of generated images.
 - In `labeled-gpt-image` mode, generated images may contain only short exact labels that make the picture self-explanatory.
 - Never duplicate the outer HTML title inside the generated illustration. The illustration should explain the mechanism, while the outer card introduces the topic.
+- Keep prompts content-driven. State what the image needs; add a specific avoid item only when the user requests it or a reviewed output demonstrates that exact defect.
 - Do not add top metadata/category/page labels by default. Use them only when the user requests an editorial issue system.
 - Use enough illustrations to support the natural page count.
 - Reserve composition safe zones before generating illustrations.

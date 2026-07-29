@@ -257,6 +257,17 @@ Never duplicate the outer card title inside the generated illustration. If the H
 
 ## Labeled GPT Image Prompt Template
 
+### Prompt Specificity Rule
+
+Write the prompt around the required visual evidence:
+
+- the one relationship or mechanism the image must explain;
+- the necessary objects, actions, direction, and result;
+- the exact short labels that help the picture explain itself;
+- the slot, composition, palette, and text-quality contract.
+
+Do not append a generic negative-prompt checklist. Add a specific avoid item only when it follows from the user's request, protects a fixed design-system rule, or corrects a defect observed in the current output. Visual devices remain content-driven.
+
 Use this structure for GPT Image 2 via ZenMux:
 
 ```markdown
@@ -276,9 +287,7 @@ Only render these Chinese labels, exactly:
 - {{label 3}}
 - {{label 4}}
 
-Do not add any other words.
-Do not render an internal big title.
-Do not render hashtags, source tags, section labels, or any text beginning with #.
+Keep all image text limited to the necessary labels listed above. Keep the outer card title and publish metadata in HTML.
 
 SCENE
 {{specific objects and actions}}
@@ -307,18 +316,14 @@ STYLE
 Editorial textbook isometric × electronic ink.
 Off-white paper background #fafaf8, visually flat and uniform.
 Thin ink linework, precise geometric forms, restrained fills.
-Use accent color only as a small analytical accent or for one focal object, not as large chunky filled regions.
+Use accent color as a small analytical accent or for one focal object.
 Hairline arrows, fine rules, quiet whitespace, magazine-diagram hierarchy.
-No cartoon toy look, no childish icon style, no 3D blocks, no glossy shadows.
-No people unless the role requires an agent (e.g., chef, operator, driver).
+Choose people, objects, diagrams, or interface elements only when they help explain the page's message.
 
 PALETTE LOCK
 Only these colors may appear: <ACCENT HEX>, off-white paper #fafaf8, ink black #0a0a0a, light grey lines.
 Do NOT use yellow, orange, red, green, purple, or any other color.
 Do NOT use gradients, glows, shadows, or 3D rendering.
-
-EXCLUDE
-No logos, watermark, decorative clutter, fake UI, extra titles, extra labels, hashtags, source tags, social media metadata, or noisy background.
 ```
 
 ## Text Budget
@@ -393,8 +398,7 @@ Only render these Chinese labels, exactly:
 - Token 块
 - 交给模型
 
-Do not add any other words.
-Do not render an internal big title.
+Keep all image text limited to the necessary labels listed above.
 ...
 ```
 
