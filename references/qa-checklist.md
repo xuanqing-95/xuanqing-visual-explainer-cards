@@ -24,7 +24,6 @@
 - Are outer-card titles, definitions, caveats, dates, prices, and unstable claims rendered in HTML?
 - Is every requested in-image label correct, readable, and intentionally placed?
 - Does the generated image avoid duplicating the outer HTML title?
-- Does the image prompt describe the required evidence directly, without a generic list of invented visual prohibitions?
 - Is body text at least 28px?
 - Is the page title at most two lines?
 - Is there any unrequested generated-image text or gibberish?

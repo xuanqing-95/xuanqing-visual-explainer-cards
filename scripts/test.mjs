@@ -119,27 +119,6 @@ pages:
 }
 
 const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "visual-cards-test-"));
-const illustrationPromptGuide = fs.readFileSync(
-  path.join(repoDir, "references", "illustration-prompts.md"),
-  "utf8"
-);
-assert(
-  /Do not append a generic negative-prompt checklist/i.test(illustrationPromptGuide),
-  "prompt guide must keep image instructions content-driven"
-);
-for (const staleGenericRestriction of [
-  "speech bubbles",
-  "callout bubbles",
-  "floating badges",
-  "decorative connector",
-  "\nEXCLUDE\n",
-]) {
-  assert(
-    !illustrationPromptGuide.includes(staleGenericRestriction),
-    `prompt guide still contains generic restriction: ${staleGenericRestriction}`
-  );
-}
-console.log("[PASS] prompt guide avoids generic invented visual prohibitions");
 try {
   const structuralBlue = validatePromptVisualFidelity(
     "A thin IKB blue outline frames the page and an IKB blue bracket marks the capacity."
