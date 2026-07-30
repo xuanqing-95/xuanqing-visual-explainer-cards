@@ -9,7 +9,6 @@ A secondary **Swiss mode** is available for users who explicitly want it — pur
 - Content shape decides layout. Do not pick a pretty layout first and invent content to fit it.
 - Use strong hierarchy: chrome, kicker, display title, evidence, caption.
 - Use real images or generated illustrations as evidence, not decoration.
-- Keep only visual elements that help explain the page's message; let the content determine which shapes and connectors are useful.
 - Keep all pages in a set visually related through grid, typography, palette, and recurring metadata.
 - Every page should have a clear focal point.
 

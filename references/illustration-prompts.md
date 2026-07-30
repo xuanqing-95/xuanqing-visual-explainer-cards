@@ -257,17 +257,6 @@ Never duplicate the outer card title inside the generated illustration. If the H
 
 ## Labeled GPT Image Prompt Template
 
-### Prompt Specificity Rule
-
-Write the prompt around the required visual evidence:
-
-- the one relationship or mechanism the image must explain;
-- the necessary objects, actions, direction, and result;
-- the exact short labels that help the picture explain itself;
-- the slot, composition, palette, and text-quality contract.
-
-Do not append a generic negative-prompt checklist. Add a specific avoid item only when it follows from the user's request, protects a fixed design-system rule, or corrects a defect observed in the current output. Visual devices remain content-driven.
-
 Use this structure for GPT Image 2 via ZenMux:
 
 ```markdown
@@ -286,8 +275,6 @@ Only render these Chinese labels, exactly:
 - {{label 2}}
 - {{label 3}}
 - {{label 4}}
-
-Keep all image text limited to the necessary labels listed above. Keep the outer card title and publish metadata in HTML.
 
 SCENE
 {{specific objects and actions}}
@@ -316,9 +303,8 @@ STYLE
 Editorial textbook isometric × electronic ink.
 Off-white paper background #fafaf8, visually flat and uniform.
 Thin ink linework, precise geometric forms, restrained fills.
-Use accent color as a small analytical accent or for one focal object.
+Use accent color only as a small analytical accent or for one focal object.
 Hairline arrows, fine rules, quiet whitespace, magazine-diagram hierarchy.
-Choose people, objects, diagrams, or interface elements only when they help explain the page's message.
 
 PALETTE LOCK
 Only these colors may appear: <ACCENT HEX>, off-white paper #fafaf8, ink black #0a0a0a, light grey lines.
@@ -398,7 +384,6 @@ Only render these Chinese labels, exactly:
 - Token 块
 - 交给模型
 
-Keep all image text limited to the necessary labels listed above.
 ...
 ```
 

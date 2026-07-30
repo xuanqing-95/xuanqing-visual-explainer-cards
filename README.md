@@ -13,7 +13,7 @@ inside this repository or commit generated task folders.
 
 ```text
 请安装并使用这个固定版本的 Skill：
-https://github.com/xuanqing-95/xuanqing-visual-explainer-cards/releases/tag/v1.1.4
+https://github.com/xuanqing-95/xuanqing-visual-explainer-cards/releases/tag/v1.1.5
 
 请按 README 完成依赖安装并运行 npm run verify。
 优先使用 Codex 自带的 ImageGen；如果当前环境没有生图工具，再提醒我配置自己的图片 API。
@@ -35,7 +35,7 @@ Paste this into Codex:
 
 ```text
 Install and use this exact Skill release:
-https://github.com/xuanqing-95/xuanqing-visual-explainer-cards/releases/tag/v1.1.4
+https://github.com/xuanqing-95/xuanqing-visual-explainer-cards/releases/tag/v1.1.5
 
 Follow the README to install dependencies and run npm run verify.
 Prefer the built-in Codex ImageGen tool. If it is unavailable, ask me to
@@ -55,7 +55,7 @@ tool or access to the user's own image API.
 ### Codex
 
 ```bash
-git clone --branch v1.1.4 --depth 1 https://github.com/xuanqing-95/xuanqing-visual-explainer-cards.git \
+git clone --branch v1.1.5 --depth 1 https://github.com/xuanqing-95/xuanqing-visual-explainer-cards.git \
   "$HOME/.agents/skills/xuanqing-visual-explainer-cards"
 cd "$HOME/.agents/skills/xuanqing-visual-explainer-cards"
 ```
@@ -63,7 +63,7 @@ cd "$HOME/.agents/skills/xuanqing-visual-explainer-cards"
 ### Claude Code
 
 ```bash
-git clone --branch v1.1.4 --depth 1 https://github.com/xuanqing-95/xuanqing-visual-explainer-cards.git \
+git clone --branch v1.1.5 --depth 1 https://github.com/xuanqing-95/xuanqing-visual-explainer-cards.git \
   "$HOME/.claude/skills/xuanqing-visual-explainer-cards"
 cd "$HOME/.claude/skills/xuanqing-visual-explainer-cards"
 ```
@@ -72,7 +72,7 @@ cd "$HOME/.claude/skills/xuanqing-visual-explainer-cards"
 
 ```bash
 openclaw skills install \
-  git:xuanqing-95/xuanqing-visual-explainer-cards@v1.1.4 \
+  git:xuanqing-95/xuanqing-visual-explainer-cards@v1.1.5 \
   --global
 ```
 
