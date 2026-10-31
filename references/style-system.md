@@ -65,6 +65,7 @@ A Swiss poster is Swiss only if **all three** hold:
 
 - Photos: crop with intent. Keep faces, hands, products, and main objects in safe areas.
 - Generated illustrations: pick the ratio that matches the final slot; do not default everything to 3:4.
+- Generated illustrations use flat orthographic 2D construction and uniform hairline strokes, while preserving concrete actors, actions, state changes, and consequences; reject both visible depth and unexplained icon maps.
 - Use `.illust-frame` (object-fit: contain) for AI-generated illustrations.
 - Use `.frame-img` (object-fit: cover) for photographic evidence where cropping is acceptable.
 - Generated images must respect the system palette — see `illustration-prompts.md` Palette Lock.
