@@ -117,7 +117,7 @@ node <skill-dir>/scripts/validate.mjs <task-dir>
 
 Fix every FAIL before final delivery. WARN is advisory: report important WARNs briefly, but do not block delivery unless the visual issue is obvious.
 
-18. Inspect the final PNGs. Run both image-only and full-page explanation checks, then check generated Chinese text accuracy, factual accuracy, readability, page rhythm, and series consistency. Confirm no publish hashtags or `#...` strings appear inside cards or generated images. Show the user the rendered PNGs only after validation and inspection, with absolute paths and a short note summarizing validator status.
+18. Inspect the final PNGs. Run both image-only and full-page explanation checks, then check generated Chinese text accuracy, factual accuracy, readability, page rhythm, and series consistency. Treat the flat orthographic style and hairline stroke weight in `references/illustration-prompts.md` as a human visual gate: reject visible depth, isometric faces, thick black contours, or large solid-black icon masses even when the mechanical validator passes. Confirm no publish hashtags or `#...` strings appear inside cards or generated images. Show the user the rendered PNGs only after validation and inspection, with absolute paths and a short note summarizing validator status.
 
 ## Storyboard Contract
 
@@ -184,6 +184,7 @@ Hard rules:
 - Use enough illustrations to support the natural page count.
 - Reserve composition safe zones before generating illustrations.
 - Prefer concrete actions over static collections of objects.
+- Flatness controls rendering style, not explanatory depth. Keep actors, actions, objects, state changes, and visible consequences when the concept needs them; do not reduce a mechanism or metaphor to a noun-icon map merely to stay flat.
 - Illustration presence is not success. Every illustration-led page must visibly communicate a causal chain and pass both image-only and full-page explanation checks.
 - Generated illustrations explain one decisive visual moment. HTML completes exact causal chains, labels, definitions, and caveats.
 - Generate for the final image slot. Do not default every embedded illustration to 3:4.

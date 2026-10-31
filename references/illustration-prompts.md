@@ -300,11 +300,18 @@ Use clean modern sans-serif Chinese lettering.
 Use large labels; avoid tiny captions.
 
 STYLE
-Editorial textbook isometric × electronic ink.
+Flat orthographic 2D editorial line diagram × electronic ink.
 Off-white paper background #fafaf8, visually flat and uniform.
-Thin ink linework, precise geometric forms, restrained fills.
+Uniform hairline strokes: primary outlines 2-3px at a 1536px-wide canvas; arrows and secondary rules 1-2px. Scale proportionally for other canvas sizes.
+Use precise planar geometry and restrained flat fills.
 Use accent color only as a small analytical accent or for one focal object.
 Hairline arrows, fine rules, quiet whitespace, magazine-diagram hierarchy.
+
+FLATNESS LOCK
+Use a straight-on orthographic view with no visible top or side faces.
+No isometric perspective, visible depth, beveled faces, thick black outlines, solid-black icon masses, shadows, or 3D volume.
+Flatness is a rendering constraint, not permission to simplify the explanation into icons. When the concept involves work or change, show an identifiable actor performing an action on an object and make the result visibly different.
+The result should resemble a flat editorial narrative diagram with technical-line precision, not a cartoon icon set or a disconnected noun-icon map.
 
 PALETTE LOCK
 Only these colors may appear: <ACCENT HEX>, off-white paper #fafaf8, ink black #0a0a0a, light grey lines.
@@ -405,7 +412,10 @@ Reject and regenerate if:
 - the reading direction is unclear;
 - the text becomes too small at phone-thumbnail size;
 - the picture has good labels but weak mechanism;
+- the image is only a collection of labeled nouns, with no visible actor, action, state change, or consequence where the page claim requires them;
 - the image panel fights the outer card layout instead of acting as evidence.
-- the style looks like a chunky cartoon icon set instead of a refined editorial diagram;
+- any object shows isometric perspective, visible top/side faces, depth, bevels, or 3D volume;
+- primary outlines exceed the intended hairline weight, or arrows and secondary rules become visually heavy;
+- large solid-black icon masses or chunky cartoon-icon styling replace refined linework;
 - the image background visibly differs from the outer card paper;
 - the image introduces colors not in the system palette (e.g., yellow in an Indigo Porcelain set).

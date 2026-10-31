@@ -9,6 +9,7 @@
 - Can a beginner predict the outcome of one new example after reading?
 - Is the boundary of each analogy or likely misconception stated?
 - Does the illustration show a mechanism or consequence?
+- When the concept involves work or change, can a beginner see who acts on what, what changes, and what result comes back, rather than only recognizing a set of labeled icons?
 - Does nearby copy explicitly tell the reader what to notice in the illustration?
 - Does every illustration-led page visibly connect input -> transformation -> result -> consequence?
 - Does every annotation point to a specific visual element instead of floating beside the image?
@@ -36,6 +37,8 @@
 - Does every major generated illustration use an `.evidence-figure` wrapper instead of a naked `.illust-frame`?
 - Does the illustration feel native to the card: optically centered, balanced top/bottom margin, not pasted in, not stuck to the top?
 - Does each generated illustration visually fill its intended slot, rather than appearing as a small centered diagram with excessive paper margin?
+- Is every generated illustration visibly flat and orthographic, with no isometric perspective, visible top/side faces, bevels, shadows, or 3D volume?
+- Are primary outlines true hairlines rather than chunky black contours, with no large solid-black icon masses?
 - Did the prompt include a measurable composition contract for content width, content height, balanced margins, and visual centering?
 - Did the prompt include a pixel margin contract for the actual generator output size (`1536x1024`, `1024x1024`, or `1024x1536`)?
 - Does the HTML slot match the generated image's physical aspect ratio, e.g. `1536x1024` landscape output placed in `.evidence-figure.landscape` or another near-3:2 slot instead of a shallow wide band?
@@ -58,4 +61,5 @@
 - Run `render.mjs`.
 - Run `validate.mjs`.
 - Fix every FAIL.
+- Treat flatness and line-weight review as a human visual gate; a mechanical PASS does not override a visibly heavy or three-dimensional illustration.
 - Inspect every output PNG at full size and phone thumbnail size.
