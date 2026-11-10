@@ -12,15 +12,17 @@ Use the cover skeleton in `assets/template.html` verbatim. Replace these placeho
 |---|---|---|
 | `Day NN` | `Day 04` | top-right chrome |
 | Section label | `Indigo Porcelain` | small IKB tag with square mark |
-| `term-en` | `LLMOps` | huge serif English, mustard yellow bar underneath |
-| `term-zh` | `AI 代码编辑器` | Chinese explanation of the English technical term; do not use an English subtitle here |
+| `term-en` | `Machine Learning` | full English technical name, mustard yellow bar underneath |
+| `term-zh` | `机器学习` | Chinese explanation of the English technical term; do not use an English subtitle here |
 | `term-question` | `为什么同一个模型,别人用起来效果炸裂,你用起来平平无奇?` | open-ended hook |
-| `foot-tagline` | `LLMOPS · 从能跑到可控` | bottom-left tag |
+| `foot-tagline` | `Machine Learning · 从例子里找规律` | bottom-left tag; preserve the full topic name |
 
 Hard rules for the cover:
 - The mustard yellow bar under `term-en` is the **only** place mustard yellow appears in the entire card set.
 - The cover does NOT carry an illustration. The huge English term IS the visual.
-- `term-en` should fit on one line. If your term is >8 characters, switch to two lines or shorten.
+- Preserve the full English technical name in `cover.english_term`, `.term-en`, and any cover footer that repeats it. `Machine Learning` must not become `ML`.
+- Let the full name determine the typography: wrap at word boundaries, then adjust task-local font size and spacing until it fits. The seed’s 240px size is for short terms, not a reason to shorten longer ones. Do not abbreviate, truncate, omit words, or use ellipsis.
+- For example, `Machine<br>Learning` keeps the full name on two lines; check actual glyph width and vertical fit after rendering. Do not expand fixed series branding or official product names.
 - `term-zh` must be the Chinese meaning/explanation of `term-en`, e.g. `AI 代码编辑器`, `上下文窗口`, `智能体`; it is not an English subtitle or slogan.
 - `term-question` is one open question, not a sentence summarizing the topic.
 

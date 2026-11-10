@@ -44,6 +44,8 @@
 - Does the HTML slot match the generated image's physical aspect ratio, e.g. `1536x1024` landscape output placed in `.evidence-figure.landscape` or another near-3:2 slot instead of a shallow wide band?
 - Did the generation wrapper run default `auto-frame`, or was `--no-auto-frame` intentionally justified?
 - For wide workflow/comparison/metaphor pages, was the image generated as `16:10` or `4:3`, or enlarged with `.wide-flow` / `.zoom-*` after label-crop inspection?
+- Compare the source full English topic name with `cover.english_term`, the rendered `.term-en`, and any cover footer that repeats it. Are all words preserved, with no acronym substituted merely to fit (e.g. `Machine Learning` becoming `ML`)? Check the source too: a storyboard already shortened to `ML` is not a valid reference.
+- Does the full term fit without clipping or overlap after word-boundary wrapping and task-local type adjustments?
 - Does the cover bar under `.term-en` follow the real English term width instead of stretching across the full row?
 - Is the cover `term-zh` a Chinese explanation of the English professional term, not an English subtitle?
 - Does HTML remain the dominant layout system?
