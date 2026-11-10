@@ -167,7 +167,9 @@ Hard rules:
 - Keep one core message per page.
 - Treat user-provided labels/hashtags as `source_tags`, not content. Do not place `source_tags` into page messages, cover copy, footers, captions, image prompts, or generated in-image labels unless the user explicitly asks to design a hashtag page.
 - Page 1 of a recurring AI concept series should use the fixed `series-cover` layout unless the user asks for another cover format.
-- The cover must contain exactly four content units: series line, English technical term, Chinese explanation, and one scenario question.
+- The cover must contain exactly four content units: series line, full English technical term, Chinese explanation, and one scenario question.
+- Write the cover topic in full in `cover.english_term`, `.term-en`, and any cover footer that repeats it: `Machine Learning`, not `ML`. Preserve a supplied full name; if the source gives only an acronym, resolve its full technical name from context before storyboarding. Never invent an expansion for an ambiguous acronym or a product name. Keep established series branding such as “每天吃透一个 AI 知识点” unchanged.
+- Fit the full cover term by wrapping at word boundaries and adjusting task-local font size/spacing. Never abbreviate, truncate, remove words, or use ellipsis to make it fit. Compare the finished cover with the source full name during QA.
 - Cover typography must be rendered in HTML, not generated into an image.
 - The cover's `term-zh` must be the Chinese explanation of `term-en`, not an English subtitle or slogan.
 - A core message must be a complete sentence with a subject, mechanism, and consequence. A keyword is not a message.

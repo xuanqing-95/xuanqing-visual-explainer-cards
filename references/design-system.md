@@ -58,6 +58,8 @@ The second most important rule: **body and lead use serif-zh, not sans-zh.** San
 
 Cover-only: `.cover-series .series-zh` = 96px serif-zh; `.cover-series .term-en` = 240px Playfair weight 900; `.cover-series .term-zh` = 42px serif-zh IKB Chinese explanation of the English term; `.cover-series .term-question` = 56px serif-zh.
 
+For long cover terms, 240px is a short-term seed size, not a fixed requirement. Keep the full technical name and fit it with word-boundary line breaks and task-local font-size/spacing adjustments; never abbreviate it to preserve the seed size.
+
 ### Fonts
 
 - `--serif-en`: Playfair Display (loaded from Google Fonts)
